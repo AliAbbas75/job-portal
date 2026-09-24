@@ -1,0 +1,75 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-weight: var(--weight-medium);
+}
+
+.required {
+  color: var(--pr-ember-red);
+}
+
+.hint {
+  font-size: var(--text-sm);
+}
+
+.error {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--pr-ember-red);
+}
+
+.control {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--pr-heritage-green);
+  border-radius: var(--radius-sm);
+  background: var(--pr-white);
+}
+
+.control:focus-visible {
+  outline-offset: 0;
+}
+
+.control[aria-invalid='true'] {
+  border: 2px solid var(--pr-ember-red);
+}
+
+.control:disabled,
+.control[readonly] {
+  background: var(--pr-surface-green);
+  cursor: not-allowed;
+}
+
+textarea.control {
+  min-height: 88px;
+  resize: vertical;
+}
+
+select.control {
+  appearance: none;
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231F4D36' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  cursor: pointer;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.checkbox input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--pr-heritage-green);
+}

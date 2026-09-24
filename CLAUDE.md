@@ -129,6 +129,10 @@ workspace/             # tasks, milestones, workflow, per-member logs
 - Functional components and hooks only. `PascalCase.jsx` for components, `camelCase.js` for everything else.
 - All user-facing text goes through `i18n/`, never hard-coded. English only for now; Urdu is deferred but must be addable without touching components.
 - Build mobile-first and keep bundles small; many candidates are on low-bandwidth connections.
+- **Follow the brand guide** ([docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md)): only the 8 brand colours, via the CSS variables in `frontend/src/styles/tokens.css` (never raw hex in components); Instrument Sans; no gradients; no shadows (use borders); gold and pumpkin only for accents, badges and backgrounds, never body text on white.
+- Style components with CSS Modules (`Name.module.css` next to the component).
+- **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }`; the UI maps `code` to `errors.<code>` in `i18n/en.json`.
+- Frontend checks before pushing: `npm run lint`, `npm run format:check`, `npm test`, `npm run build` (run in `frontend/`).
 
 **Data and security**
 - CNIC, phone and uploaded documents are personal data. Don't log them, don't put them in URLs, don't commit real samples.
@@ -166,6 +170,7 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 ## 9. Key files
 
 - [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md): where code goes, naming, repo hygiene
+- [docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md): colours, type, logo rules for all UI
 - [workspace/WORKFLOW.md](workspace/WORKFLOW.md): the step-by-step team process
 - [workspace/MILESTONES.md](workspace/MILESTONES.md): milestone claim board, scope, open questions
 - [workspace/TASKS.md](workspace/TASKS.md): task checklist per milestone

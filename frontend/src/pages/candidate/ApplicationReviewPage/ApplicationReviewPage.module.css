@@ -1,0 +1,108 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 860px;
+  padding-top: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-2xl);
+}
+
+.jobCard {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--pr-cream);
+}
+
+.section {
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--pr-heritage-green);
+  border-radius: var(--radius-md);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--text-lg);
+}
+
+.edit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--weight-medium);
+}
+
+.rows {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: var(--space-3);
+}
+
+.row dt {
+  color: var(--pr-heritage-green);
+  font-weight: var(--weight-medium);
+}
+
+.row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.entries {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.declaration {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 2px solid var(--pr-heritage-green);
+  border-radius: var(--radius-md);
+  background: var(--pr-surface-green);
+}
+
+.fee {
+  font-weight: var(--weight-bold);
+}
+
+.fee span {
+  font-weight: var(--weight-regular);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .section {
+    padding: var(--space-4);
+  }
+}
