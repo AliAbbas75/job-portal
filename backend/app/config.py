@@ -23,18 +23,20 @@ class Config:
 
 
 class DevelopmentConfig(Config):
+    ENV_NAME = "development"
     DEBUG = True
 
 
 class TestingConfig(Config):
+    ENV_NAME = "testing"
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URL")
-    SECRET_KEY = "test-secret"
-    JWT_SECRET_KEY = "test-jwt-secret"
+    SECRET_KEY = "test-secret-key-at-least-32-bytes-long"
+    JWT_SECRET_KEY = "test-jwt-secret-at-least-32-bytes-long"
 
 
 class ProductionConfig(Config):
-    pass
+    ENV_NAME = "production"
 
 
 CONFIGS = {

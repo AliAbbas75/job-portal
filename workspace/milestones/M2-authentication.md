@@ -41,6 +41,7 @@ Master flow §4.3. Candidate signup and OTP login; staff login with roles.
 ## Notes
 
 - T-020: CNIC format + duplicate check; signup creates the permanent profile.
+- T-022: issue the token M4's APIs already accept: Flask-JWT-Extended access token, identity = candidate account id as a string, claim `{"role": "candidate"}` (see `backend/app/controllers/auth_guard.py`).
 - T-023: roles are job creator, approver, admin. Do this first; M3 depends on it. Depends on open question 2.
 - T-024: stub until NADRA integration is available.
 - T-025: built on the mock API (`src/api/mocks/authMock.js`). T-020 to T-022 must match its request/response shapes.
