@@ -1,131 +1,187 @@
 # Team Workflow
 
-Every piece of work, by every team member, follows the same five steps:
+Work is organised by **milestone** (a development phase). One person, or a few co-owners, claims a whole milestone, builds it on one branch, and releases it through `develop` to `main`.
 
-**Claim → Branch → Work → Log → Commit, push, PR**
+**Claim milestone → Branch → Work + log → PR into `develop` → Release to `main`**
 
-The goal is that anyone can open `workspace/TASKS.md` and see who is doing what right now, and open `workspace/logs/` to see what changed and why.
+## Branches
+
+```
+main              ← releases only: one merge per finished milestone, tagged
+  ↑  (PR, merge commit)
+develop           ← integration: finished milestones + milestone claims
+  ↑  (PR, squash merge)
+m4-candidate-portal   ← one branch per milestone, shared by its owners
+```
+
+| Branch | What goes in | How |
+|--------|--------------|-----|
+| `main` | Released milestones only | PR from `develop`, 1 approval, merge commit, tag |
+| `develop` | Finished milestones; milestone claims in `MILESTONES.md` | Milestone PR (squash); claims pushed directly |
+| `m<N>-<name>` | All work for one milestone: code, `TASKS.md` ticks, work logs | Owners commit and push freely |
+| `fix/<desc>` | A bug fix outside any open milestone | PR into `develop` |
+
+**Nobody pushes to `main` directly. The only direct push to `develop` is a claim change to `MILESTONES.md`.** Everything else arrives by pull request.
+
+On `main`, `git log --first-parent main` shows exactly one entry per released milestone.
 
 ---
 
-## Step 1: Claim the task
+## Step 1: Claim a milestone
 
-1. Get the latest board:
+1. Update `develop`:
    ```bash
-   git checkout main
+   git checkout develop
    git pull
    ```
-2. Open [TASKS.md](TASKS.md) and find the task. If it doesn't exist, add a row at the bottom of the right milestone table using the next free ID.
-3. Check the Owner is `-` (unassigned). If someone else owns it, pick another task or talk to them first.
-4. Fill in your row:
-   - **Owner:** your name (Ali, Anum, Hadi, Malaika or Umaima)
-   - **Status:** `IN PROGRESS`
-5. Commit and push the claim to `main` straight away, on its own:
+2. Open [MILESTONES.md](MILESTONES.md). Check the milestone is unclaimed (`-`) and everything in **Depends on** is `Done`.
+3. In the claim board, set **Owners** to your name and **Status** to `In progress`. Add a line to the milestone changelog.
+   - **Joining as a co-owner:** add your name after the existing owners (`Hadi, Anum`). Tell the lead.
+4. Commit only that file and push to `develop`:
    ```bash
-   git add workspace/TASKS.md
-   git commit -m "chore(tasks): claim T-020 [T-020]"
-   git push origin main
+   git add workspace/MILESTONES.md
+   git commit -m "chore(milestones): claim M2 [M2]"
+   git push origin develop
    ```
-6. **If the push is rejected**, someone else pushed first. Run `git pull`, check the task is still free, resolve any conflict (keep both people's rows), and push again. If they claimed the same task, it's theirs: undo your claim.
+5. **If the push is rejected**, someone pushed first. `git pull`, check the milestone is still free, and push again. If someone else claimed it, join as co-owner or pick another.
 
 Don't start coding until your claim is on the remote.
 
-**Limit:** one `IN PROGRESS` task per person at a time, unless the other is `BLOCKED`.
+## Step 2: Create the milestone branch
 
-## Step 2: Create your branch
-
+The **lead** (first owner) creates the branch from `develop` and pushes it right away:
 ```bash
-git checkout -b <name>/<task-id>-<short-desc>
-# e.g.
-git checkout -b malaika/T-043-profile-section-apis
+git checkout -b m2-authentication
+git push -u origin m2-authentication
+```
+Co-owners pick it up:
+```bash
+git fetch
+git checkout m2-authentication
+```
+Use the branch name listed in the claim board.
+
+## Step 3: Split the tasks
+
+On the milestone branch, owners put their names on the tasks they'll do in [TASKS.md](TASKS.md) and set them to `IN PROGRESS`. Commit that on the branch. `TASKS.md` is **never** pushed to `develop` or `main` directly; it travels with the milestone PR.
+
+Missing a task? Add a row with the next free ID. If the scope grows a lot, talk to the team before widening the milestone.
+
+## Step 4: Work and log
+
+**Code**
+- Follow [CLAUDE.md](../CLAUDE.md), and put every new file where [docs/PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md) says.
+- Commit often. Every commit message includes the task ID:
+  ```
+  feat(auth): add CNIC signup endpoint [T-020]
+  ```
+- Mark a task `DONE` in `TASKS.md` when it's finished, in the same commit as the last code for it.
+- Stuck? Set the task to `BLOCKED` and add a note under that milestone's table.
+
+**Sharing a branch with co-owners**
+- Always `git pull --rebase` before `git push`. Never force-push a milestone branch.
+- Split work by task so two people rarely edit the same file at once.
+
+**Keeping up with `develop`.** Do this at least weekly, and whenever another milestone lands in `develop`:
+```bash
+git fetch
+git merge origin/develop     # resolve conflicts now, while they're small
+git push
 ```
 
-Lowercase, hyphens, no spaces.
-
-## Step 3: Do the work
-
-- Follow the architecture and conventions in [CLAUDE.md](../CLAUDE.md).
-- Put every new file where [docs/PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md) says, named by its conventions. Don't create files the task doesn't need.
-- Commit often on your branch. Every commit message includes the task ID:
-  ```
-  feat(profile): add education section endpoints [T-043]
-  ```
-- If you get stuck waiting on someone else, set Status to `BLOCKED` and say why in a note under that milestone's table (push that board change to `main` the same way as a claim).
-- If the task grows, split it: add new task rows rather than silently widening the scope.
-
-## Step 4: Log the work
-
-Before you push for review, add an entry to **your own** log file in [logs/](logs/). Newest entries go at the **top**, just under the header.
+**Log.** Add an entry to **your own** file in [logs/](logs/) at the end of each work session, newest at the top. Commit it on the milestone branch.
 
 ```markdown
-### 2026-09-24 | T-043 Profile section APIs
+### 2026-09-24 | T-042 Profile section APIs
+- **Milestone:** M4 (branch m4-candidate-portal)
 - **Status:** Done / Partial / In progress
-- **Branch:** malaika/T-043-profile-section-apis
 - **What changed:**
   - `backend/app/models/profile.py`: added `EducationRecord`, `ExperienceRecord`
-  - `backend/app/controllers/profile.py`: GET/POST/PUT/DELETE for education and experience
-  - `backend/tests/test_profile.py`: 9 tests
-- **Database:** migration `a1b2c3_T-043_profile_sections` (adds 2 tables)
+  - `backend/app/controllers/profile_controller.py`: CRUD for education and experience
+  - `backend/tests/controllers/test_profile_controller.py`: 9 tests
+- **Database:** migration `a1b2c3_T-042_profile_sections` (adds 2 tables)
 - **Commits:**
-  - `feat(profile): add education section endpoints [T-043]`
-  - `test(profile): cover education/experience CRUD [T-043]`
-- **How to test:** `pytest backend/tests/test_profile.py`
-- **Notes / follow-ups:** Document upload for certificates is left for T-045.
+  - `feat(profile): add education section endpoints [T-042]`
+  - `test(profile): cover education/experience CRUD [T-042]`
+- **How to test:** `pytest backend/tests/controllers/test_profile_controller.py`
+- **Notes / follow-ups:** Certificate upload waits for T-043.
 ```
 
-Rules:
-- One entry per work session or per PR, whichever is smaller.
-- List every file you touched and why, in one line each.
-- Always mention migrations, new env vars, and new dependencies. Others need them to run the project.
-- Commits: list commit messages (the hash of a commit can't be written inside that same commit). Anyone can find them with `git log --grep "T-043"`.
-- Write only in your own log. That keeps five people from conflicting in one file.
+Log rules:
+- List every file you created, changed or deleted, one line each, with why.
+- Always mention migrations, new env vars and new dependencies. Others need them to run the project.
+- List commit messages, not hashes (a commit can't contain its own hash). `git log --grep "T-042"` finds them.
+- Write only in your own log, so co-owners never conflict.
 
-## Step 5: Commit, push, open a pull request
+## Step 5: Finish the milestone: PR into `develop`
 
-```bash
-git add <files> workspace/logs/<your-name>.md
-git commit -m "docs(log): T-043 work log [T-043]"   # or include the log in your last code commit
-git pull --rebase origin main                        # pick up others' work
-git push -u origin <your-branch>
-```
+When every task is `DONE` and the milestone's **Done when** criteria in MILESTONES.md are met:
 
-Then:
-1. Open a pull request into `main`. Title: `[T-043] Profile section APIs`. In the description, link the task and paste the log entry.
-2. On your branch, set the task's Status to `IN REVIEW` in `TASKS.md` so it merges with the PR.
-3. Ask at least one other team member to review. Reviewers check the architecture rules in CLAUDE.md, file placement and naming against PROJECT_STRUCTURE.md, no debug leftovers or stray files, tests, migrations, and that the log entry is there.
-4. After merge, set Status to `DONE` (push to `main` like a claim).
-5. Delete the branch.
+1. On the milestone branch, merge the latest `develop` (Step 4), run all tests, and fix anything that broke.
+2. In `MILESTONES.md`, set the milestone's Status to `Done` and add a changelog line. It only lands if the PR merges.
+3. Push, then the lead opens a PR **into `develop`**:
+   - Title: `M2: Authentication`
+   - Description: list of tasks done, migrations, new env vars/dependencies, how to test. Point to the owners' log entries.
+4. **Review:** at least one team member who is **not** an owner of this milestone. For large milestones, the reviewer can follow the branch as it's pushed rather than reading everything at the end. Reviewers check:
+   - the domain rules and layer rules in CLAUDE.md
+   - file placement and naming against PROJECT_STRUCTURE.md
+   - tests pass; migrations reviewed; no debug leftovers or stray files
+   - `TASKS.md` all `DONE`, log entries present
+5. **Merge with "Squash and merge"**, titled `M2: Authentication (#PR)`. GitHub keeps co-owners as co-authors.
+6. Delete the milestone branch.
 
-## Status values
+## Step 6: Release to `main`
 
-| Status | Meaning |
-|--------|---------|
-| `TODO` | Nobody is on it |
-| `IN PROGRESS` | Claimed and being worked on |
-| `BLOCKED` | Can't continue; reason in the milestone's notes |
-| `IN REVIEW` | Pull request open |
-| `DONE` | Merged into `main` |
+Right after the milestone lands in `develop`, the lead:
+1. Opens a PR **from `develop` into `main`**, titled `Release M2: Authentication`.
+2. Gets one approval, then merges with **"Create a merge commit"**. Never squash `develop` into `main`, because the two branches would drift apart.
+3. Tags the release:
+   ```bash
+   git checkout main && git pull
+   git tag -a m2 -m "M2: Authentication"
+   git push origin m2
+   ```
 
-## Handing over or dropping a task
+If two milestones finish close together, one release PR can carry both.
 
-- **Dropping:** set Owner back to `-`, Status to `TODO`, and add a note saying what's done and where the branch is. Add a matching log entry.
-- **Handing over:** change Owner, add a note `handed over from <name> on <date>`. Both people add a log entry.
+## Bug fixes between milestones
 
-## Milestones
+For a bug already on `develop` that isn't part of an open milestone: branch `fix/<short-desc>` from `develop`, fix it, add a log entry, and open a PR into `develop` (squash). Use `[fix]` in commit messages if there's no task ID. It reaches `main` with the next release.
 
-[MILESTONES.md](MILESTONES.md) is updated by whoever finishes the last task in a milestone, or at the weekly sync. Don't mark a milestone done until every task in it is `DONE` and its exit criteria are met.
+## Handing over or dropping a milestone
+
+- **Dropping:** remove your name from Owners in MILESTONES.md (push to `develop` like a claim). If you were the only owner, set Status back to `Not started` and add a changelog line saying where the branch stands.
+- **Handing over:** change Owners and add a changelog line `handed over from <name>`. Both people add a log entry on the branch.
+
+## Repo settings (one-time, done by the repo admin)
+
+In GitHub → **Settings**:
+1. **General → Default branch:** `develop`, so clones and new PRs start from it.
+2. **General → Pull Requests:** allow **squash merging** and **merge commits**; turn on **Automatically delete head branches**.
+3. **Branches → add rule for `main`:** require a pull request with 1 approval; block force pushes and deletion.
+4. **Branches → add rule for `develop`:** block force pushes and deletion. The "PR required for code" rule is kept by team discipline, since claims are pushed directly.
+5. After CI exists (T-007): require status checks to pass on `main` and on PRs into `develop`.
 
 ## Using Claude Code
 
-Claude Code reads [CLAUDE.md](../CLAUDE.md) and follows this same workflow. Tell it who you are at the start of a session ("I'm Anum, working on T-031"). It will check the claim, write your log entry and use your branch prefix. It won't commit or push unless you ask.
+Claude Code reads [CLAUDE.md](../CLAUDE.md) and follows this workflow. Start a session by saying who you are and what you're on ("I'm Anum, working on M4, task T-047"). It checks the milestone claim, works on the milestone branch, updates `TASKS.md`, writes your log entry, and won't commit or push unless you ask.
 
 ## Quick checklist
 
-- [ ] Pulled latest `main`
-- [ ] Task claimed in TASKS.md and pushed to `main`
-- [ ] Working on `<name>/<task-id>-<desc>` branch
-- [ ] New files placed and named per PROJECT_STRUCTURE.md; no stray/debug files
+**Starting a milestone**
+- [ ] `develop` pulled; dependencies are `Done`
+- [ ] Claim pushed to `develop` (MILESTONES.md only)
+- [ ] Milestone branch created from `develop` and pushed
+
+**Every work session**
+- [ ] On the milestone branch, `git pull --rebase` first
+- [ ] Tasks I'm on have my name and `IN PROGRESS` in TASKS.md
+- [ ] Files placed and named per PROJECT_STRUCTURE.md; no debug leftovers
 - [ ] Commits include `[T-###]`
-- [ ] Log entry added to `workspace/logs/<name>.md`
-- [ ] Rebased on `main`, pushed, PR opened
-- [ ] Task set to `IN REVIEW`, then `DONE` after merge
+- [ ] Log entry in `workspace/logs/<name>.md`
+
+**Finishing**
+- [ ] `develop` merged in, tests pass
+- [ ] All tasks `DONE`, milestone set to `Done`
+- [ ] PR into `develop`, reviewed by a non-owner, squash-merged
+- [ ] Release PR `develop` → `main` merged (merge commit) and tagged
