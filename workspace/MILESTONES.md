@@ -1,114 +1,126 @@
 # Milestones
 
-Each milestone groups tasks in [TASKS.md](TASKS.md). A milestone is **Done** only when all its tasks are `DONE` and its exit criteria are met.
+Development is split into **phases (milestones)**. You claim a **milestone**, not a single task. Its tasks in [TASKS.md](TASKS.md) are the checklist for "done". How to claim and release: [WORKFLOW.md](WORKFLOW.md).
 
-Section numbers (§) refer to [docs/railway-job-portal-master-flow.md](../docs/railway-job-portal-master-flow.md).
+**Current scope:** the master flow up to **§4.9 Application Tracking** ([docs/railway-job-portal-master-flow.md](../docs/railway-job-portal-master-flow.md)). Screening (§5) and cross-cutting work (§6) are listed under [Deferred](#deferred-out-of-current-scope).
 
-| ID | Milestone | Tasks | Status | Target date | Lead |
-|----|-----------|-------|--------|-------------|------|
-| M0 | Project setup | T-001 – T-008 | Not started | TBD | |
-| M1 | Data model | T-010 – T-017 | Not started | TBD | |
-| M2 | Authentication | T-020 – T-025 | Not started | TBD | |
-| M3 | Job creation, approval, publication | T-030 – T-035 | Not started | TBD | |
-| M4 | Candidate portal: jobs and profile | T-040 – T-046 | Not started | TBD | |
-| M5 | Application flow | T-050 – T-056 | Not started | TBD | |
-| M6 | BPS-15+ resume tier | T-060 – T-064 | Not started | TBD | |
-| M7 | Screening and selection | T-070 – T-076 | Not started | TBD | |
-| M8 | Cross-cutting and release | T-080 – T-086 | Not started | TBD | |
+## Claim board
 
-Status values: `Not started`, `In progress`, `Done`.
+This table is the only thing pushed directly to `develop`. Everything else goes through a milestone pull request.
+
+| ID | Milestone                           | Owners | Branch                | Status      | Depends on |
+|----|-------------------------------------|--------|-----------------------|-------------|------------|
+| M0 | Project setup                       | Ali    | `m0-project-setup`    | In progress | -          |
+| M1 | Data model                          | -      | `m1-data-model`       | Not started | M0         |
+| M2 | Authentication                      | -      | `m2-authentication`   | Not started | M1         |
+| M3 | Job creation, approval, publishing  | -      | `m3-job-admin`        | Not started | M1, T-023  |
+| M4 | Candidate portal: jobs and profile  | -      | `m4-candidate-portal` | Not started | M1         |
+| M5 | BPS-15+ resume tier                 | -      | `m5-resume-tier`      | Not started | M4         |
+| M6 | Application flow and tracking       | -      | `m6-applications`     | Not started | M3, M4     |
+
+- **Owners:** one or more of Ali, Anum, Hadi, Malaika, Umaima, comma-separated. The first name is the lead, who opens the pull requests.
+- **Status:** `Not started` → `In progress` → `In review` (PR into `develop` open) → `Done` (merged into `develop` and released to `main`)
+- **Depends on:** don't claim a milestone until these are `Done`. M3 only needs staff roles (T-023) from M2, so it can run alongside M2.
+
+```
+M0 → M1 ─┬→ M2 ──(T-023)──┐
+         ├→ M3 ←──────────┘ ─┐
+         └→ M4 ─┬────────────┴→ M6
+                └→ M5
+```
+
+Up to three milestones can run at once (M2, M3, M4, then M5 and M6). With five people, share milestones as co-owners rather than waiting.
 
 ---
 
-## M0: Project setup
+## Milestone details
+
+Section numbers (§) refer to the master flow.
+
+### M0: Project setup
 Repo structure, Flask and React skeletons, PostgreSQL, tooling, CI.
 
-**Exit criteria**
+**Done when**
 - `flask run` serves `/api/health`; `npm run dev` shows the app shell calling it.
 - A new team member can go from clone to running both apps using only the README.
-- CI runs lint and tests on every pull request.
-- Open questions below have an owner and a date.
+- CI runs lint and tests on pull requests into `develop` and `main`.
 
-## M1: Data model
-All entities from §7 as SQLAlchemy models with migrations and seed data.
+### M1: Data model
+All in-scope entities from §7 as SQLAlchemy models with migrations and seed data. Backend only.
 
-**Exit criteria**
+**Done when**
 - `flask db upgrade` builds the full schema on an empty database.
-- Unique constraints exist for CNIC and (candidate, job) applications.
-- Seed script loads departments, BPS scales, provinces/districts and qualification lists.
+- Unique constraints exist for CNIC and for (candidate, job) applications.
+- The application status list includes the expanded §4.9 statuses, so later phases need no schema change.
+- The seed script loads departments, BPS scales, provinces/districts and qualification lists.
 
-## M2: Authentication
-Candidate signup/login with CNIC, mobile, CAPTCHA and OTP (§4.3); staff login with roles.
+### M2: Authentication (§4.3)
+Candidate signup and OTP login; staff login with roles.
 
-**Exit criteria**
-- A candidate can sign up, receive an OTP (stubbed SMS in dev), log in, and a permanent profile exists.
+**Done when**
+- A candidate can sign up, receive an OTP (stubbed SMS in dev) and log in, and a permanent profile exists.
 - Duplicate CNIC is rejected. OTP requests are rate-limited.
-- Staff roles (job creator, approver, screening staff, admin) gate the admin API.
+- Staff roles (job creator, approver, admin) gate the admin API and admin pages.
 
-## M3: Job creation, approval, publication
-Admin flow (§3).
-
-**Exit criteria**
+### M3: Job creation, approval, publishing (§3.1–3.3)
+**Done when**
 - A job can be drafted with structured requirements, approved by the configured approvers, and appears on the public portal on its opening date.
-- Approved jobs can't be edited; returned jobs go back to draft with comments.
+- Returned jobs go back to draft with comments. Rejected jobs are closed.
+- **Published jobs can't be edited** (no corrigendum).
 - Every admin action has an audit record.
 
-## M4: Candidate portal: jobs and profile
-Job search, job details, permanent section-based profile, document vault (§4.1, 4.2, 4.4).
-
-**Exit criteria**
+### M4: Candidate portal: jobs and profile (§4.1, 4.2, 4.4)
+**Done when**
 - Candidates can search and filter jobs and view job details on a phone-width screen.
 - Every profile section can be filled and edited; documents uploaded once can be reused.
+- Age is calculated from DOB, never entered.
 
-## M5: Application flow
-Application check, review, submit, snapshot, tracking (§4.6 – 4.9). This is the core of the portal.
-
-**Exit criteria**
-- For a given job, the application check lists only the missing items; filling them saves back to the profile.
-- Submitting creates an application ID and a frozen snapshot; later profile edits don't change it.
-- A second application to the same job is rejected.
-- Candidates see their application status timeline.
-
-## M6: BPS-15+ resume tier
-Resume upload and parsing, builder, confirmation, higher-tier sections (§4.5).
-
-**Exit criteria**
+### M5: BPS-15+ resume tier (§4.5)
+**Done when**
 - An uploaded resume prefills the structured profile; the candidate confirms each section.
-- The builder produces the same structured data and exports a PDF.
+- Parse failures land in the builder with whatever was extracted.
+- The builder writes the same structured data and exports a PDF.
 - Eligibility still uses only structured fields.
 
-## M7: Screening and selection
-Post-deadline pipeline (§5).
+### M6: Application flow and tracking (§4.6–4.9)
+The core of the portal.
 
-**Exit criteria**
-- At the deadline, applications are auto-screened; flagged cases go to manual scrutiny.
-- Shortlist, admit cards, merit list (quota-wise) and later stages can be driven end to end for a test job.
-
-## M8: Cross-cutting and release
-Notifications, Urdu/English, reports, audit viewer, security, deployment (§6).
-
-**Exit criteria**
-- Every status change sends SMS and email (real providers or configured stubs).
-- The candidate portal is fully usable in Urdu and English.
-- Security review items are closed; production deployment is documented and repeatable.
+**Done when**
+- For a given job, the application check lists only the missing items; filling them saves back to the profile.
+- Submitting creates an application ID and a frozen snapshot; later profile edits don't change it.
+- A second application to the same job is rejected. Submitted applications can't be edited or withdrawn.
+- Candidates see their status timeline. Staff can move an application through the §4.9 statuses by hand (automated screening comes later).
 
 ---
+
+## Deferred (out of current scope)
+
+These wait until M6 is done. They'll be broken into tasks when a new milestone is planned for them.
+
+- **Screening and selection (§5):** auto-screening at deadline, manual scrutiny, shortlist, objection windows, admit cards, test/interview results, quota-wise merit list, document verification, medical, offer letter
+- **Notifications (§6):** SMS + email on every status change (OTP SMS is in scope, in M2)
+- **Urdu / English** support with RTL layout
+- **Reports** per job, and an admin audit-trail viewer
+- **Security review, low-bandwidth performance, production deployment**
 
 ## Open questions (from §9)
 
-These block some tasks. Record the decision here and as a note on the affected tasks in TASKS.md when it's made.
+Record the decision here, and as a note on the affected tasks in TASKS.md.
 
 | # | Question | Blocks | Decision | Decided on |
 |---|----------|--------|----------|------------|
-| 1 | Is BPS-15 the right tier boundary, or BPS-16? | T-060 – T-064 (tier split config) | | |
+| 1 | Is BPS-15 the right tier boundary, or BPS-16? | M5 (tier split) | | |
 | 2 | Who creates the job: the requesting department or a central recruitment cell? | T-023, T-030 (roles) | | |
-| 3 | Is the written test in-house or by an external agency? | T-073, T-074 | | |
-| 4 | Can a candidate edit or withdraw an application before the deadline? | T-056 | | |
+| 3 | Is the written test in-house or by an external agency? | Deferred (§5) | | |
+| 4 | Can a candidate edit or withdraw an application before the deadline? | - | **No.** Submitted applications are final. | 2026-09-24 |
 
 ## Milestone changelog
 
-Add a line whenever a milestone changes status or target date.
+Add a line whenever a milestone changes status, owners or scope.
 
-| Date | Milestone | Change | By |
-|------|-----------|--------|----|
-| 2026-09-24 | All | Milestones created from master flow draft | Ali |
+| Date       | Milestone | Change | By |
+|------------|-----------|--------|----|
+| 2026-09-24 | All       | Milestones created from master flow draft | Ali |
+| 2026-09-24 | All       | Re-planned as phases up to §4.9; corrigendum removed; §5 and §6 deferred; milestone-based claiming | Ali |
+| 2026-09-24 | M0        | Claimed by Ali | Ali |
+| 2026-09-24 | M6        | Edit/withdraw application removed (open question 4 answered: no) | Ali |
