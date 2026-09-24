@@ -59,10 +59,10 @@ export const jobs = [
     description:
       'Assistant Station Masters manage train reception and dispatch, keep station records, supervise platform staff and coordinate with control offices. Posts are spread across the Lahore division and involve shift duty.',
     quotas: [
-      { label: 'Open merit', seats: 16 },
-      { label: 'Women', seats: 4 },
-      { label: 'Minorities', seats: 2 },
-      { label: 'Persons with disabilities', seats: 2 },
+      { category: 'open_merit', seats: 16 },
+      { category: 'women', seats: 4 },
+      { category: 'minority', seats: 2 },
+      { category: 'disability', seats: 2 },
     ],
   }),
   job({
@@ -86,8 +86,8 @@ export const jobs = [
     description:
       'Lead site teams on permanent-way maintenance, bridge inspection and new works. Prepare estimates, supervise contractors and ensure works meet Pakistan Railways standards. PEC registration is required.',
     quotas: [
-      { label: 'Open merit', seats: 4 },
-      { label: 'Provincial / regional', seats: 2 },
+      { category: 'open_merit', seats: 4 },
+      { category: 'provincial', seats: 2 },
     ],
   }),
   job({
@@ -109,9 +109,9 @@ export const jobs = [
     description:
       'Ticket Checkers verify tickets and reservations on trains and platforms, issue excess fare tickets and assist passengers. Open to candidates with a Sindh domicile.',
     quotas: [
-      { label: 'Open merit', seats: 30 },
-      { label: 'Women', seats: 6 },
-      { label: 'Minorities', seats: 4 },
+      { category: 'open_merit', seats: 30 },
+      { category: 'women', seats: 6 },
+      { category: 'minority', seats: 4 },
     ],
   }),
   job({
@@ -132,7 +132,7 @@ export const jobs = [
     summary: 'Maintain signalling, interlocking and telecom equipment on the line.',
     description:
       'Inspect and maintain signals, point machines, interlocking and communication equipment. At least one year of relevant experience after the DAE is required.',
-    quotas: [{ label: 'Open merit', seats: 10 }],
+    quotas: [{ category: 'open_merit', seats: 10 }],
   }),
   job({
     id: 'j-105',
@@ -153,7 +153,7 @@ export const jobs = [
     summary: 'Build and run the software behind ticketing, HR and operations.',
     description:
       'Work with the IT directorate on web applications, databases and networks used across Pakistan Railways. Degree in Computer Science, Software Engineering or IT with two years of experience.',
-    quotas: [{ label: 'Open merit', seats: 3 }],
+    quotas: [{ category: 'open_merit', seats: 3 }],
   }),
   job({
     id: 'j-106',
@@ -174,8 +174,8 @@ export const jobs = [
     description:
       'Deliver ward and outpatient care, maintain patient records and support doctors at the railway hospital. BSc Nursing or General Nursing with PNC registration. Open to candidates with a Balochistan domicile.',
     quotas: [
-      { label: 'Open merit', seats: 6 },
-      { label: 'Women', seats: 2 },
+      { category: 'open_merit', seats: 6 },
+      { category: 'women', seats: 2 },
     ],
   }),
   job({
@@ -196,9 +196,9 @@ export const jobs = [
     description:
       'Carry out scheduled maintenance, fault finding and repairs on diesel-electric locomotives. A trade certificate is an advantage.',
     quotas: [
-      { label: 'Open merit', seats: 14 },
-      { label: 'Minorities', seats: 2 },
-      { label: 'Persons with disabilities', seats: 2 },
+      { category: 'open_merit', seats: 14 },
+      { category: 'minority', seats: 2 },
+      { category: 'disability', seats: 2 },
     ],
   }),
   job({
@@ -219,8 +219,8 @@ export const jobs = [
     description:
       'Process bills, maintain cash books and ledgers, and help prepare payroll for divisional staff. Typing speed of 30 wpm preferred.',
     quotas: [
-      { label: 'Open merit', seats: 10 },
-      { label: 'Women', seats: 2 },
+      { category: 'open_merit', seats: 10 },
+      { category: 'women', seats: 2 },
     ],
   }),
   job({
@@ -241,7 +241,7 @@ export const jobs = [
     summary: 'Oversee power supply and electrical systems at stations and workshops.',
     description:
       'Supervise installation and maintenance of electrical systems at stations, workshops and colonies. Electrical engineering degree with PEC registration.',
-    quotas: [{ label: 'Open merit', seats: 4 }],
+    quotas: [{ category: 'open_merit', seats: 4 }],
   }),
   job({
     id: 'j-110',
@@ -261,9 +261,9 @@ export const jobs = [
     description:
       'Open and close level-crossing gates according to train timings, keep the gate log and report faults. Shift duty at the assigned crossing.',
     quotas: [
-      { label: 'Open merit', seats: 24 },
-      { label: 'Minorities', seats: 3 },
-      { label: 'Persons with disabilities', seats: 3 },
+      { category: 'open_merit', seats: 24 },
+      { category: 'minority', seats: 3 },
+      { category: 'disability', seats: 3 },
     ],
   }),
   job({
@@ -285,8 +285,8 @@ export const jobs = [
     description:
       'MBBS with PMDC registration. Duties include outpatient clinics, emergency cover and occupational health checks for railway staff.',
     quotas: [
-      { label: 'Open merit', seats: 4 },
-      { label: 'Women', seats: 1 },
+      { category: 'open_merit', seats: 4 },
+      { category: 'women', seats: 1 },
     ],
   }),
   job({
@@ -305,7 +305,7 @@ export const jobs = [
     summary: 'Enter and verify records in Pakistan Railways information systems.',
     description:
       'Accurate data entry for reservation, HR and inventory systems, with a typing speed of at least 35 wpm and basic computer skills.',
-    quotas: [{ label: 'Open merit', seats: 9 }],
+    quotas: [{ category: 'open_merit', seats: 9 }],
   }),
   job({
     id: 'j-090',
@@ -322,6 +322,6 @@ export const jobs = [
     documents: ['matric_certificate', 'intermediate_certificate'],
     summary: 'Office support for the commercial department.',
     description: 'Maintain files, correspondence and records for the commercial department.',
-    quotas: [{ label: 'Open merit', seats: 15 }],
+    quotas: [{ category: 'open_merit', seats: 15 }],
   }),
 ];

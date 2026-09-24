@@ -88,6 +88,7 @@ class CandidateProfile(TimestampMixin, db.Model):
     statement_of_purpose: Mapped[str | None] = mapped_column(Text)
 
     account: Mapped[CandidateAccount] = relationship(back_populates="profile")
+    domicile_district = relationship("District")
     education: Mapped[list["EducationRecord"]] = relationship(
         back_populates="profile",
         cascade="all, delete-orphan",

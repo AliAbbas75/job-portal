@@ -7,6 +7,7 @@ seeded with reference data. After each test every non-reference table is truncat
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from flask_jwt_extended import create_access_token
 from flask_migrate import upgrade
 from sqlalchemy import text
 
@@ -15,11 +16,13 @@ from app.extensions import db
 from app.models import (
     CandidateAccount,
     CandidateProfile,
+    DocumentType,
     Job,
     JobQuota,
     JobRequirement,
+    Province,
 )
-from app.models.enums import EmploymentType, QuotaCategory
+from app.models.enums import EmploymentType, JobStatus, QuotaCategory
 from app.services.reference_seed_service import seed_reference_data
 
 REFERENCE_TABLES = {
@@ -51,6 +54,7 @@ def _clean_tables(app):
     tables = [t.name for t in db.metadata.sorted_tables if t.name not in REFERENCE_TABLES]
     db.session.execute(text(f"TRUNCATE {', '.join(tables)} RESTART IDENTITY CASCADE"))
     db.session.commit()
+    db.session.remove()  # forget this test's objects; ids restart at 1
 
 
 @pytest.fixture
@@ -99,3 +103,37 @@ def make_job():
         return job
 
     return _make
+
+
+@pytest.fixture
+def publish_job(make_job):
+    """Creates a job that is live on the public portal (published, opened yesterday)."""
+
+    def _publish(**overrides):
+        now = datetime.now(UTC)
+        fields = {
+            "status": JobStatus.PUBLISHED,
+            "opening_date": now - timedelta(days=1),
+            "published_at": now - timedelta(days=1),
+        }
+        fields.update(overrides)
+        job = make_job(**fields)
+        job.required_documents = [db.session.get(DocumentType, "cnic_copy")]
+        job.domicile_provinces = [db.session.get(Province, "PB")]
+        db.session.flush()
+        return job
+
+    return _publish
+
+
+@pytest.fixture
+def auth_headers():
+    """Authorization header for a candidate, in the token format the M2 login must issue."""
+
+    def _headers(account):
+        token = create_access_token(
+            identity=str(account.id), additional_claims={"role": "candidate"}
+        )
+        return {"Authorization": f"Bearer {token}"}
+
+    return _headers

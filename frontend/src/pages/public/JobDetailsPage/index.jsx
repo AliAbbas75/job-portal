@@ -80,8 +80,8 @@ export default function JobDetailsPage() {
                 </thead>
                 <tbody>
                   {job.quotas.map((quota) => (
-                    <tr key={quota.label}>
-                      <td>{quota.label}</td>
+                    <tr key={quota.category}>
+                      <td>{t(`quota.${quota.category}`)}</td>
                       <td>{quota.seats}</td>
                     </tr>
                   ))}

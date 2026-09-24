@@ -17,6 +17,25 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-24 | M4 backend: jobs, reference, profile, documents APIs (T-040–T-044)
+- **Milestone:** M4 (branch m4-candidate-portal)
+- **Status:** Done (M4 complete)
+- **What changed:**
+  - `backend/app/controllers/`: `job_controller.py` (GET /jobs, /jobs/stats, /jobs/<id>), `reference_controller.py` (GET /reference), `profile_controller.py` (profile sections + education/experience CRUD), `document_controller.py` (vault list/upload/remove), `auth_guard.py` (`@candidate_required`, JWT contract for M2); `__init__.py` registers them alphabetically; `errors.py` returns `validation_error` with `fields`, and JWT failures as `unauthorized`
+  - `backend/app/services/`: `job_service.py` (open published jobs only; keyword, BPS, department, type, location, qualification-rank, closing filters; sort; pagination; stats), `reference_service.py`, `profile_service.py` (domicile district must be in province; edit history in audit log: section + field names, no values), `document_service.py` (type-checked upload, replace/remove archive instead of delete), `candidate_service.py`, `demo_seed_service.py`
+  - `backend/app/schemas/`: `job_schema.py`, `reference_schema.py`, `profile_schema.py` (per-section input validation, blank strings → missing, read-only cnic/mobile ignored), `document_schema.py`; JSON shapes match the frontend mocks
+  - `backend/app/models/`: `constants.py` (BPS ranges, closing windows, labels), `Job.is_open()`, `Job.department` and `CandidateProfile.domicile_district` relationships (no schema change)
+  - `backend/app/utils/dates.py`: `age_on()` (T-044)
+  - `backend/app/commands.py`: `flask seed-demo` (dev only, gated on config name, since `flask` CLI overrides DEBUG); `config.py`: `ENV_NAME`, 32+ byte test keys; `.env.example`: longer keys + `FLASK_DEBUG=1`
+  - Tests: jobs (11), reference, profile (10), documents (6), dates (6), demo seed; conftest `publish_job` + `auth_headers` fixtures, session cleared between tests (74 backend tests)
+  - Frontend: quotas use a `category` code translated via new `i18n/en/quota.json` (mock data updated); `.env.example` note
+  - Docs: README (seed-demo, real-API mode), CLAUDE.md (auth contract, validation error shape), M2 note on the token T-022 must issue, M4 tasks done
+- **Database:** none (relationships only; `flask db check` clean)
+- **Commits:**
+  - `feat(api): M4 jobs, reference, profile and document endpoints [T-040]`
+- **How to test:** four checks in WORKFLOW.md; manual: `flask seed-demo`, `frontend/.env.local` with `VITE_USE_MOCKS=false`, `npm run dev`: job search and details show database jobs
+- **Notes / follow-ups:** profile/document pages need M2's login to use the real API from the browser
+
 ### 2026-09-24 | Self-serve milestones and conflict-proof layout
 - **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)
 - **Status:** Done
