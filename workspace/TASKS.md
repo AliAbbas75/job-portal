@@ -23,7 +23,7 @@ Claim a task before you write any code. Full steps are in [WORKFLOW.md](WORKFLOW
 
 | ID    | Task                                                       | Owner | Status      |
 |-------|------------------------------------------------------------|-------|-------------|
-| T-001 | Repo structure, .gitignore, README                         | Ali   | IN PROGRESS |
+| T-001 | Repo structure, .gitignore, README                         | Ali   | IN REVIEW   |
 | T-002 | Flask app factory, config, extensions, /api/health         | -     | TODO        |
 | T-003 | PostgreSQL (docker-compose), .env.example, first migration | -     | TODO        |
 | T-004 | React (Vite) scaffold: router, API client, layout          | -     | TODO        |
