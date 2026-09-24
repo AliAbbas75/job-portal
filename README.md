@@ -9,8 +9,8 @@ Recruitment portal where admins create, approve and publish jobs, candidates kee
 | Read | For |
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | Project rules, architecture, conventions (humans and AI agents) |
-| [workspace/WORKFLOW.md](workspace/WORKFLOW.md) | How to claim a task, log work, commit and push |
-| [workspace/TASKS.md](workspace/TASKS.md) | Task board |
+| [workspace/WORKFLOW.md](workspace/WORKFLOW.md) | How to claim a milestone, work, sync, open and merge PRs |
+| [workspace/milestones/](workspace/milestones/) | One file per milestone: owners, status, tasks |
 | [workspace/MILESTONES.md](workspace/MILESTONES.md) | Milestones and open questions |
 | [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | Where code goes, naming, repo hygiene |
 | [docs/railway-job-portal-master-flow.md](docs/railway-job-portal-master-flow.md) | Product flow |

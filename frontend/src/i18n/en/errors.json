@@ -1,0 +1,19 @@
+{
+  "generic": "Something went wrong. Please try again.",
+  "loadFailed": "We couldn't load this page",
+  "crashTitle": "Something went wrong on this page",
+  "crashBody": "Reload the page to try again. If it keeps happening, please let us know.",
+  "reload": "Reload page",
+  "network_error": "Can't reach the server. Check your connection and try again.",
+  "unauthorized": "Your session has ended. Please log in again.",
+  "not_found": "We couldn't find what you were looking for.",
+  "cnic_taken": "An account with this CNIC already exists. Log in instead.",
+  "account_not_found": "No account matches this CNIC and mobile number.",
+  "invalid_otp": "That code isn't right. Check it and try again.",
+  "file_type_not_allowed": "Only PDF, JPG or PNG files can be uploaded.",
+  "file_too_large": "This file is larger than 2 MB. Please upload a smaller file.",
+  "job_closed": "Applications for this job have closed.",
+  "already_applied": "You've already applied for this job.",
+  "declaration_required": "Please accept the declaration to submit.",
+  "requirements_incomplete": "Some requirements are still missing. Go back to the eligibility check."
+}

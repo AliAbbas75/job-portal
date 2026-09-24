@@ -1,0 +1,15 @@
+{
+  "title": "Review and submit",
+  "lead": "Check everything below. To change something, edit it in your profile and come back.",
+  "editNamed": "Edit {name}",
+  "documentsTitle": "Documents attached",
+  "declarationTitle": "Declaration",
+  "fee": "Application fee: {amount}.",
+  "feeNote": "Payment options (online or bank challan) will be added here.",
+  "confirmEligibility": "I confirm that I meet all the eligibility requirements for this job.",
+  "confirmDeclaration": "I declare that the information and documents I've provided are true and complete. I understand that false information can lead to rejection at any stage.",
+  "finalTitle": "Submitted applications are final",
+  "finalBody": "After you submit, you can't edit or withdraw this application.",
+  "submit": "Submit application",
+  "back": "Back to eligibility check"
+}
