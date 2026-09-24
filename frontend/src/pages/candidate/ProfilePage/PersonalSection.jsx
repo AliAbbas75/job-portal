@@ -3,7 +3,6 @@ import { SelectField } from '../../../components/forms/SelectField';
 import { TextField } from '../../../components/forms/TextField';
 import { t } from '../../../i18n';
 import { isBlank } from '../../../utils/validators';
-import styles from './ProfilePage.module.css';
 import { SectionForm } from './SectionForm';
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -28,7 +27,7 @@ export function PersonalSection({ profile, reference, onSaved }) {
     >
       {({ draft, setField, errors }) => (
         <>
-          <div className={styles.grid}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
             <TextField
               label={t('fields.fullName')}
               autoComplete="name"
@@ -64,7 +63,7 @@ export function PersonalSection({ profile, reference, onSaved }) {
               placeholder={t('common.select')}
               options={(reference?.genders ?? []).map((g) => ({ value: g.code, label: g.name }))}
               value={draft.gender}
-              onChange={(e) => setField('gender')(e.target.value)}
+              onChange={setField('gender')}
               error={errors.gender}
               required
             />

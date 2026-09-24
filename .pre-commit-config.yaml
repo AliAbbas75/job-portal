@@ -1,0 +1,29 @@
+# Install once per clone: backend/.venv/Scripts/pre-commit install  (or: pre-commit install)
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.8
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+        files: ^backend/
+        exclude: ^backend/migrations/versions/
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 26.5.1
+    hooks:
+      - id: black
+        files: ^backend/
+        exclude: ^backend/migrations/versions/
+  - repo: local
+    hooks:
+      - id: frontend-lint
+        name: frontend eslint
+        entry: npm --prefix frontend run lint
+        language: system
+        files: ^frontend/
+        pass_filenames: false
+      - id: frontend-format
+        name: frontend prettier
+        entry: npm --prefix frontend run format:check
+        language: system
+        files: ^frontend/
+        pass_filenames: false

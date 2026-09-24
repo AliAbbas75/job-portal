@@ -1,0 +1,9 @@
+{
+  "title": "Create your account",
+  "lead": "Your account comes with one permanent profile linked to your CNIC. You'll use it for every job you apply to.",
+  "captcha": "I'm not a robot",
+  "captchaNote": "(A CAPTCHA check will replace this box.)",
+  "submit": "Send code",
+  "permanentNote": "You can only create one account per CNIC.",
+  "haveAccount": "Already have an account?"
+}

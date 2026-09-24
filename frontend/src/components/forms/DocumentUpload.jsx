@@ -3,16 +3,24 @@ import { ALLOWED_FILE_TYPES, MAX_FILE_BYTES } from '../../api/documents';
 import { t } from '../../i18n';
 import { compressImage } from '../../utils/compressImage';
 import { errorMessage } from '../../utils/errorMessage';
+import { cx } from '../../utils/cx';
 import { formatDate, formatFileSize } from '../../utils/format';
 import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
-import styles from './DocumentUpload.module.css';
 
 /**
  * One document slot in the vault. `onUpload(file)` and `onDelete()` return promises.
  * Checks type/size in the browser and compresses large images before upload.
+ * `divider={false}` drops the bottom border (e.g. inside an already-divided list).
  */
-export function DocumentUpload({ label, document, onUpload, onDelete, required = false }) {
+export function DocumentUpload({
+  label,
+  document,
+  onUpload,
+  onDelete,
+  required = false,
+  divider = true,
+}) {
   const inputRef = useRef(null);
   const inputId = useId();
   const [busy, setBusy] = useState(false);
@@ -55,16 +63,26 @@ export function DocumentUpload({ label, document, onUpload, onDelete, required =
   }
 
   return (
-    <div className={styles.slot}>
-      <span className={`${styles.icon} ${document ? styles.done : ''}`}>
+    <div
+      className={cx(
+        'flex flex-wrap items-center gap-x-4 gap-y-3',
+        divider && 'border-b border-dashed border-heritage py-4',
+      )}
+    >
+      <span
+        className={cx(
+          'grid size-10 flex-none place-items-center rounded-sm border border-heritage',
+          document ? 'bg-heritage text-white' : 'text-heritage',
+        )}
+      >
         <Icon name={document ? 'check' : 'file'} size={20} />
       </span>
-      <div className={styles.info}>
-        <p className={styles.label}>
+      <div className="min-w-0 flex-[1_1_220px]">
+        <p className="font-medium">
           {label}
-          {required && <span className={styles.required}> {t('documents.requiredTag')}</span>}
+          {required && <span className="text-sm text-ember"> {t('documents.requiredTag')}</span>}
         </p>
-        <p className={styles.meta}>
+        <p className="text-sm wrap-anywhere">
           {document
             ? t('documents.uploadedMeta', {
                 name: document.fileName,
@@ -74,18 +92,18 @@ export function DocumentUpload({ label, document, onUpload, onDelete, required =
             : t('documents.notUploaded')}
         </p>
         {error && (
-          <p className={styles.error} role="alert">
+          <p className="mt-1 text-sm font-medium text-ember" role="alert">
             {error}
           </p>
         )}
       </div>
-      <div className={styles.actions}>
+      <div className="flex gap-2">
         <input
           ref={inputRef}
           id={inputId}
           type="file"
           accept={ALLOWED_FILE_TYPES.join(',')}
-          className="visually-hidden"
+          className="sr-only"
           onChange={handleFile}
           aria-label={t('documents.chooseFileFor', { name: label })}
         />

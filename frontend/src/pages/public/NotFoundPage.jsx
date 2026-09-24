@@ -7,7 +7,7 @@ import { paths } from '../../routes/paths';
 export default function NotFoundPage() {
   useDocumentTitle(t('notFound.title'));
   return (
-    <div className="container">
+    <div className="page">
       <EmptyState
         icon="alert"
         title={t('notFound.title')}

@@ -4,8 +4,8 @@ import { Icon } from '../../../components/common/Icon';
 import { DocumentUpload } from '../../../components/forms/DocumentUpload';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
+import { cx } from '../../../utils/cx';
 import { documentName, qualificationName } from '../../../utils/referenceLabels';
-import styles from './ApplicationCheckPage.module.css';
 
 function describe(item, ref) {
   const { required } = item;
@@ -54,17 +54,25 @@ function describe(item, ref) {
   }
 }
 
-const ICONS = { met: 'check', missing: 'x', not_met: 'x' };
+const STATUS = {
+  met: { icon: 'check', row: 'border-l-heritage', badge: 'bg-heritage text-white' },
+  missing: { icon: 'x', row: 'border-l-pumpkin bg-cream', badge: 'bg-pumpkin text-black' },
+  not_met: { icon: 'x', row: 'border-l-ember', badge: 'bg-ember text-white' },
+};
+
+const rowClass =
+  'flex flex-wrap items-center gap-x-4 gap-y-3 border-l-6 px-4 py-3 not-first:border-t not-first:border-t-heritage not-first:[border-top-style:dashed]';
 
 export function CheckItem({ item, reference, returnTo, onChanged }) {
   const { label, rule, detail } = describe(item, reference);
 
   if (item.key === 'document' && item.status === 'missing') {
     return (
-      <li className={`${styles.item} ${styles.missing}`}>
+      <li className={cx(rowClass, STATUS.missing.row)}>
         <DocumentUpload
           label={label}
           required
+          divider={false}
           onUpload={async (file) => {
             await uploadDocument(item.documentType, file);
             onChanged();
@@ -75,15 +83,20 @@ export function CheckItem({ item, reference, returnTo, onChanged }) {
   }
 
   return (
-    <li className={`${styles.item} ${styles[item.status]}`}>
-      <span className={styles.icon}>
-        <Icon name={ICONS[item.status]} size={16} />
+    <li className={cx(rowClass, STATUS[item.status].row)}>
+      <span
+        className={cx(
+          'grid size-7 flex-none place-items-center rounded-full',
+          STATUS[item.status].badge,
+        )}
+      >
+        <Icon name={STATUS[item.status].icon} size={16} />
       </span>
-      <div className={styles.text}>
-        <p className={styles.label}>
-          {label} <span className={styles.rule}>{rule}</span>
+      <div className="min-w-0 flex-[1_1_260px]">
+        <p className="font-bold">
+          {label} <span className="font-normal">{rule}</span>
         </p>
-        <p className={styles.status}>
+        <p className={cx('text-sm', item.status === 'not_met' && 'font-medium text-ember')}>
           {t(`check.status.${item.status}`)}
           {detail && ` · ${detail}`}
         </p>

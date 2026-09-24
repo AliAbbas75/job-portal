@@ -49,7 +49,7 @@ export function OtpStep({ mobile, onVerify, onResend, onBack }) {
   }
 
   return (
-    <form className="stack" onSubmit={submit} noValidate>
+    <form className="space-y-4" onSubmit={submit} noValidate>
       <p>{t('otp.sentTo', { mobile })}</p>
       {USE_MOCKS && <Alert variant="info">{t('otp.demoHint')}</Alert>}
       <TextField

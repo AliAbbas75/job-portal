@@ -35,7 +35,8 @@ describe('JobSearchPage', () => {
   it('filters by department', async () => {
     renderPage();
     await screen.findByText('12 jobs');
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Department' }), 'MED');
+    await userEvent.click(screen.getByRole('combobox', { name: 'Department' }));
+    await userEvent.click(screen.getByRole('option', { name: 'Medical Services' }));
     expect(await screen.findByText('2 jobs')).toBeInTheDocument();
   });
 });

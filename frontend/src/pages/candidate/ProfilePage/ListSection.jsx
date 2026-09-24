@@ -5,7 +5,6 @@ import { Button } from '../../../components/common/Button';
 import { Icon } from '../../../components/common/Icon';
 import { t } from '../../../i18n';
 import { errorMessage } from '../../../utils/errorMessage';
-import styles from './ProfilePage.module.css';
 
 /**
  * Add / edit / remove entries of a list section (education, experience).
@@ -63,10 +62,14 @@ export function ListSection({
 
   // Only built while an entry is being added or edited (draft is null otherwise).
   const form = draft && (
-    <form className={`${styles.form} ${styles.itemForm}`} onSubmit={save} noValidate>
-      <h3 className={styles.itemFormTitle}>{editingId === 'new' ? labels.add : labels.edit}</h3>
+    <form
+      className="flex flex-col gap-4 rounded-md border border-dashed border-heritage bg-cream p-4"
+      onSubmit={save}
+      noValidate
+    >
+      <h3 className="text-lg">{editingId === 'new' ? labels.add : labels.edit}</h3>
       {renderFields({ draft, setField, errors })}
-      <div className={styles.formActions}>
+      <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" loading={busy}>
           {t('profile.save')}
         </Button>
@@ -78,20 +81,23 @@ export function ListSection({
   );
 
   return (
-    <div className="stack">
+    <div className="space-y-4">
       {error && <Alert variant="error">{errorMessage(error)}</Alert>}
       {items.length === 0 && editingId === null && <p>{labels.empty}</p>}
-      <ul className={styles.entries}>
+      <ul className="flex flex-col gap-3">
         {items.map((item) =>
           editingId === item.id ? (
             <li key={item.id}>{form}</li>
           ) : (
-            <li key={item.id} className={styles.entry}>
+            <li
+              key={item.id}
+              className="flex flex-wrap items-center justify-between gap-3 border-l-4 border-heritage bg-surface px-4 py-3"
+            >
               <div>
-                <p className={styles.entryTitle}>{summarize(item).title}</p>
-                <p className={styles.entryMeta}>{summarize(item).subtitle}</p>
+                <p className="font-bold">{summarize(item).title}</p>
+                <p className="text-sm">{summarize(item).subtitle}</p>
               </div>
-              <div className={styles.entryActions}>
+              <div className="flex gap-2">
                 <Button
                   variant="secondary"
                   size="sm"

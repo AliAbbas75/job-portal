@@ -1,18 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Icon } from '../../../components/common/Icon';
 import { t } from '../../../i18n';
-import styles from './ApplicationReviewPage.module.css';
 
 /** One summary block on the review page. `rows` is [{ label, value }]; `children` overrides rows. */
 export function ReviewSection({ title, editTo, rows, children }) {
   return (
-    <section className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
+    <section className="rounded-md border border-heritage p-4 sm:px-5">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2 className="text-lg">{title}</h2>
         {editTo && (
           <Link
             to={editTo}
-            className={styles.edit}
+            className="inline-flex items-center gap-1 font-medium"
             aria-label={t('review.editNamed', { name: title })}
           >
             <Icon name="edit" size={14} />
@@ -21,9 +20,12 @@ export function ReviewSection({ title, editTo, rows, children }) {
         )}
       </div>
       {children ?? (
-        <dl className={styles.rows}>
+        <dl className="grid gap-2">
           {rows.map((row) => (
-            <div key={row.label} className={styles.row}>
+            <div
+              key={row.label}
+              className="grid sm:grid-cols-[180px_1fr] sm:gap-3 [&_dd]:wrap-anywhere [&_dt]:font-medium [&_dt]:text-heritage"
+            >
               <dt>{row.label}</dt>
               <dd>{row.value || '—'}</dd>
             </div>

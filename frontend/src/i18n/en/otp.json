@@ -1,0 +1,10 @@
+{
+  "title": "Enter your code",
+  "sentTo": "We sent a 6-digit code to {mobile}.",
+  "demoHint": "Demo mode: use the code 123456.",
+  "label": "6-digit code",
+  "verify": "Verify and continue",
+  "resendIn": "Resend code in {count}s",
+  "resend": "Resend code",
+  "changeNumber": "Change details"
+}

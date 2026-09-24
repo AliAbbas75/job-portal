@@ -1,0 +1,59 @@
+{
+  "title": "Your profile",
+  "lead": "One profile for every application. Changes here never alter applications you've already submitted.",
+  "completion": "Profile {percent}% complete",
+  "completionLabel": "Profile completion",
+  "sectionsLabel": "Profile sections",
+  "sections": {
+    "personal": "Personal details",
+    "contact": "Contact and address",
+    "domicile": "Domicile",
+    "education": "Education",
+    "experience": "Experience",
+    "skills": "Skills and licences",
+    "documents": "Documents",
+    "additional": "Additional eligibility"
+  },
+  "save": "Save",
+  "saved": "Saved.",
+  "edit": "Edit",
+  "add": "Add",
+  "removeNamed": "Remove {name}",
+  "cnicFixed": "Linked to your account and can't be changed.",
+  "mobileFixed": "Linked to your account.",
+  "ageNote": "You never enter your age. It's calculated from your date of birth for each job.",
+  "sameAddress": "Permanent address is the same as current address",
+  "pickProvinceFirst": "Select a province first",
+  "domicileCertificate": "Upload your domicile certificate under",
+  "education": {
+    "add": "Add qualification",
+    "edit": "Edit qualification",
+    "empty": "You haven't added any qualifications yet.",
+    "disciplinePlaceholder": "e.g. Pre-Engineering, Civil Engineering",
+    "marksHint": "For CGPA, enter the percentage shown on your transcript.",
+    "summary": "{institution}, {year} · {marks}%"
+  },
+  "experience": {
+    "lead": "Add jobs you've held. Some posts need a minimum number of years.",
+    "add": "Add experience",
+    "edit": "Edit experience",
+    "empty": "No experience added.",
+    "current": "I currently work here",
+    "present": "Present"
+  },
+  "skillsLead": "Add only skills and licences that matter for the jobs you want, e.g. a driving licence or typing speed.",
+  "skillPlaceholder": "e.g. Typing 40 wpm",
+  "documentsLead": "Upload each document once. We attach the right ones to each application. PDF, JPG or PNG, up to 2 MB.",
+  "additionalLead": "Tick what applies to you. These can affect quotas and the documents a job asks for.",
+  "additional": {
+    "governmentEmployee": "I am a government employee",
+    "governmentEmployeeNote": "You'll need to upload a no-objection certificate (NOC).",
+    "disability": "I have a disability",
+    "disabilityNote": "Upload your disability certificate to apply under the disability quota.",
+    "minority": "I belong to a religious minority",
+    "minorityNote": "You may apply under the minority quota where available."
+  },
+  "returnTitle": "You were applying for a job",
+  "returnBody": "Save your changes, then go back to your application.",
+  "returnAction": "Back to application"
+}
