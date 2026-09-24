@@ -189,18 +189,23 @@
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: var(--space-4) var(--space-5);
-  padding: var(--space-5) var(--space-3) var(--space-5) var(--space-4);
+  padding: var(--space-5) var(--space-4);
   border-bottom: 1px dashed var(--pr-heritage-green);
-  border-left: 4px solid transparent;
+  transition: background-color 0.2s ease;
 }
 
-/* Closing within 7 days: Ember Red edge (brand palette only, no tints). */
+/* Closing within 7 days (1 week remaining): Slightly darker red row highlight, no left vertical bar. */
 .itemClosingSoon {
-  border-left-color: var(--pr-ember-red);
+  background-color: #f8d7da;
+  border-bottom-color: #f5c6cb;
+}
+
+.itemClosingSoon:hover {
+  background-color: #f1aeb5;
 }
 
 .item:hover {
-  background: var(--pr-surface-green);
+  background-color: var(--pr-surface-green);
 }
 
 .itemMain {

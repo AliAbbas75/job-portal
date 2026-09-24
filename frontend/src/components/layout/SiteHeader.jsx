@@ -28,8 +28,7 @@ export function SiteHeader() {
     <header className={styles.header}>
       <div className={styles.topBar}>
         <div className={`container ${styles.topBarInner}`}>
-          <p>{t('header.announcement')}</p>
-          {USE_MOCKS && <span className={styles.demo}>{t('header.demoMode')}</span>}
+          <p className="w-full text-center font-medium">{t('header.announcement')}</p>
         </div>
       </div>
 

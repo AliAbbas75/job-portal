@@ -4,7 +4,7 @@
 }
 
 .topBar {
-  background: var(--pr-heritage-green);
+  background: var(--pr-ember-red);
   color: var(--pr-white);
   font-size: var(--text-sm);
 }

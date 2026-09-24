@@ -17,6 +17,30 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-24 | Frontend: FAQ Section, Header/Footer Brand Redesign & Job Highlight (T-045)
+- **Milestone:** M4 (branch m4-candidate-portal)
+- **Status:** In progress
+- **What changed:**
+  - `CLAUDE.md`: updated Section 4 Tech Stack table to full 24-layer overall architecture definition
+  - `frontend/index.html`: added Tailwind CSS CDN & Instrument Sans Google font
+  - `frontend/package.json`: added `react-icons` dependency
+  - `frontend/public/`: added `pakrail-logo-vertical.png` and `pakrail-logo-horizontal.png` official logo assets
+  - `frontend/src/components/common/Logo.jsx`: updated to render horizontal logo image
+  - `frontend/src/components/layout/FaqSection.jsx` & `FaqSection.module.css`: created FAQ section component with 2-column grid, Instrument Sans typography, and closed-by-default state
+  - `frontend/src/components/layout/AppLayout.jsx`: embedded `FaqSection` above `SiteFooter`
+  - `frontend/src/components/layout/SiteHeader.jsx` & `SiteHeader.module.css`: top header bar set to Ember Red (`#A63A2C`), announcement text centered, removed demo badge
+  - `frontend/src/components/layout/SiteFooter.jsx`: redesigned footer with vertical logo, bottom-to-top fill hover effect for social icons with colorful default brand borders, removed unnecessary link groups/app banners, white policy links
+  - `frontend/src/pages/public/JobSearchPage/JobSearchPage.module.css`: updated `.itemClosingSoon` for jobs closing in 1 week or less with a soft red row background highlight (`#f8d7da`), removed left vertical bar
+  - `frontend/src/setupTests.js`: added `scrollIntoView` polyfill to fix Vitest DOM test suite
+- **Database:** none
+- **Dependencies:** `react-icons`
+- **Commits:**
+  - `docs(claude): update tech stack table in CLAUDE.md`
+  - `feat(frontend): add FaqSection, brand header/footer & closing date row highlight [T-045]`
+- **How to test:** `npm test` in `frontend` (21 tests pass); launch `npm run dev` and view `http://localhost:5173/`
+- **Notes / follow-ups:** UI enhancements aligned with brand guidelines.
+
+
 ### 2026-09-24 | Frontend: scaffold, brand theme and candidate pages (T-004, T-005, T-009, T-025, T-045–T-048, T-066–T-068)
 - **Milestone:** M1 + M4 frontend (branch m1-foundation)
 - **Status:** Done, except T-005 (Python half) and T-068 (admin status UI)

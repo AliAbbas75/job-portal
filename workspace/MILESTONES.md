@@ -125,3 +125,4 @@ Add a line whenever a milestone changes status, owners or scope.
 | 2026-09-24 | M0        | Done (repo structure + workflow). Setup tasks T-002 to T-009 moved to M1 | Ali |
 | 2026-09-24 | M1        | Renamed "App setup and data model", branch `m1-foundation` | Ali |
 | 2026-09-24 | M1, M4    | Claimed by Ali for frontend work; backend tasks open for co-owners. M4 UI starts early on mock API data | Ali |
+| 2026-09-24 | M4        | Enhanced candidate portal UI: FAQ section, brand header/footer redesign & job closing date row highlight | Ali |

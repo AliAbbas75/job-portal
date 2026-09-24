@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { t } from '../../i18n';
 import { ErrorBoundary } from '../common/ErrorBoundary';
 import styles from './AppLayout.module.css';
+import { FaqSection } from './FaqSection';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 
@@ -18,6 +19,7 @@ export function AppLayout() {
           <Outlet />
         </ErrorBoundary>
       </main>
+      <FaqSection />
       <SiteFooter />
     </div>
   );
