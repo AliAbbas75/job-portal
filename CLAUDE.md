@@ -57,16 +57,32 @@ The source of truth for the product flow is [docs/railway-job-portal-master-flow
 
 ## 4. Tech stack
 
-| Layer | Choice |
-|-------|--------|
-| Frontend | React (Vite), React Router, Axios |
-| Backend | Python 3.11+, Flask (app factory + blueprints) |
-| ORM / migrations | Flask-SQLAlchemy, Flask-Migrate (Alembic) |
-| Validation / serialization | Marshmallow |
-| Auth | Flask-JWT-Extended (OTP-based candidate login, role-based staff login) |
-| Database | PostgreSQL 16 |
-| Tests | pytest (backend), Vitest + React Testing Library (frontend) |
-| Lint / format | Ruff + Black (Python), ESLint + Prettier (JS) |
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Frontend | React / Next.js | User interface |
+| UI | Tailwind CSS | Consistent responsive design |
+| API | Flask | Backend REST API |
+| API Server | Gunicorn | Production Flask server |
+| Reverse Proxy | Nginx | Traffic gateway |
+| Edge Security | Cloudflare | CDN, WAF, DDoS protection |
+| ORM | SQLAlchemy | Database interaction |
+| Database | PostgreSQL | Main source of truth |
+| Migration | Alembic / Flask-Migrate | Database version control |
+| Validation | Marshmallow | Request/response validation |
+| Authentication | JWT | API authentication |
+| Password Hashing | Argon2id | Secure password storage |
+| Cache | Redis | Fast temporary data |
+| Background Jobs | Celery | Async processing |
+| Broker | Redis initially | Celery task queue |
+| Search | OpenSearch | Advanced job/CV search |
+| File Storage | S3-compatible object storage | CVs/documents |
+| API Docs | OpenAPI / Swagger | API documentation |
+| Containers | Docker | Deployment consistency |
+| Monitoring | Prometheus | Metrics |
+| Dashboards | Grafana | Monitoring visualization |
+| Errors | Sentry | Application error tracking |
+| Logs | Structured logging | Debugging/auditing |
+| CI/CD | GitHub Actions/GitLab CI | Automated testing/deployment |
 
 Adding a new dependency needs a task and a line in the log explaining why.
 
