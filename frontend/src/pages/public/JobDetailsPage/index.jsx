@@ -12,7 +12,6 @@ import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
 import { daysUntil, formatCurrency, formatDate } from '../../../utils/format';
-import styles from './JobDetailsPage.module.css';
 import { Requirements } from './Requirements';
 
 export default function JobDetailsPage() {
@@ -24,7 +23,7 @@ export default function JobDetailsPage() {
 
   if (error) {
     return (
-      <div className="container">
+      <div className="page">
         <ErrorState error={error} onRetry={reload} />
       </div>
     );
@@ -50,29 +49,29 @@ export default function JobDetailsPage() {
   ];
 
   return (
-    <div className={`container ${styles.page}`}>
-      <Link to={paths.home} className={styles.back}>
+    <div className="page pt-6">
+      <Link to={paths.home} className="inline-flex items-center gap-1 font-medium">
         <Icon name="arrowLeft" size={16} />
         {t('job.backToJobs')}
       </Link>
 
-      <header className={styles.header}>
+      <header className="border-b border-heritage pt-6 pb-8">
         <JobSummary job={job} as="h1" size="lg" />
       </header>
 
-      <div className={styles.layout}>
-        <div className={styles.main}>
-          <section className={styles.section}>
+      <div className="grid items-start gap-8 pt-8 lg:grid-cols-[1fr_340px] lg:gap-12">
+        <div className="flex min-w-0 flex-col gap-8">
+          <section className="flex flex-col gap-3 [&>h2]:text-xl">
             <h2>{t('job.aboutHeading')}</h2>
             <p>{job.description}</p>
           </section>
 
           <Requirements job={job} reference={ref} />
 
-          <section className={styles.section}>
+          <section className="flex flex-col gap-3 [&>h2]:text-xl">
             <h2>{t('job.quotaHeading')}</h2>
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse [&_td]:border-b [&_td]:border-surface [&_td]:px-3 [&_td]:py-2 [&_td:last-child]:text-right [&_th]:border-b-2 [&_th]:border-heritage [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-heritage [&_th:last-child]:text-right">
                 <thead>
                   <tr>
                     <th scope="col">{t('job.quotaCategory')}</th>
@@ -92,20 +91,26 @@ export default function JobDetailsPage() {
           </section>
         </div>
 
-        <aside className={styles.aside} aria-label={t('job.applyPanel')}>
-          <div className={styles.applyCard}>
+        <aside
+          className="order-first lg:sticky lg:top-4 lg:order-none"
+          aria-label={t('job.applyPanel')}
+        >
+          <div className="flex flex-col gap-4 rounded-md border-2 border-heritage bg-white p-5">
             {closed ? (
               <Alert variant="warning" title={t('job.closedTitle')}>
                 {t('job.closedBody')}
               </Alert>
             ) : (
-              <p className={daysLeft <= 7 ? styles.deadlineSoon : styles.deadline}>
+              <p className={daysLeft <= 7 ? 'text-lg font-bold text-ember' : 'text-lg font-bold'}>
                 {t('jobs.closesIn', { count: daysLeft })}
               </p>
             )}
-            <dl className={styles.facts}>
+            <dl className="flex flex-col gap-2">
               {facts.map((fact) => (
-                <div key={fact.label} className={styles.fact}>
+                <div
+                  key={fact.label}
+                  className="flex justify-between gap-3 border-b border-dashed border-heritage pb-2 [&_dd]:text-right [&_dd]:font-bold [&_dt]:inline-flex [&_dt]:flex-none [&_dt]:items-center [&_dt]:gap-2 [&_dt]:whitespace-nowrap [&_dt_svg]:text-heritage"
+                >
                   <dt>
                     <Icon name={fact.icon} size={16} />
                     {fact.label}
@@ -119,7 +124,7 @@ export default function JobDetailsPage() {
                 <Button to={applyTo} variant="accent" size="lg" fullWidth>
                   {t('job.apply')}
                 </Button>
-                <p className={styles.applyNote}>{t('job.applyNote')}</p>
+                <p className="text-sm">{t('job.applyNote')}</p>
               </>
             )}
           </div>

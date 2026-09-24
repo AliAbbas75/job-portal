@@ -4,7 +4,6 @@ import { t } from '../../../i18n';
 import { formatDate } from '../../../utils/format';
 import { isBlank } from '../../../utils/validators';
 import { ListSection } from './ListSection';
-import styles from './ProfilePage.module.css';
 
 const EMPTY = { organization: '', designation: '', startDate: '', endDate: '', current: false };
 const today = () => new Date().toISOString().slice(0, 10);
@@ -43,7 +42,7 @@ export function ExperienceSection({ profile, onSaved }) {
         })}
         renderFields={({ draft, setField, errors }) => (
           <>
-            <div className={styles.grid}>
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
               <TextField
                 label={t('fields.organization')}
                 value={draft.organization}

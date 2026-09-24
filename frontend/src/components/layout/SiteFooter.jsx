@@ -66,7 +66,7 @@ export function SiteFooter() {
             </Link>
           </div>
 
-          {/* SOCIAL MEDIA BUTTONS (Colorful Border & Icon in Default State, Fill Color Bottom-to-Top on Hover) */}
+          {/* SOCIAL MEDIA BUTTONS */}
           <div className="flex flex-col items-center md:items-start gap-2">
             <span className="text-sm font-semibold text-gray-800 font-['Instrument_Sans',sans-serif]">
               Follow Us
@@ -143,7 +143,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* FAINT WATERMARK TEXT - NO CUTOFF - INSTRUMENT SANS */}
+        {/* FAINT WATERMARK TEXT - NO CUTOFF */}
         <div className="mt-8 text-center select-none pointer-events-none w-full overflow-hidden">
           <span className="font-['Instrument_Sans',sans-serif] font-extrabold text-[clamp(1.1rem,4.1vw,3.6rem)] text-[#1F4D36]/10 tracking-wider uppercase block text-center leading-tight">
             PUBLIC RECRUITMENT SERVICES

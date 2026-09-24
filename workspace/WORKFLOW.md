@@ -25,6 +25,32 @@ m4-candidate-portal   ← one branch per milestone, shared by its owners
 
 On `main`, `git log --first-parent main` shows exactly one entry per released milestone.
 
+## Checks (there is no CI)
+
+The project doesn't use GitHub Actions or any other CI. Quality is checked on your own machine, in two layers:
+
+**1. Automatic on every commit.** Set up once per clone:
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate            # Git Bash: source .venv/Scripts/activate · macOS/Linux: source .venv/bin/activate
+pip install -r requirements-dev.txt
+cd ..
+pre-commit install                # from the repo root
+cd frontend && npm install
+```
+After that, every `git commit` runs Ruff, Black, ESLint and Prettier on the files you changed. If a hook fails or reformats a file, `git add` the files again and re-run the commit.
+
+**2. Before opening a PR, and by the reviewer before approving.** All four must pass. Run them from the repo root, with `backend/.venv` activated and Docker Desktop running:
+```bash
+docker compose up -d db                        # 1. start the database
+cd backend && pytest && cd ..                  # 2. backend tests (uses the test database)
+cd frontend && npm test && npm run build && cd ..   # 3. frontend tests + production build
+pre-commit run --all-files                     # 4. lint/format everything
+```
+
+Don't add GitHub Actions workflows or other CI to the repo.
+
 ---
 
 ## Step 1: Claim a milestone
@@ -117,17 +143,19 @@ Log rules:
 
 When every task is `DONE` and the milestone's **Done when** criteria in MILESTONES.md are met:
 
-1. On the milestone branch, merge the latest `develop` (Step 4), run all tests, and fix anything that broke.
+1. On the milestone branch, merge the latest `develop` (Step 4), then run the [pre-PR checks](#checks-there-is-no-ci) and fix anything that broke.
 2. In `MILESTONES.md`, set the milestone's Status to `Done` and add a changelog line. It only lands if the PR merges.
 3. Push, then the lead opens a PR **into `develop`**:
    - Title: `M2: Authentication`
    - Description: list of tasks done, migrations, new env vars/dependencies, how to test. Point to the owners' log entries.
+   - Add the reviewer under **Reviewers**.
 4. **Review:** at least one team member who is **not** an owner of this milestone. For large milestones, the reviewer can follow the branch as it's pushed rather than reading everything at the end. Reviewers check:
+   - check out the branch and run the [pre-PR checks](#checks-there-is-no-ci) themselves (there's no CI to do it)
    - the domain rules and layer rules in CLAUDE.md
    - file placement and naming against PROJECT_STRUCTURE.md
-   - tests pass; migrations reviewed; no debug leftovers or stray files
+   - migrations reviewed; no debug leftovers or stray files
    - `TASKS.md` all `DONE`, log entries present
-5. **Merge with "Squash and merge"**, titled `M2: Authentication (#PR)`. GitHub keeps co-owners as co-authors.
+5. **The reviewer merges, after approving**, with **"Squash and merge"**, titled `M2: Authentication (#PR)`. GitHub keeps co-owners as co-authors. Never merge your own PR or one that isn't approved yet.
 6. Delete the milestone branch.
 
 ## Step 6: Release to `main`
@@ -160,13 +188,17 @@ In GitHub → **Settings**:
 2. **General → Pull Requests:** allow **squash merging** and **merge commits**; turn on **Automatically delete head branches**.
 3. **Branches → add rule for `main`:** require a pull request with 1 approval; block force pushes and deletion.
 4. **Branches → add rule for `develop`:** block force pushes and deletion. The "PR required for code" rule is kept by team discipline, since claims are pushed directly.
-5. After CI exists (T-007): require status checks to pass on `main` and on PRs into `develop`.
+
+No status-check rules: the project has no CI (see [Checks](#checks-there-is-no-ci)).
 
 ## Using Claude Code
 
 Claude Code reads [CLAUDE.md](../CLAUDE.md) and follows this workflow. Start a session by saying who you are and what you're on ("I'm Anum, working on M4, task T-047"). It checks the milestone claim, works on the milestone branch, updates `TASKS.md`, writes your log entry, and won't commit or push unless you ask.
 
 ## Quick checklist
+
+**Once per clone**
+- [ ] Setup from [Checks](#checks-there-is-no-ci) done, including `pre-commit install`
 
 **Starting a milestone**
 - [ ] `develop` pulled; dependencies are `Done`
@@ -181,7 +213,7 @@ Claude Code reads [CLAUDE.md](../CLAUDE.md) and follows this workflow. Start a s
 - [ ] Log entry in `workspace/logs/<name>.md`
 
 **Finishing**
-- [ ] `develop` merged in, tests pass
+- [ ] `develop` merged in; all four pre-PR checks pass
 - [ ] All tasks `DONE`, milestone set to `Done`
-- [ ] PR into `develop`, reviewed by a non-owner, squash-merged
+- [ ] PR into `develop` with a non-owner as reviewer; the reviewer re-runs the checks, approves and squash-merges
 - [ ] Release PR `develop` → `main` merged (merge commit) and tagged
