@@ -1,0 +1,135 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 860px;
+  padding-top: var(--space-6);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--weight-medium);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.eyebrow {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: var(--text-2xl);
+}
+
+.jobCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--pr-cream);
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sectionTitle {
+  font-size: var(--text-xl);
+}
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+}
+
+/* Connector line between markers. */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  bottom: 0;
+  left: 13px;
+  border-left: 2px dashed var(--pr-heritage-green);
+}
+
+.done:not(:last-child)::before {
+  border-left-style: solid;
+}
+
+.marker {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--pr-heritage-green);
+  border-radius: 50%;
+  background: var(--pr-white);
+}
+
+.done .marker {
+  background: var(--pr-heritage-green);
+  color: var(--pr-white);
+}
+
+.current .marker {
+  border-color: var(--pr-signal-gold);
+  background: var(--pr-signal-gold);
+  color: var(--pr-black);
+}
+
+.rejected .marker {
+  border-color: var(--pr-ember-red);
+  background: var(--pr-ember-red);
+  color: var(--pr-white);
+}
+
+.stepBody {
+  padding-top: 2px;
+}
+
+.stepTitle {
+  font-weight: var(--weight-bold);
+}
+
+.current .stepTitle {
+  color: var(--pr-heritage-green);
+}
+
+.upcoming .stepTitle {
+  font-weight: var(--weight-regular);
+}
+
+.stepMeta {
+  font-size: var(--text-sm);
+}
+
+.nextActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

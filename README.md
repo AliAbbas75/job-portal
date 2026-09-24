@@ -26,10 +26,29 @@ workspace/  Tasks, milestones, per-member work logs
 
 ## Local setup
 
-Setup steps will be added as the skeletons land:
-- Database (PostgreSQL via docker-compose): T-003
-- Backend (Flask): T-002
-- Frontend (React): T-004
+### Frontend (React)
+
+Needs Node.js 20 or later.
+
+```bash
+cd frontend
+cp .env.example .env      # VITE_USE_MOCKS=true serves sample data, no backend needed
+npm install
+npm run dev               # http://localhost:5173
+```
+
+In mock mode, sign up with any valid CNIC and mobile number and use the code **123456**. Data is kept in your browser's localStorage.
+
+| Command | Does |
+|---|---|
+| `npm run dev` | Dev server (proxies `/api` to Flask on port 5000) |
+| `npm test` | Unit and component tests (Vitest) |
+| `npm run lint` / `npm run format` | ESLint / Prettier |
+| `npm run build` | Production build into `frontend/dist/` |
+
+### Backend and database
+
+Setup steps will be added as they land: Flask (T-002), PostgreSQL via docker-compose (T-003).
 
 ## Team
 
