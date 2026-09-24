@@ -17,6 +17,17 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-24 | M1 fix: CI pytest import error
+- **Milestone:** M1 (branch m1-foundation)
+- **Status:** Done
+- **What changed:**
+  - `backend/pyproject.toml`: `pythonpath = ["."]` for pytest. CI runs plain `pytest`, which doesn't add the working directory to the import path (`python -m pytest` does, which is why it passed locally).
+- **Database:** none
+- **Commits:**
+  - `fix(ci): let pytest import the app package [T-006]`
+- **How to test:** `cd backend && pytest` (plain command, as CI runs it): 39 passed
+- **Notes / follow-ups:** none
+
 ### 2026-09-24 | Frontend: Tailwind v4 + 4-item dropdowns (M1/M4)
 - **Milestone:** M1 + M4 frontend (branch m1-foundation)
 - **Status:** Done
