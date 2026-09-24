@@ -1,33 +1,37 @@
 # Team Workflow
 
-Work is organised by **milestone** (a development phase). One person, or a few co-owners, claims a whole milestone, builds it on one branch, and releases it through `develop` to `main`.
+Work is organised by **milestone** (a development phase). One person, or a few co-owners, claims a milestone, builds it on **one branch**, merges it into `develop` with **one pull request**, and then the branch is deleted.
 
-**Claim milestone → Branch → Work + log → PR into `develop` → Release to `main`**
+**Claim → Branch → Work + log → Checks → PR into `develop` → Reviewer merges → Delete branch → Release to `main`**
+
+## The 7 golden rules
+
+Follow these and merging stays boring. Every rule exists because breaking it caused trouble in M0/M1.
+
+1. **Merge method is always "Create a merge commit".** Never "Squash and merge" or "Rebase and merge". Squashing turns your work into a new commit Git can't recognise, so the next sync fights the same changes again and can silently undo deletions.
+2. **Only two PR directions exist:** your branch → `develop`, and `develop` → `main` (release). Never open a PR into `main` from any other branch, and never from `main` into `develop`.
+3. **One branch = one PR.** After the PR is merged, the branch is finished: delete it. Need more changes? Make a new branch from `develop`.
+4. **Only the reviewer clicks Merge**, after approving. Never merge your own PR.
+5. **Don't press GitHub's "Update branch" button.** Update from `develop` on your machine instead (Step 5), where you can run the checks.
+6. **Never force-push** (`git push -f`) and never push to `main`.
+7. **Pull before you start, push when you stop.** Every session starts with `git pull` and ends with `git push`.
 
 ## Branches
 
 ```
-main              ← releases only: one merge per finished milestone, tagged
-  ↑  (PR, merge commit)
-develop           ← integration: finished milestones + milestone claims
-  ↑  (PR, squash merge)
-m4-candidate-portal   ← one branch per milestone, shared by its owners
+main                   ← releases only; moves forward when develop is released
+  ↑  PR develop → main, "Create a merge commit"
+develop                ← integration branch (GitHub default); milestone claims pushed here
+  ↑  PR branch → develop, "Create a merge commit"
+m2-authentication      ← one branch per milestone, shared by its owners, deleted after merge
+fix/<short-desc>       ← small fixes outside a milestone, same rules
 ```
 
-| Branch | What goes in | How |
-|--------|--------------|-----|
-| `main` | Released milestones only | PR from `develop`, 1 approval, merge commit, tag |
-| `develop` | Finished milestones; milestone claims in `MILESTONES.md` | Milestone PR (squash); claims pushed directly |
-| `m<N>-<name>` | All work for one milestone: code, `TASKS.md` ticks, work logs | Owners commit and push freely |
-| `fix/<desc>` | A bug fix outside any open milestone | PR into `develop` |
-
-**Nobody pushes to `main` directly. The only direct push to `develop` is a claim change to `MILESTONES.md`.** Everything else arrives by pull request.
-
-On `main`, `git log --first-parent main` shows exactly one entry per released milestone.
+**Nobody pushes to `main`. The only direct push to `develop` is a claim change to `workspace/MILESTONES.md`.** Everything else arrives by pull request.
 
 ## Checks (there is no CI)
 
-The project doesn't use GitHub Actions or any other CI. Quality is checked on your own machine, in two layers:
+The project doesn't use GitHub Actions or any other CI. Quality is checked on your own machine, in two layers.
 
 **1. Automatic on every commit.** Set up once per clone:
 ```bash
@@ -55,67 +59,52 @@ Don't add GitHub Actions workflows or other CI to the repo.
 
 ## Step 1: Claim a milestone
 
-1. Update `develop`:
-   ```bash
-   git checkout develop
-   git pull
-   ```
-2. Open [MILESTONES.md](MILESTONES.md). Check the milestone is unclaimed (`-`) and everything in **Depends on** is `Done`.
-3. In the claim board, set **Owners** to your name and **Status** to `In progress`. Add a line to the milestone changelog.
-   - **Joining as a co-owner:** add your name after the existing owners (`Hadi, Anum`). Tell the lead.
-4. Commit only that file and push to `develop`:
+```bash
+git checkout develop
+git pull
+```
+1. Open [MILESTONES.md](MILESTONES.md). Check the milestone is unclaimed (`-`) and everything in **Depends on** is `Done`.
+2. Set **Owners** to your name and **Status** to `In progress`, and add a changelog line. (Joining as a co-owner: add your name after the existing owners and tell the lead.)
+3. Commit only that file and push it to `develop`:
    ```bash
    git add workspace/MILESTONES.md
    git commit -m "chore(milestones): claim M2 [M2]"
-   git push origin develop
+   git push
    ```
-5. **If the push is rejected**, someone pushed first. `git pull`, check the milestone is still free, and push again. If someone else claimed it, join as co-owner or pick another.
-
-Don't start coding until your claim is on the remote.
+4. **Push rejected?** Someone pushed first. Run `git pull`, check the milestone is still free, then `git push` again.
 
 ## Step 2: Create the milestone branch
 
-The **lead** (first owner) creates the branch from `develop` and pushes it right away:
+The **lead** (first owner), straight after claiming, still on an up-to-date `develop`:
 ```bash
 git checkout -b m2-authentication
 git push -u origin m2-authentication
 ```
-Co-owners pick it up:
+Co-owners:
 ```bash
 git fetch
 git checkout m2-authentication
 ```
-Use the branch name listed in the claim board.
 
 ## Step 3: Split the tasks
 
-On the milestone branch, owners put their names on the tasks they'll do in [TASKS.md](TASKS.md) and set them to `IN PROGRESS`. Commit that on the branch. `TASKS.md` is **never** pushed to `develop` or `main` directly; it travels with the milestone PR.
-
-Missing a task? Add a row with the next free ID. If the scope grows a lot, talk to the team before widening the milestone.
+On the milestone branch, owners put their names on their tasks in [TASKS.md](TASKS.md) with status `IN PROGRESS`, then commit and push. `TASKS.md` only changes on milestone branches; it reaches `develop` with the milestone PR.
 
 ## Step 4: Work and log
 
-**Code**
-- Follow [CLAUDE.md](../CLAUDE.md), and put every new file where [docs/PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md) says.
-- Commit often. Every commit message includes the task ID:
-  ```
-  feat(auth): add CNIC signup endpoint [T-020]
-  ```
-- Mark a task `DONE` in `TASKS.md` when it's finished, in the same commit as the last code for it.
-- Stuck? Set the task to `BLOCKED` and add a note under that milestone's table.
-
-**Sharing a branch with co-owners**
-- Always `git pull --rebase` before `git push`. Never force-push a milestone branch.
-- Split work by task so two people rarely edit the same file at once.
-
-**Keeping up with `develop`.** Do this at least weekly, and whenever another milestone lands in `develop`:
+**Every session:**
 ```bash
-git fetch
-git merge origin/develop     # resolve conflicts now, while they're small
-git push
+git checkout m2-authentication
+git pull                       # get your co-owners' work first
+# ... work, commit often ...
+git push                       # before you stop
 ```
+- Follow [CLAUDE.md](../CLAUDE.md), and put every new file where [docs/PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md) says.
+- Every commit message includes the task ID: `feat(auth): add CNIC signup endpoint [T-020]`
+- Mark a task `DONE` in `TASKS.md` in the same commit as its last code. Stuck? Set it to `BLOCKED` and add a note.
+- **`git push` rejected?** A co-owner pushed first. Run `git pull`, fix any conflicts, commit, and push again. Never force-push.
 
-**Log.** Add an entry to **your own** file in [logs/](logs/) at the end of each work session, newest at the top. Commit it on the milestone branch.
+**Log.** At the end of each session, add an entry to **your own** file in [logs/](logs/), newest at the top, and commit it on the branch:
 
 ```markdown
 ### 2026-09-24 | T-042 Profile section APIs
@@ -123,73 +112,112 @@ git push
 - **Status:** Done / Partial / In progress
 - **What changed:**
   - `backend/app/models/profile.py`: added `EducationRecord`, `ExperienceRecord`
-  - `backend/app/controllers/profile_controller.py`: CRUD for education and experience
   - `backend/tests/controllers/test_profile_controller.py`: 9 tests
 - **Database:** migration `a1b2c3_T-042_profile_sections` (adds 2 tables)
 - **Commits:**
   - `feat(profile): add education section endpoints [T-042]`
-  - `test(profile): cover education/experience CRUD [T-042]`
 - **How to test:** `pytest backend/tests/controllers/test_profile_controller.py`
 - **Notes / follow-ups:** Certificate upload waits for T-043.
 ```
 
-Log rules:
-- List every file you created, changed or deleted, one line each, with why.
-- Always mention migrations, new env vars and new dependencies. Others need them to run the project.
-- List commit messages, not hashes (a commit can't contain its own hash). `git log --grep "T-042"` finds them.
-- Write only in your own log, so co-owners never conflict.
+Always list migrations, new env vars and new dependencies. List commit messages, not hashes.
 
-## Step 5: Finish the milestone: PR into `develop`
+## Step 5: Stay up to date with `develop`
 
-When every task is `DONE` and the milestone's **Done when** criteria in MILESTONES.md are met:
+Do this at least weekly, whenever another milestone lands in `develop`, and always right before Step 6. **On your machine, not with GitHub's "Update branch" button:**
+```bash
+git checkout m2-authentication
+git pull                       # your branch first
+git fetch
+git merge origin/develop       # bring in everyone else's merged work
+```
+- **No conflicts:** run the checks, then `git push`.
+- **Conflicts:** Git lists the files. Open each one, keep the right code between the `<<<<<<<` / `>>>>>>>` markers (usually both sides), delete the markers, then:
+  ```bash
+  git add <each fixed file>
+  git commit                   # completes the merge
+  ```
+  Run the checks, then `git push`. Unsure? Stop and ask the lead or the other side's author. Don't guess, and don't `git merge --abort` halfway through someone else's changes without telling them.
 
-1. On the milestone branch, merge the latest `develop` (Step 4), then run the [pre-PR checks](#checks-there-is-no-ci) and fix anything that broke.
-2. In `MILESTONES.md`, set the milestone's Status to `Done` and add a changelog line. It only lands if the PR merges.
-3. Push, then the lead opens a PR **into `develop`**:
+## Step 6: Open the pull request
+
+When every task is `DONE` and the **Done when** criteria in MILESTONES.md are met:
+
+1. Do Step 5 (merge the latest `develop`).
+2. Run all four [checks](#checks-there-is-no-ci). They must pass.
+3. In `MILESTONES.md`, set the milestone to `Done` and add a changelog line. Commit and `git push`.
+4. On GitHub: **Pull requests → New pull request**.
+   - **base: `develop`** ← compare: `m2-authentication`. Double-check the base: it must not be `main`.
    - Title: `M2: Authentication`
-   - Description: list of tasks done, migrations, new env vars/dependencies, how to test. Point to the owners' log entries.
-   - Add the reviewer under **Reviewers**.
-4. **Review:** at least one team member who is **not** an owner of this milestone. For large milestones, the reviewer can follow the branch as it's pushed rather than reading everything at the end. Reviewers check:
-   - check out the branch and run the [pre-PR checks](#checks-there-is-no-ci) themselves (there's no CI to do it)
-   - the domain rules and layer rules in CLAUDE.md
-   - file placement and naming against PROJECT_STRUCTURE.md
-   - migrations reviewed; no debug leftovers or stray files
-   - `TASKS.md` all `DONE`, log entries present
-5. **The reviewer merges, after approving**, with **"Squash and merge"**, titled `M2: Authentication (#PR)`. GitHub keeps co-owners as co-authors. Never merge your own PR or one that isn't approved yet.
-6. Delete the milestone branch.
+   - Description: tasks done, migrations, new env vars/dependencies, how to test; link the owners' log entries.
+   - **Reviewers:** one team member who isn't an owner of this milestone.
+5. **Stop committing to the branch** unless the reviewer asks for changes.
 
-## Step 6: Release to `main`
+## Step 7: Review and merge (reviewer)
 
-Right after the milestone lands in `develop`, the lead:
-1. Opens a PR **from `develop` into `main`**, titled `Release M2: Authentication`.
-2. Gets one approval, then merges with **"Create a merge commit"**. Never squash `develop` into `main`, because the two branches would drift apart.
-3. Tags the release:
+```bash
+git fetch
+git checkout m2-authentication
+git pull
+```
+1. Run all four [checks](#checks-there-is-no-ci).
+2. Review against CLAUDE.md (domain and layer rules) and PROJECT_STRUCTURE.md (placement, naming). Also check migrations, stray or debug files, `TASKS.md` all `DONE`, and log entries present.
+3. **Changes needed?** Choose "Request changes" and explain. The owners fix it on the same branch, push, and ask you to look again.
+4. **All good?** Approve, then click **Merge pull request → "Create a merge commit" → Confirm**, then **Delete branch**.
+5. If GitHub says **"This branch has conflicts"**: don't resolve them in the browser. Ask the owners to do Step 5 and push; then re-check.
+
+## Step 8: After the merge (everyone)
+
+```bash
+git checkout develop
+git pull
+git branch -d m2-authentication      # delete your local copy of the finished branch
+```
+The branch is finished. Any follow-up work gets a **new** branch from `develop`: a `fix/...` branch, or the next milestone.
+
+## Step 9: Release to `main` (milestone lead)
+
+Right after the milestone is merged into `develop`:
+1. On GitHub: **New pull request → base: `main` ← compare: `develop`**, titled `Release M2: Authentication`.
+2. Get one approval. The reviewer clicks **"Create a merge commit"**. **Do not delete `develop`**: it's permanent.
+3. Tag the release:
    ```bash
-   git checkout main && git pull
+   git checkout main
+   git pull
    git tag -a m2 -m "M2: Authentication"
    git push origin m2
+   git checkout develop
    ```
 
-If two milestones finish close together, one release PR can carry both.
+## Small fixes outside a milestone
 
-## Bug fixes between milestones
-
-For a bug already on `develop` that isn't part of an open milestone: branch `fix/<short-desc>` from `develop`, fix it, add a log entry, and open a PR into `develop` (squash). Use `[fix]` in commit messages if there's no task ID. It reaches `main` with the next release.
+Same process, smaller: `git checkout develop && git pull && git checkout -b fix/short-desc`, fix it, add a log entry, run the checks, and open a PR into `develop`. The reviewer merges it with a merge commit and deletes the branch. It reaches `main` with the next release. Use `[fix]` in commit messages if there's no task ID.
 
 ## Handing over or dropping a milestone
 
-- **Dropping:** remove your name from Owners in MILESTONES.md (push to `develop` like a claim). If you were the only owner, set Status back to `Not started` and add a changelog line saying where the branch stands.
+- **Dropping:** remove your name from Owners in MILESTONES.md (push to `develop` like a claim). If you were the only owner, set Status back to `Not started` and note where the branch stands.
 - **Handing over:** change Owners and add a changelog line `handed over from <name>`. Both people add a log entry on the branch.
 
-## Repo settings (one-time, done by the repo admin)
+## If something goes wrong
+
+| Problem | Do this |
+|---|---|
+| `git push` rejected | `git pull`, resolve conflicts if any, commit, `git push`. Never `-f`. |
+| PR shows "This branch has conflicts" | Owners do Step 5 locally and push. Don't use the web conflict editor. |
+| Opened the PR against the wrong base | Click **Edit** next to the PR title and change the base to `develop` (or close it and open a new one). |
+| Committed to `develop` by mistake (not a claim) | Don't push. `git branch fix/my-work` (keeps your commits), `git reset --hard origin/develop`, `git checkout fix/my-work`, then open a PR. |
+| A branch was already merged but has new commits | Don't open a second PR from it. Create a new branch from it, then merge `develop` into that branch (Step 5), and open the PR from the new branch. |
+| Anything else confusing | Stop and ask in the team chat before pushing. A pause costs minutes; a bad merge costs hours. |
+
+## Repo settings (one-time, repo admin)
 
 In GitHub → **Settings**:
-1. **General → Default branch:** `develop`, so clones and new PRs start from it.
-2. **General → Pull Requests:** allow **squash merging** and **merge commits**; turn on **Automatically delete head branches**.
-3. **Branches → add rule for `main`:** require a pull request with 1 approval; block force pushes and deletion.
-4. **Branches → add rule for `develop`:** block force pushes and deletion. The "PR required for code" rule is kept by team discipline, since claims are pushed directly.
+1. **General → Default branch:** `develop`.
+2. **General → Pull Requests:** tick **Allow merge commits** only; **untick** "Allow squash merging" and "Allow rebase merging". Tick **Automatically delete head branches**. Untick **Always suggest updating pull request branches**.
+3. **Branches → rule for `main`:** require a pull request with 1 approval; block force pushes and deletion.
+4. **Branches → rule for `develop`:** block force pushes and deletion.
 
-No status-check rules: the project has no CI (see [Checks](#checks-there-is-no-ci)).
+No status-check rules: the project has no CI.
 
 ## Using Claude Code
 
@@ -205,15 +233,15 @@ Claude Code reads [CLAUDE.md](../CLAUDE.md) and follows this workflow. Start a s
 - [ ] Claim pushed to `develop` (MILESTONES.md only)
 - [ ] Milestone branch created from `develop` and pushed
 
-**Every work session**
-- [ ] On the milestone branch, `git pull --rebase` first
-- [ ] Tasks I'm on have my name and `IN PROGRESS` in TASKS.md
-- [ ] Files placed and named per PROJECT_STRUCTURE.md; no debug leftovers
-- [ ] Commits include `[T-###]`
-- [ ] Log entry in `workspace/logs/<name>.md`
+**Every session**
+- [ ] `git pull` first, `git push` last
+- [ ] My tasks have my name and `IN PROGRESS` in TASKS.md
+- [ ] Commits include `[T-###]`; log entry written
 
 **Finishing**
-- [ ] `develop` merged in; all four pre-PR checks pass
-- [ ] All tasks `DONE`, milestone set to `Done`
-- [ ] PR into `develop` with a non-owner as reviewer; the reviewer re-runs the checks, approves and squash-merges
-- [ ] Release PR `develop` → `main` merged (merge commit) and tagged
+- [ ] `develop` merged in locally (Step 5); four checks pass
+- [ ] All tasks `DONE`; milestone set to `Done`
+- [ ] PR **into `develop`**, reviewer added; no more commits on the branch
+- [ ] Reviewer: checks pass → approve → **Create a merge commit** → delete branch
+- [ ] Everyone: `git checkout develop && git pull`
+- [ ] Release PR `develop` → `main` (merge commit) and tag

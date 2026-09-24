@@ -11,7 +11,7 @@ Work is claimed by **milestone** (development phase), not by single task. Every 
 3. **Mark your tasks** in [workspace/TASKS.md](workspace/TASKS.md) on that branch: your name + `IN PROGRESS`, then `DONE`.
 4. **Log your work** in your own file under [workspace/logs/](workspace/logs/): what changed, which files, migrations, follow-ups.
 5. **Commit with the task ID** and push to the milestone branch.
-6. **When the milestone is done:** PR into `develop` (squash, reviewed by a non-owner), then a release PR from `develop` into `main` (merge commit + tag).
+6. **When the milestone is done:** merge `develop` into your branch locally, run the checks, and open one PR into `develop`. A non-owner reviews and merges it with **"Create a merge commit"** (never squash), and the branch is deleted. Then a release PR goes from `develop` into `main` (merge commit + tag).
 
 The full procedure, with commands, branch rules and repo settings, is in [workspace/WORKFLOW.md](workspace/WORKFLOW.md).
 
@@ -164,9 +164,10 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 ## 8. Git
 
 - **`main`**: released milestones only. Changes arrive only by a PR from `develop`, merged with a merge commit and tagged (`m2`). Never push to it directly.
-- **`develop`**: integration branch and GitHub default. Milestone branches merge in by PR (squash, reviewed by a non-owner). The only direct push allowed is a claim change to `workspace/MILESTONES.md`.
+- **`develop`**: integration branch and GitHub default. Milestone branches merge in by PR with **"Create a merge commit"** (never squash or rebase), reviewed and merged by a non-owner. One PR per branch, then the branch is deleted; follow-up work gets a new branch. The only direct push allowed is a claim change to `workspace/MILESTONES.md`.
 - **`m<N>-<name>`**: one branch per milestone, shared by its owners. `git pull --rebase` before pushing; merge `develop` in at least weekly.
 - **`fix/<desc>`**: fixes outside an open milestone, PR into `develop`.
+- Only two PR directions: branch → `develop`, and `develop` → `main`. Never use GitHub's "Update branch" button; merge `develop` in locally (WORKFLOW.md Step 5). Never force-push.
 - Commit message format: `<type>(<scope>): <summary> [T-###]`
   - types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
   - example: `feat(auth): add CNIC signup endpoint [T-020]`

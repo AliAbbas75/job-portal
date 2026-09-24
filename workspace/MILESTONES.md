@@ -128,3 +128,4 @@ Add a line whenever a milestone changes status, owners or scope.
 | 2026-09-24 | M1        | All tasks done by Ali (frontend + backend); T-008 moved out of M1 to the Open questions table | Ali |
 | 2026-09-24 | M1        | Done; PR into `develop` for review by Malaika | Ali |
 | 2026-09-24 | All       | GitHub Actions CI removed (not needed); checks run locally, see WORKFLOW.md | Ali |
+| 2026-09-24 | All       | Branch cleanup: `main` synced with `develop`; merge commits only from now on (see WORKFLOW.md) | Ali |
