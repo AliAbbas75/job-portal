@@ -18,12 +18,12 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 -->
 
 ### 2026-09-24 | Branch cleanup and merge process
-- **Milestone:** none (repo maintenance, done directly on `develop`)
+- **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)
 - **Status:** Done
 - **What changed:**
   - Removed `.github/workflows/ci.yml` again: a squash merge (PR #10) had silently re-added it
-  - Merged `main` into `develop` with no file changes (history sync), then fast-forwarded `main` to `develop`; `main` had only an old front end snapshot from PR #7
-  - Deleted the finished `m1-foundation` branch (merged four times via PRs #7–#10)
+  - Merged `main` into the branch with no file changes (history sync), so the release PR `develop` → `main` merges without conflicts; `main` had only an old front end snapshot from PR #7
+  - To do after merge: delete the finished `m1-foundation` branch (merged four times via PRs #7–#10)
   - `workspace/WORKFLOW.md`: rewritten as a fixed step-by-step process: 7 golden rules (merge commits only, two PR directions, one PR per branch, reviewer merges, no "Update branch", no force-push), local sync from `develop`, review/merge steps, troubleshooting table, repo settings (merge commits only)
   - `CLAUDE.md`: Git rules updated to match
 - **Database:** none
@@ -31,7 +31,7 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
   - `chore: remove ci.yml re-added by a squash merge (no CI in this project)`
   - `Merge main into develop: history sync only, develop's files unchanged`
   - `docs(workflow): merge-commit-only process to stop merge conflicts loops`
-- **How to test:** `git diff origin/main origin/develop` is empty after the fast-forward
+- **How to test:** after both PRs merge, `git diff origin/main origin/develop` is empty
 - **Notes / follow-ups:** Repo admin must apply the new Pull Request settings (see WORKFLOW.md → Repo settings)
 
 ### 2026-09-24 | Remove GitHub Actions; local checks instead
