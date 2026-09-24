@@ -1,5 +1,5 @@
 import { t } from '../../i18n';
-import styles from './Logo.module.css';
+import { cx } from '../../utils/cx';
 
 /**
  * PLACEHOLDER wordmark until the official logo files are added to the repo.
@@ -8,9 +8,18 @@ import styles from './Logo.module.css';
  */
 export function Logo({ inverted = false }) {
   return (
-    <span className={`${styles.logo} ${inverted ? styles.inverted : ''}`}>
-      <span className={styles.wordmark}>{t('app.brand')}</span>
-      <span className={styles.tag}>{t('app.careers')}</span>
+    <span
+      className={cx(
+        'inline-flex flex-col py-1 leading-[1.05]',
+        inverted ? 'text-white' : 'text-heritage',
+      )}
+    >
+      <span className="text-xl font-bold tracking-wide uppercase">{t('app.brand')}</span>
+      <span
+        className={cx('text-sm font-medium tracking-[0.2em] uppercase', inverted && 'text-gold')}
+      >
+        {t('app.careers')}
+      </span>
     </span>
   );
 }

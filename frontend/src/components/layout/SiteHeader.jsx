@@ -4,10 +4,10 @@ import { USE_MOCKS } from '../../api/client';
 import { useAuth } from '../../hooks/useAuth';
 import { t } from '../../i18n';
 import { paths } from '../../routes/paths';
+import { cx } from '../../utils/cx';
 import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
 import { Logo } from '../common/Logo';
-import styles from './SiteHeader.module.css';
 
 export function SiteHeader() {
   const { status, candidate, signOut } = useAuth();
@@ -22,39 +22,52 @@ export function SiteHeader() {
     setMenuOpen(false);
   }
 
-  const navClass = ({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`;
+  const navClass = ({ isActive }) =>
+    cx(
+      'block py-3 font-medium no-underline hover:text-heritage md:inline-block md:py-2',
+      isActive
+        ? 'border-b-3 border-gold text-heritage'
+        : 'border-b border-surface text-black md:border-b-3 md:border-transparent',
+    );
 
   return (
-    <header className={styles.header}>
-      <div className={styles.topBar}>
-        <div className={`container ${styles.topBarInner}`}>
+    <header className="border-b border-heritage bg-white">
+      <div className="bg-heritage text-sm text-white">
+        <div className="page flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-2 text-center">
           <p>{t('header.announcement')}</p>
-          {USE_MOCKS && <span className={styles.demo}>{t('header.demoMode')}</span>}
+          {USE_MOCKS && (
+            <span className="rounded-full bg-gold px-2 font-bold text-black">
+              {t('header.demoMode')}
+            </span>
+          )}
         </div>
       </div>
 
-      <div className={`container ${styles.main}`}>
-        <Link to={paths.home} className={styles.logoLink} aria-label={t('header.homeLink')}>
+      <div className="page flex min-h-18 flex-wrap items-center justify-between gap-4 py-2">
+        <Link to={paths.home} className="no-underline" aria-label={t('header.homeLink')}>
           <Logo />
         </Link>
 
         <button
           type="button"
-          className={styles.menuButton}
+          className="inline-flex cursor-pointer rounded-sm border border-heritage bg-white p-2 text-heritage md:hidden"
           aria-expanded={menuOpen}
           aria-controls="site-nav"
           onClick={() => setMenuOpen((open) => !open)}
         >
           <Icon name={menuOpen ? 'x' : 'menu'} size={22} />
-          <span className="visually-hidden">{t('header.menu')}</span>
+          <span className="sr-only">{t('header.menu')}</span>
         </button>
 
         <nav
           id="site-nav"
-          className={`${styles.nav} ${menuOpen ? styles.open : ''}`}
+          className={cx(
+            'basis-full flex-col items-stretch gap-4 pb-4 md:flex md:flex-1 md:basis-auto md:flex-row md:items-center md:justify-end md:gap-5 md:pb-0',
+            menuOpen ? 'flex' : 'hidden',
+          )}
           aria-label={t('header.navLabel')}
         >
-          <ul className={styles.links}>
+          <ul className="flex flex-col md:flex-row md:gap-5">
             <li>
               <NavLink to={paths.home} end className={navClass}>
                 {t('nav.findJobs')}
@@ -76,10 +89,10 @@ export function SiteHeader() {
             )}
           </ul>
 
-          <div className={styles.account}>
+          <div className="flex flex-wrap items-center gap-3">
             {signedIn ? (
               <>
-                <span className={styles.user}>
+                <span className="inline-flex items-center gap-1 font-medium text-heritage">
                   <Icon name="user" size={18} />
                   {candidate?.name || t('header.account')}
                 </span>

@@ -112,7 +112,8 @@ frontend/src/
   api/                 # one module per backend resource (jobs.js)
   pages/               # public/ candidate/ admin/: route-level screens (JobDetailsPage.jsx)
   components/          # common/ forms/ layout/: reusable UI
-  hooks/ context/ routes/ i18n/ utils/ styles/ assets/
+  hooks/ context/ routes/ i18n/ utils/ assets/
+  index.css            # the only stylesheet: Tailwind v4 + brand theme
 docs/                  # product flow, structure guide
 workspace/             # tasks, milestones, workflow, per-member logs
 ```
@@ -129,8 +130,11 @@ workspace/             # tasks, milestones, workflow, per-member logs
 - Functional components and hooks only. `PascalCase.jsx` for components, `camelCase.js` for everything else.
 - All user-facing text goes through `i18n/`, never hard-coded. English only for now; Urdu is deferred but must be addable without touching components.
 - Build mobile-first and keep bundles small; many candidates are on low-bandwidth connections.
-- **Follow the brand guide** ([docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md)): only the 8 brand colours, via the CSS variables in `frontend/src/styles/tokens.css` (never raw hex in components); Instrument Sans; no gradients; no shadows (use borders); gold and pumpkin only for accents, badges and backgrounds, never body text on white.
-- Style components with CSS Modules (`Name.module.css` next to the component).
+- **Styling is Tailwind CSS v4, controlled from one file: `frontend/src/index.css`.** Components use Tailwind utility classes only. No other `.css` files, no CSS Modules, no inline `style` except for computed values (e.g. a progress width).
+- **Follow the brand guide** ([docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md)). `index.css` enforces most of it: the `@theme` removes Tailwind's default palette and shadows, so only the 8 brand colours exist (`heritage`, `ember`, `gold`, `pumpkin`, `surface`, `cream`, `white`, `black`). Never use arbitrary colours (`bg-[#...]`), gradients (`bg-linear-*`), or gold/pumpkin for body text on white. New design tokens go in `@theme` in `index.css`, nowhere else.
+- **Dropdowns:** always use `components/forms/Select.jsx` (or `SelectField` with a label), never a native `<select>`. It always shows 4 options and scrolls beyond that, and is keyboard- and screen-reader-accessible.
+- Join conditional classes with `cx()` (`utils/cx.js`). Never put two utilities for the same property in one class list (e.g. `font-medium` and `font-bold`): Tailwind doesn't guarantee which wins. Put alternatives in the two branches of a condition instead.
+- Prettier sorts Tailwind classes automatically (`prettier-plugin-tailwindcss`).
 - **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }`; the UI maps `code` to `errors.<code>` in `i18n/en.json`.
 - Frontend checks before pushing: `npm run lint`, `npm run format:check`, `npm test`, `npm run build` (run in `frontend/`).
 

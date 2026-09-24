@@ -1,16 +1,19 @@
-import styles from './Field.module.css';
-
 export function CheckboxField({ label, description, error, ...inputProps }) {
   return (
-    <div className={styles.field}>
-      <label className={styles.checkbox}>
-        <input type="checkbox" aria-invalid={Boolean(error) || undefined} {...inputProps} />
+    <div className="flex flex-col gap-1">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          type="checkbox"
+          className="mt-0.5 size-5 flex-none accent-heritage"
+          aria-invalid={Boolean(error) || undefined}
+          {...inputProps}
+        />
         <span>
-          <span className={styles.label}>{label}</span>
-          {description && <span className={styles.hint}> {description}</span>}
+          <span className="font-medium">{label}</span>
+          {description && <span className="text-sm"> {description}</span>}
         </span>
       </label>
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className="text-sm font-medium text-ember">{error}</p>}
     </div>
   );
 }

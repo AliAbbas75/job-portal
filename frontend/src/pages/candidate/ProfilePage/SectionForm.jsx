@@ -4,7 +4,6 @@ import { Alert } from '../../../components/common/Alert';
 import { Button } from '../../../components/common/Button';
 import { t } from '../../../i18n';
 import { errorMessage } from '../../../utils/errorMessage';
-import styles from './ProfilePage.module.css';
 
 /**
  * Edit-and-save wrapper for one profile section.
@@ -39,9 +38,9 @@ export function SectionForm({ section, initial, onSaved, validate = () => ({}), 
   }
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
+    <form className="flex flex-col gap-4" onSubmit={submit} noValidate>
       {children({ draft, setField, setDraft: updateDraft, errors })}
-      <div className={styles.formActions}>
+      <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" loading={status === 'saving'}>
           {t('profile.save')}
         </Button>

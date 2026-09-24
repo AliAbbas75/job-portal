@@ -79,7 +79,7 @@ export default function LoginPage() {
 
   return (
     <AuthCard title={t('login.title')} lead={t('login.lead')} footer={signupLink}>
-      <form className="stack" onSubmit={sendOtp} noValidate>
+      <form className="space-y-4" onSubmit={sendOtp} noValidate>
         {formError && <Alert variant="error">{errorMessage(formError)}</Alert>}
         <CnicInput value={cnic} onChange={setCnic} error={errors.cnic} required />
         <TextField

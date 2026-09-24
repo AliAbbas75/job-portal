@@ -1,0 +1,82 @@
+/*
+ * The only stylesheet in the app. Components style themselves with Tailwind utilities.
+ * Design rules: docs/pakistan-railways-brand-guidelines.md
+ *   - Only the 8 brand colours exist (Tailwind's default palette is removed below).
+ *   - No shadows (removed below) and no gradients (don't use bg-linear-* / bg-radial-*).
+ *   - Gold and pumpkin are for accents, badges and backgrounds, never body text on white.
+ */
+@import 'tailwindcss';
+
+@theme {
+  --color-*: initial;
+  --color-heritage: #1f4d36;
+  --color-ember: #a63a2c;
+  --color-gold: #f8b735;
+  --color-pumpkin: #da7a11;
+  --color-surface: #eaf4ef;
+  --color-cream: #f7f3e8;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+
+  --font-*: initial;
+  --font-sans: 'Instrument Sans', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-urdu: 'Jameel Noori Nastaleeq Kasheeda', 'Noto Nastaliq Urdu', serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --container-page: 70rem;
+}
+
+@layer base {
+  body {
+    @apply bg-white font-sans text-base text-black;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply leading-tight font-bold text-heritage;
+  }
+
+  a {
+    @apply text-heritage underline;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-heritage);
+    outline-offset: 2px;
+  }
+
+  [lang='ur'] {
+    @apply font-urdu leading-loose;
+    direction: rtl;
+  }
+}
+
+/* Page-width wrapper with side gutters. */
+@utility page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+/* Custom dropdown list: always 4 options tall, scrolls when there are more. */
+@utility dropdown-list {
+  max-height: calc(4 * 2.5rem + 2px);
+  overflow-y: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

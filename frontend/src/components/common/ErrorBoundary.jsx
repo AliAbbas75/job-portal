@@ -14,7 +14,7 @@ export class ErrorBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children;
     return (
-      <div className="container">
+      <div className="page">
         <EmptyState
           icon="alert"
           title={t('errors.crashTitle')}

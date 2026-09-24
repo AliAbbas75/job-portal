@@ -11,7 +11,6 @@ import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
-import styles from './ApplicationCheckPage.module.css';
 import { CheckItem } from './CheckItem';
 
 export default function ApplicationCheckPage() {
@@ -24,7 +23,7 @@ export default function ApplicationCheckPage() {
   const error = job.error ?? check.error;
   if (error) {
     return (
-      <div className="container">
+      <div className="page">
         <ErrorState error={error} onRetry={check.reload} />
       </div>
     );
@@ -49,14 +48,14 @@ export default function ApplicationCheckPage() {
   );
 
   return (
-    <div className={`container ${styles.page}`}>
+    <div className="mx-auto flex w-full max-w-215 flex-col gap-5 px-4 pt-8">
       <ApplySteps current="check" />
       <div>
-        <h1 className={styles.title}>{t('check.title')}</h1>
+        <h1 className="text-2xl">{t('check.title')}</h1>
         <p>{t('check.lead')}</p>
       </div>
 
-      <div className={styles.jobCard}>
+      <div className="rounded-md bg-cream p-4">
         <JobSummary job={job.data} />
       </div>
 
@@ -83,22 +82,22 @@ export default function ApplicationCheckPage() {
       )}
 
       {pending.length > 0 && (
-        <section className={styles.group} aria-labelledby="needs-attention">
-          <h2 id="needs-attention" className={styles.groupTitle}>
+        <section className="flex flex-col gap-2" aria-labelledby="needs-attention">
+          <h2 id="needs-attention" className="text-lg">
             {t('check.needsAttention', { count: pending.length })}
           </h2>
-          <ul className={styles.list}>{pending.map(renderItem)}</ul>
+          <ul className="rounded-md border border-heritage">{pending.map(renderItem)}</ul>
         </section>
       )}
 
-      <section className={styles.group} aria-labelledby="already-met">
-        <h2 id="already-met" className={styles.groupTitle}>
+      <section className="flex flex-col gap-2" aria-labelledby="already-met">
+        <h2 id="already-met" className="text-lg">
           {t('check.alreadyMet', { count: met.length, total: result.items.length })}
         </h2>
-        <ul className={styles.list}>{met.map(renderItem)}</ul>
+        <ul className="rounded-md border border-heritage">{met.map(renderItem)}</ul>
       </section>
 
-      <div className={styles.actions}>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-heritage pt-4">
         <Button to={paths.job(jobId)} variant="ghost">
           {t('check.backToJob')}
         </Button>
@@ -113,7 +112,7 @@ export default function ApplicationCheckPage() {
         )}
       </div>
       {!canContinue && !blocked && result.eligible && (
-        <p className={styles.hint}>{t('check.continueHint')}</p>
+        <p className="text-right text-sm">{t('check.continueHint')}</p>
       )}
     </div>
   );

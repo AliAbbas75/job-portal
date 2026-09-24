@@ -3,7 +3,6 @@ import { Button } from '../../../components/common/Button';
 import { Icon } from '../../../components/common/Icon';
 import { TextField } from '../../../components/forms/TextField';
 import { t } from '../../../i18n';
-import styles from './ProfilePage.module.css';
 import { SectionForm } from './SectionForm';
 
 export function SkillsSection({ profile, onSaved }) {
@@ -20,7 +19,7 @@ export function SkillsSection({ profile, onSaved }) {
         return (
           <>
             <p>{t('profile.skillsLead')}</p>
-            <div className={styles.inlineAdd}>
+            <div className="flex items-end gap-2 [&>:first-child]:flex-1">
               <TextField
                 label={t('fields.skill')}
                 placeholder={t('profile.skillPlaceholder')}
@@ -39,13 +38,16 @@ export function SkillsSection({ profile, onSaved }) {
               </Button>
             </div>
             {draft.length > 0 && (
-              <ul className={styles.chips}>
+              <ul className="flex flex-wrap gap-2">
                 {draft.map((skill) => (
-                  <li key={skill} className={styles.chip}>
+                  <li
+                    key={skill}
+                    className="inline-flex items-center gap-1 rounded-full bg-surface py-1 pr-1 pl-3 font-medium text-heritage"
+                  >
                     {skill}
                     <button
                       type="button"
-                      className={styles.chipRemove}
+                      className="grid size-6 cursor-pointer place-items-center rounded-full bg-transparent text-inherit hover:bg-heritage hover:text-white"
                       onClick={() => setDraft(draft.filter((s) => s !== skill))}
                       aria-label={t('profile.removeNamed', { name: skill })}
                     >

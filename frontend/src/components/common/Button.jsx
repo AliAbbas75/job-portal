@@ -1,5 +1,22 @@
 import { Link } from 'react-router-dom';
-import styles from './Button.module.css';
+import { cx } from '../../utils/cx';
+
+const VARIANTS = {
+  primary: 'border-transparent bg-heritage text-white hover:enabled:bg-black [a&]:hover:bg-black',
+  accent: 'border-transparent bg-gold text-black hover:enabled:bg-pumpkin [a&]:hover:bg-pumpkin',
+  secondary:
+    'border-heritage bg-white text-heritage hover:enabled:bg-surface [a&]:hover:bg-surface',
+  danger: 'border-transparent bg-ember text-white hover:enabled:bg-black [a&]:hover:bg-black',
+  ghost: 'border-transparent bg-transparent text-heritage hover:underline',
+};
+
+const SIZES = {
+  sm: 'py-1.5 text-sm',
+  md: 'py-2.5 text-base',
+  lg: 'py-3.5 text-lg',
+};
+
+const PADDING_X = { sm: 'px-3.5', md: 'px-5', lg: 'px-7' };
 
 /**
  * variant: 'primary' (green) | 'accent' (gold, main call to action) | 'secondary' | 'danger' | 'ghost'
@@ -11,19 +28,21 @@ export function Button({
   fullWidth = false,
   loading = false,
   to,
-  className = '',
+  className,
   children,
   disabled,
   type = 'button',
   ...rest
 }) {
-  const classes = [
-    styles.button,
-    styles[variant],
-    styles[size],
-    fullWidth ? styles.full : '',
+  const classes = cx(
+    'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-2 leading-tight font-bold no-underline transition-colors',
+    'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-surface disabled:text-heritage',
+    SIZES[size],
+    variant === 'ghost' ? 'px-2' : PADDING_X[size],
+    VARIANTS[variant],
+    fullWidth && 'w-full',
     className,
-  ].join(' ');
+  );
 
   if (to) {
     return (
@@ -40,7 +59,12 @@ export function Button({
       aria-busy={loading || undefined}
       {...rest}
     >
-      {loading && <span className={styles.spinner} aria-hidden="true" />}
+      {loading && (
+        <span
+          className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+          aria-hidden="true"
+        />
+      )}
       {children}
     </button>
   );

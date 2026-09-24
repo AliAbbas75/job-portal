@@ -83,7 +83,7 @@ export default function SignupPage() {
 
   return (
     <AuthCard title={t('signup.title')} lead={t('signup.lead')} footer={loginLink}>
-      <form className="stack" onSubmit={sendOtp} noValidate>
+      <form className="space-y-4" onSubmit={sendOtp} noValidate>
         {formError && (
           <Alert
             variant="error"

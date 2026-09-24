@@ -1,24 +1,20 @@
 import { Button } from '../../../components/common/Button';
+import { Select } from '../../../components/forms/Select';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
 import { toOptions } from './filters';
-import styles from './JobSearchPage.module.css';
 
 function FilterSelect({ label, value, onChange, allLabel, options }) {
   return (
-    <select
-      className={styles.filter}
-      aria-label={label}
+    <Select
+      size="sm"
+      ariaLabel={label}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
-    >
-      {allLabel && <option value="">{allLabel}</option>}
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+      onChange={onChange}
+      placeholder={allLabel}
+      options={options}
+      className="min-w-0 md:w-44"
+    />
   );
 }
 
@@ -28,7 +24,11 @@ export function MoreFilters({ filters, onChange, onClear, hasFilters }) {
   const set = (key) => (value) => onChange({ [key]: value });
 
   return (
-    <div className={styles.moreFilters} role="group" aria-label={t('jobs.filters.refine')}>
+    <div
+      className="grid w-full grid-cols-2 items-center gap-2 md:flex md:w-auto md:flex-wrap"
+      role="group"
+      aria-label={t('jobs.filters.refine')}
+    >
       <FilterSelect
         label={t('jobs.filters.sort')}
         value={filters.sort}

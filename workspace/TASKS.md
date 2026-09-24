@@ -37,18 +37,18 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 
 | ID    | Task                                                       | Owner | Status |
 |-------|------------------------------------------------------------|-------|--------|
-| T-002 | Flask app factory, config, extensions, /api/health         | -     | TODO   |
-| T-003 | PostgreSQL (docker-compose), .env.example, first migration | -     | TODO   |
-| T-006 | pytest setup with a test database                          | -     | TODO   |
-| T-010 | CandidateAccount + CandidateProfile (unique CNIC)          | -     | TODO   |
-| T-011 | Profile section models                                     | -     | TODO   |
-| T-012 | BPS-15+ section models                                     | -     | TODO   |
-| T-013 | Document model + file storage service                      | -     | TODO   |
-| T-014 | Job + JobRequirement models                                | -     | TODO   |
-| T-015 | ApprovalRecord model                                       | -     | TODO   |
-| T-016 | Application, ApplicationSnapshot, StatusEvent              | -     | TODO   |
-| T-017 | AuditLog model + helper                                    | -     | TODO   |
-| T-018 | Seed data (departments, BPS, districts, qualifications)    | -     | TODO   |
+| T-002 | Flask app factory, config, extensions, /api/health         | Ali   | DONE   |
+| T-003 | PostgreSQL (docker-compose), .env.example, first migration | Ali   | DONE   |
+| T-006 | pytest setup with a test database                          | Ali   | DONE   |
+| T-010 | CandidateAccount + CandidateProfile (unique CNIC)          | Ali   | DONE   |
+| T-011 | Profile section models                                     | Ali   | DONE   |
+| T-012 | BPS-15+ section models                                     | Ali   | DONE   |
+| T-013 | Document model + file storage service                      | Ali   | DONE   |
+| T-014 | Job + JobRequirement models                                | Ali   | DONE   |
+| T-015 | ApprovalRecord model                                       | Ali   | DONE   |
+| T-016 | Application, ApplicationSnapshot, StatusEvent              | Ali   | DONE   |
+| T-017 | AuditLog model + helper                                    | Ali   | DONE   |
+| T-018 | Seed data (departments, BPS, districts, qualifications)    | Ali   | DONE   |
 
 **Frontend**
 
@@ -59,22 +59,21 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 
 **Shared**
 
-| ID    | Task                                                   | Owner | Status      |
-|-------|--------------------------------------------------------|-------|-------------|
-| T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit | Ali   | IN PROGRESS |
-| T-007 | CI on pull requests (GitHub Actions)                   | -     | TODO        |
-| T-008 | Get answers to open questions                          | -     | TODO        |
+| ID    | Task                                                   | Owner | Status |
+|-------|--------------------------------------------------------|-------|--------|
+| T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit | Ali   | DONE   |
+| T-007 | CI on pull requests (GitHub Actions)                   | Ali   | DONE   |
 
 **Notes**
 - Do T-002 to T-004 first; everything else builds on them. They also fill in the README setup steps.
-- T-005: frontend half done (ESLint + Prettier in `frontend/`); Ruff/Black and pre-commit still to do.
 - T-007: run on pull requests into `develop` and `main`.
-- T-008: record decisions in MILESTONES.md.
 - T-011: personal, contact/address, domicile, education, experience, skills, additional eligibility.
 - T-012: professional registration, publications, references, statement of purpose.
 - T-013: enforce file size and format limits.
 - T-014: include quotas, fee, opening/closing dates, status, advertisement number.
 - T-016: unique (candidate, job); status list covers all expanded §4.9 statuses.
+- T-015: also added a `StaffUser` model (approvers and audit entries need it); login and roles stay in T-023.
+- Former T-008 (open questions) moved out of M1: tracked in the Open questions table in MILESTONES.md.
 
 ---
 
