@@ -1,64 +1,86 @@
 # Task Board
 
-Claim a task before you write any code. Full steps are in [WORKFLOW.md](WORKFLOW.md).
+The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](MILESTONES.md), not a task here. Full steps: [WORKFLOW.md](WORKFLOW.md).
 
-**To claim:** pull `main` → put your name in **Owner** and set **Status** to `IN PROGRESS` → commit and push to `main`.
+**This file is only edited on milestone branches.** Changes reach `develop` with the milestone pull request. Never push it to `develop` or `main` directly.
 
-| Status        | Meaning                           |
-|---------------|-----------------------------------|
-| `TODO`        | Free to pick up                   |
-| `IN PROGRESS` | Someone is working on it          |
-| `BLOCKED`     | Stuck; reason in the notes below  |
-| `IN REVIEW`   | Pull request is open              |
-| `DONE`        | Merged into `main`                |
+| Status        | Meaning                            |
+|---------------|------------------------------------|
+| `TODO`        | Not started                        |
+| `IN PROGRESS` | A milestone owner is working on it |
+| `BLOCKED`     | Stuck; reason in the notes below   |
+| `DONE`        | Finished on the milestone branch   |
 
-- **Owner** is one of: Ali, Anum, Hadi, Malaika, Umaima. `-` means unassigned.
+- **Owner:** which milestone owner is doing the task (co-owners split tasks this way). `-` means unassigned.
 - **[P]** means the feature is still *proposed* in the flow doc. Confirm scope before building it.
-- **New task?** Add a row in the right milestone with the next free ID, and a note if it needs one.
-- Branch names and dates go in your work log (`workspace/logs/<name>.md`), not here.
+- **New task?** Add a row in the right milestone and area with the next free ID, plus a note if needed.
+- Scope is the master flow up to §4.9. Deferred work is listed in MILESTONES.md.
 
 ---
 
 ## M0: Project setup
 
-| ID    | Task                                                       | Owner | Status      |
-|-------|------------------------------------------------------------|-------|-------------|
-| T-001 | Repo structure, .gitignore, README                         | Ali   | IN REVIEW   |
-| T-002 | Flask app factory, config, extensions, /api/health         | -     | TODO        |
-| T-003 | PostgreSQL (docker-compose), .env.example, first migration | -     | TODO        |
-| T-004 | React (Vite) scaffold: router, API client, layout          | -     | TODO        |
-| T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit     | -     | TODO        |
-| T-006 | Test setup: pytest + test DB, Vitest + RTL                 | -     | TODO        |
-| T-007 | CI on pull requests (GitHub Actions)                       | -     | TODO        |
-| T-008 | Get answers to open questions 1-4                          | -     | TODO        |
+**Shared**
+
+| ID    | Task                               | Owner | Status |
+|-------|------------------------------------|-------|--------|
+| T-001 | Repo structure, .gitignore, README | Ali   | DONE   |
 
 **Notes**
-- T-001: README setup steps get filled in by T-002, T-003, T-004.
+- M0 is done. Its remaining setup tasks (T-002 to T-009) moved to M1.
+
+---
+
+## M1: App setup and data model (§7)
+
+**Backend**
+
+| ID    | Task                                                       | Owner | Status |
+|-------|------------------------------------------------------------|-------|--------|
+| T-002 | Flask app factory, config, extensions, /api/health         | -     | TODO   |
+| T-003 | PostgreSQL (docker-compose), .env.example, first migration | -     | TODO   |
+| T-006 | pytest setup with a test database                          | -     | TODO   |
+| T-010 | CandidateAccount + CandidateProfile (unique CNIC)          | -     | TODO   |
+| T-011 | Profile section models                                     | -     | TODO   |
+| T-012 | BPS-15+ section models                                     | -     | TODO   |
+| T-013 | Document model + file storage service                      | -     | TODO   |
+| T-014 | Job + JobRequirement models                                | -     | TODO   |
+| T-015 | ApprovalRecord model                                       | -     | TODO   |
+| T-016 | Application, ApplicationSnapshot, StatusEvent              | -     | TODO   |
+| T-017 | AuditLog model + helper                                    | -     | TODO   |
+| T-018 | Seed data (departments, BPS, districts, qualifications)    | -     | TODO   |
+
+**Frontend**
+
+| ID    | Task                                              | Owner | Status |
+|-------|---------------------------------------------------|-------|--------|
+| T-004 | React (Vite) scaffold: router, API client, layout | Ali   | DONE   |
+| T-009 | Vitest + React Testing Library setup              | Ali   | DONE   |
+
+**Shared**
+
+| ID    | Task                                                   | Owner | Status      |
+|-------|--------------------------------------------------------|-------|-------------|
+| T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit | Ali   | IN PROGRESS |
+| T-007 | CI on pull requests (GitHub Actions)                   | -     | TODO        |
+| T-008 | Get answers to open questions                          | -     | TODO        |
+
+**Notes**
+- Do T-002 to T-004 first; everything else builds on them. They also fill in the README setup steps.
+- T-005: frontend half done (ESLint + Prettier in `frontend/`); Ruff/Black and pre-commit still to do.
+- T-007: run on pull requests into `develop` and `main`.
 - T-008: record decisions in MILESTONES.md.
-
----
-
-## M1: Data model
-
-| ID    | Task                                                    | Owner | Status |
-|-------|---------------------------------------------------------|-------|--------|
-| T-010 | CandidateAccount + CandidateProfile (unique CNIC)       | -     | TODO   |
-| T-011 | Profile section models                                  | -     | TODO   |
-| T-012 | Document model + file storage                           | -     | TODO   |
-| T-013 | Job + JobRequirement models                             | -     | TODO   |
-| T-014 | ApprovalRecord + Corrigendum models                     | -     | TODO   |
-| T-015 | Application, ApplicationSnapshot, StatusEvent models    | -     | TODO   |
-| T-016 | AuditLog model + helper                                 | -     | TODO   |
-| T-017 | Seed data (departments, BPS, districts, qualifications) | -     | TODO   |
-
-**Notes**
 - T-011: personal, contact/address, domicile, education, experience, skills, additional eligibility.
-- T-012: enforce file size and format limits.
-- T-015: unique constraint on (candidate, job).
+- T-012: professional registration, publications, references, statement of purpose.
+- T-013: enforce file size and format limits.
+- T-014: include quotas, fee, opening/closing dates, status, advertisement number.
+- T-016: unique (candidate, job); status list covers all expanded §4.9 statuses.
 
 ---
 
-## M2: Authentication
+## M2: Authentication (§4.3)
+
+**Backend**
 
 | ID    | Task                                         | Owner | Status |
 |-------|----------------------------------------------|-------|--------|
@@ -66,118 +88,128 @@ Claim a task before you write any code. Full steps are in [WORKFLOW.md](WORKFLOW
 | T-021 | OTP service (expiry, rate limit, SMS stub)   | -     | TODO   |
 | T-022 | Candidate OTP login, JWT, account recovery   | -     | TODO   |
 | T-023 | Staff login + roles                          | -     | TODO   |
-| T-024 | Signup / OTP / login pages                   | -     | TODO   |
-| T-025 | [P] NADRA CNIC verification interface        | -     | TODO   |
+| T-024 | [P] NADRA CNIC verification interface        | -     | TODO   |
+
+**Frontend**
+
+| ID    | Task                            | Owner | Status |
+|-------|---------------------------------|-------|--------|
+| T-025 | Signup / OTP / login pages      | Ali   | DONE   |
+| T-026 | Staff login page + route guards | -     | TODO   |
 
 **Notes**
 - T-020: CNIC format + duplicate check; signup creates the permanent profile.
-- T-023: roles are job creator, approver, screening staff, admin. Depends on open question 2.
-- T-025: stub until NADRA integration is available.
+- T-023: roles are job creator, approver, admin. Do this first; M3 depends on it. Depends on open question 2.
+- T-024: stub until NADRA integration is available.
+- T-025: built on the mock API (`src/api/mocks/authMock.js`). T-020 to T-022 must match its request/response shapes.
 
 ---
 
-## M3: Job creation, approval, publication
+## M3: Job creation, approval, publishing (§3.1–3.3)
+
+**Backend**
 
 | ID    | Task                                             | Owner | Status |
 |-------|--------------------------------------------------|-------|--------|
 | T-030 | Job draft API (requirements, quotas, fee, dates) | -     | TODO   |
-| T-031 | Admin UI: create / edit job                      | -     | TODO   |
-| T-032 | Approval workflow API (N-of-M, audit)            | -     | TODO   |
-| T-033 | Admin UI: approval inbox + review                | -     | TODO   |
-| T-034 | Publish: lock, ad number, schedule, auto-close   | -     | TODO   |
-| T-035 | [P] Corrigendum flow + applicant notification    | -     | TODO   |
+| T-031 | Approval workflow API (N-of-M, audit)            | -     | TODO   |
+| T-032 | Publish: lock, ad number, schedule, auto-close   | -     | TODO   |
+
+**Frontend**
+
+| ID    | Task                                       | Owner | Status |
+|-------|--------------------------------------------|-------|--------|
+| T-033 | Admin: create / edit job form              | -     | TODO   |
+| T-034 | Admin: approval inbox + review             | -     | TODO   |
+| T-035 | Admin: job list with status + publish view | -     | TODO   |
 
 **Notes**
-- T-032: approve / return with comments / reject.
-- T-034: attach newspaper advertisement.
+- T-031: approve / return with comments / reject.
+- T-032: attach newspaper advertisement. Published jobs are final (no corrigendum).
 
 ---
 
-## M4: Candidate portal: jobs and profile
+## M4: Candidate portal: jobs and profile (§4.1, 4.2, 4.4)
+
+**Backend**
 
 | ID    | Task                                     | Owner | Status |
 |-------|------------------------------------------|-------|--------|
 | T-040 | Job search API with filters + pagination | -     | TODO   |
-| T-041 | Landing page, latest jobs, search UI     | -     | TODO   |
-| T-042 | Job details page                         | -     | TODO   |
-| T-043 | Profile section APIs + edit history      | -     | TODO   |
-| T-044 | Profile UI (section forms, mobile-first) | -     | TODO   |
-| T-045 | Document vault UI (upload once, reuse)   | -     | TODO   |
-| T-046 | Age calculation utility + tests          | -     | TODO   |
+| T-041 | Job details API                          | -     | TODO   |
+| T-042 | Profile section APIs + edit history      | -     | TODO   |
+| T-043 | Document vault API (upload once, reuse)  | -     | TODO   |
+| T-044 | Age calculation utility + tests          | -     | TODO   |
 
-**Notes**
-- T-040: filters are BPS, department, location, education, employment type, deadline.
-- T-045: client-side compression before upload.
-- T-046: age from DOB as of closing date or advertisement cutoff date.
-
----
-
-## M5: Application flow
-
-| ID    | Task                                            | Owner | Status  |
-|-------|-------------------------------------------------|-------|---------|
-| T-050 | Eligibility engine service                      | -     | TODO    |
-| T-051 | Application check API + UI (missing items only) | -     | TODO    |
-| T-052 | Review and submit UI                            | -     | TODO    |
-| T-053 | Submit API: snapshot, application ID            | -     | TODO    |
-| T-054 | [P] Fee payment (online / challan)              | -     | TODO    |
-| T-055 | Application tracking API + UI                   | -     | TODO    |
-| T-056 | Edit / withdraw before deadline                 | -     | BLOCKED |
-
-**Notes**
-- T-050: core logic; compares JobRequirement to profile, needs thorough tests.
-- T-051: items filled here are saved back to the profile.
-- T-053: one application per CNIC per job.
-- T-056: waiting on open question 4.
-
----
-
-## M6: BPS-15+ resume tier
-
-| ID    | Task                                    | Owner | Status |
-|-------|-----------------------------------------|-------|--------|
-| T-060 | Resume upload + parser, prefill profile | -     | TODO   |
-| T-061 | Confirm parsed sections UI              | -     | TODO   |
-| T-062 | Resume builder UI                       | -     | TODO   |
-| T-063 | Resume PDF export                       | -     | TODO   |
-| T-064 | Higher-tier profile sections            | -     | TODO   |
-
-**Notes**
-- T-061: highlight low-confidence fields; fall back to builder if parsing fails.
-- T-064: professional registration, publications, references, statement of purpose.
-
----
-
-## M7: Screening and selection
-
-| ID    | Task                                         | Owner | Status |
-|-------|----------------------------------------------|-------|--------|
-| T-070 | Auto-screening at deadline                   | -     | TODO   |
-| T-071 | Manual scrutiny UI                           | -     | TODO   |
-| T-072 | Shortlist + objection window                 | -     | TODO   |
-| T-073 | Admit card PDF + test centre                 | -     | TODO   |
-| T-074 | Test / interview result entry                | -     | TODO   |
-| T-075 | Quota-wise merit list + objection window     | -     | TODO   |
-| T-076 | Document verification, medical, offer letter | -     | TODO   |
-
-**Notes**
-- T-070: reuses the eligibility engine (T-050).
-- T-073, T-074: depend on open question 3.
-
----
-
-## M8: Cross-cutting and release
+**Frontend**
 
 | ID    | Task                                 | Owner | Status |
 |-------|--------------------------------------|-------|--------|
-| T-080 | SMS + email on every status change   | -     | TODO   |
-| T-081 | Urdu / English (RTL for Urdu)        | -     | TODO   |
-| T-082 | Per-job reports                      | -     | TODO   |
-| T-083 | Admin audit trail viewer             | -     | TODO   |
-| T-084 | Security review                      | -     | TODO   |
-| T-085 | Low-bandwidth performance            | -     | TODO   |
-| T-086 | Deployment (Docker, config, backups) | -     | TODO   |
+| T-045 | Landing page, latest jobs, search UI | Ali   | DONE   |
+| T-046 | Job details page                     | Ali   | DONE   |
+| T-047 | Profile section forms (mobile-first) | Ali   | DONE   |
+| T-048 | Document vault UI                    | Ali   | DONE   |
 
 **Notes**
-- T-082: received, eligible, shortlisted, quota-wise breakdown.
-- T-084: uploads, rate limits, authorization, personal data.
+- T-040: filters are BPS, department, location, education, employment type, deadline.
+- T-044: age from DOB as of closing date or advertisement cutoff date.
+- T-048: client-side compression before upload.
+- T-045 to T-048: UI built early on mock data. T-040 to T-043 must match the shapes in `src/api/mocks/`.
+
+---
+
+## M5: BPS-15+ resume tier (§4.5)
+
+**Backend**
+
+| ID    | Task                                     | Owner | Status |
+|-------|------------------------------------------|-------|--------|
+| T-050 | Resume upload + parser, prefill profile  | -     | TODO   |
+| T-051 | Resume builder API (same profile schema) | -     | TODO   |
+| T-052 | Resume PDF export                        | -     | TODO   |
+| T-053 | BPS-15+ section APIs                     | -     | TODO   |
+
+**Frontend**
+
+| ID    | Task                                    | Owner | Status |
+|-------|-----------------------------------------|-------|--------|
+| T-054 | Resume upload + confirm parsed sections | -     | TODO   |
+| T-055 | Resume builder UI                       | -     | TODO   |
+| T-056 | BPS-15+ section forms                   | -     | TODO   |
+
+**Notes**
+- T-050: store a confidence score per parsed field.
+- T-054: highlight low-confidence fields; fall back to the builder if parsing fails.
+- Tier boundary depends on open question 1.
+
+---
+
+## M6: Application flow and tracking (§4.6–4.9)
+
+**Backend**
+
+| ID    | Task                                            | Owner | Status |
+|-------|-------------------------------------------------|-------|--------|
+| T-060 | Eligibility engine service                      | -     | TODO   |
+| T-061 | Application check API (missing items only)      | -     | TODO   |
+| T-062 | Submit API: snapshot, application ID            | -     | TODO   |
+| T-063 | [P] Fee payment (online / challan)              | -     | TODO   |
+| T-064 | Application tracking API (status timeline)      | -     | TODO   |
+| T-065 | Admin: applications per job + status update API | -     | TODO   |
+
+**Frontend**
+
+| ID    | Task                                    | Owner | Status      |
+|-------|-----------------------------------------|-------|-------------|
+| T-066 | Application check UI                    | Ali   | DONE        |
+| T-067 | Review and submit UI (declaration, fee) | Ali   | DONE        |
+| T-068 | Tracking UI + admin status update UI    | Ali   | IN PROGRESS |
+
+**Notes**
+- T-060: core logic; compares JobRequirement to profile, needs thorough tests.
+- T-061: items filled here are saved back to the profile.
+- T-062: one application per CNIC per job; profile data frozen into the snapshot; no edit or withdraw after submit.
+- T-065: manual status changes until automated screening (deferred); every change writes a StatusEvent.
+- T-066, T-067: UI built early on mock data; the mock eligibility check (`eligibilityMock.js`) shows T-060 the expected output.
+- T-068: candidate tracking UI done; admin status update UI still to do (needs the admin area).
+- T-066 to T-068: submitted applications are final; no edit or withdraw UI.

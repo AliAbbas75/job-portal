@@ -1,0 +1,44 @@
+.summary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.title {
+  color: var(--pr-black);
+  font-size: var(--text-xl);
+}
+
+.lg .title {
+  font-size: var(--text-3xl);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.meta svg {
+  color: var(--pr-heritage-green);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

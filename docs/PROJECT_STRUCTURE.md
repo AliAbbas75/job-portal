@@ -43,12 +43,14 @@ job-portal/
 │   ├── .env.example              ⏳ T-002
 │   └── wsgi.py                   ⏳ T-002  entry point
 │
-└── frontend/                     (Vite files such as package.json and vite.config.js ⏳ T-004)
+└── frontend/                     ✅ Vite app: package.json, vite.config.js, eslint.config.js, .env.example
     ├── public/                   ✅ static files served as-is (favicon, robots.txt)
-    ├── index.html                ⏳ T-004
+    ├── index.html                ✅
     └── src/
-        ├── main.jsx  App.jsx     ⏳ T-004
+        ├── main.jsx  App.jsx     ✅ entry point, providers + router
+        ├── setupTests.js         ✅ Vitest setup
         ├── api/                  ✅ Axios client + one module per backend resource
+        │   └── mocks/            ✅ in-browser mock backend (VITE_USE_MOCKS=true). Mock mode only.
         ├── pages/                ✅ route-level screens, grouped by who uses them
         │   ├── public/           ✅ landing, job search, job details, signup/login
         │   ├── candidate/        ✅ profile, application check, submit, tracking
@@ -62,7 +64,7 @@ job-portal/
         ├── routes/               ✅ route table + route guards (candidate/admin)
         ├── i18n/                 ✅ en.json / ur.json and i18n setup
         ├── utils/                ✅ pure helpers (formatters, validators)
-        ├── styles/               ✅ global styles, theme variables
+        ├── styles/               ✅ tokens.css (brand colours, type, spacing) + global.css
         └── assets/               ✅ images, icons, fonts imported by code
 ```
 
@@ -85,7 +87,9 @@ job-portal/
 | A piece of UI used on 2+ pages | `frontend/src/components/<group>/<Name>.jsx` | `components/forms/CnicInput.jsx` |
 | UI used by only one page | A folder next to that page | `pages/candidate/ProfilePage/EducationSection.jsx` |
 | Stateful logic reused by components | `frontend/src/hooks/use<Name>.js` | `hooks/useApplicationCheck.js` |
-| User-facing text | `frontend/src/i18n/en.json` **and** `ur.json` | `"jobs.apply": "Apply"` |
+| User-facing text | `frontend/src/i18n/en.json` (and `ur.json` once Urdu is in scope) | `"jobs.apply": "Apply"` |
+| Styles for one component or page | `<Name>.module.css` next to it (CSS Modules) | `components/common/Button.module.css` |
+| Mock response for an endpoint not built yet | `frontend/src/api/mocks/<resource>Mock.js` | `api/mocks/jobsMock.js` |
 | Product/tech documentation | `docs/` | `docs/decisions.md` |
 | Task status, milestones, work logs | `workspace/` | |
 
@@ -113,7 +117,8 @@ React page → src/api/* → controller → service → model → PostgreSQL
 | `controllers/` | services, schemas, auth decorators | run queries directly, contain business rules |
 | `scheduler/` | services | contain business rules itself |
 | `utils/` | standard library only | import from any app layer |
-| React components | hooks, api modules, other components | call Axios directly, hard-code user-facing text |
+| React components | hooks, api modules, other components | call Axios directly, hard-code user-facing text or colours |
+| `api/mocks/` | reference data, other mocks | be imported by anything outside `src/api/` |
 
 Keep controllers thin. A controller function should read like: validate input → call one service → serialize → return.
 
@@ -131,9 +136,11 @@ Keep controllers thin. A controller function should read like: validate input �
 | Hooks | `useCamelCase.js` | `useAuth.js` |
 | Other JS files | `camelCase.js` | `api/jobs.js`, `utils/formatDate.js` |
 | Frontend tests | next to the file, `.test.jsx` | `JobCard.test.jsx` |
+| CSS Modules | `<Name>.module.css`, camelCase class names | `.itemTitle` |
+| Page components | default export (lazy loading); everything else named exports | `export default function ProfilePage()` |
 | Migrations | message starts with task ID | `flask db migrate -m "T-013 add jobs tables"` |
 
-Use the same domain words everywhere: `job`, `candidate_profile`, `application`, `snapshot`, `requirement`, `corrigendum`, `approval`, `status_event`, matching the data model in the flow doc. Don't mix synonyms (`vacancy`/`post`/`job`, `user`/`applicant`/`candidate`).
+Use the same domain words everywhere: `job`, `candidate_profile`, `application`, `snapshot`, `requirement`, `approval`, `status_event`, matching the data model in the flow doc. Don't mix synonyms (`vacancy`/`post`/`job`, `user`/`applicant`/`candidate`).
 
 ## 5. Repo hygiene rules
 

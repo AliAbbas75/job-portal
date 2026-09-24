@@ -4,41 +4,44 @@ This file is the entry point for everyone working on this repo: the five team me
 
 ## 1. Before you touch any code (mandatory)
 
-Every change follows this order. No exceptions, including for small fixes.
+Work is claimed by **milestone** (development phase), not by single task. Every change follows this order, including small fixes.
 
-1. **Pull** the latest `main`: `git checkout main && git pull`
-2. **Claim a task** in [workspace/TASKS.md](workspace/TASKS.md): set Owner and Status `IN PROGRESS`, commit and push that change on its own **before** starting work. If the task doesn't exist, add it first.
-3. **Branch**: `git checkout -b <name>/<task-id>-<short-desc>` (e.g. `hadi/T-020-signup-api`).
-4. **Do the work.**
-5. **Log it** in your own file under [workspace/logs/](workspace/logs/): what changed, which files, migrations, follow-ups.
-6. **Commit** with the task ID in the message, then **push** and open a pull request into `main`.
-7. **Update the task** to `IN REVIEW`, then `DONE` after merge.
+1. **Claim a milestone** in [workspace/MILESTONES.md](workspace/MILESTONES.md) (alone or as a co-owner) and push that one-file change to `develop` before starting.
+2. **Work on the milestone branch** (`m<N>-<name>`, e.g. `m2-authentication`), created from `develop`.
+3. **Mark your tasks** in [workspace/TASKS.md](workspace/TASKS.md) on that branch: your name + `IN PROGRESS`, then `DONE`.
+4. **Log your work** in your own file under [workspace/logs/](workspace/logs/): what changed, which files, migrations, follow-ups.
+5. **Commit with the task ID** and push to the milestone branch.
+6. **When the milestone is done:** PR into `develop` (squash, reviewed by a non-owner), then a release PR from `develop` into `main` (merge commit + tag).
 
-The full procedure, with templates and conflict rules, is in [workspace/WORKFLOW.md](workspace/WORKFLOW.md).
+The full procedure, with commands, branch rules and repo settings, is in [workspace/WORKFLOW.md](workspace/WORKFLOW.md).
 
 ### Rules for Claude Code sessions
 
-- At the start of a session, find out which team member you're working for (ask if it isn't clear; don't guess from `git config user.name`). Use their name for task ownership, their log file and their branch prefix.
-- Before editing code, confirm a task in `workspace/TASKS.md` is claimed by that person and marked `IN PROGRESS`. If not, claim it (or create it) first and tell the user.
-- Never start work on a task owned by someone else unless the user explicitly says it's been handed over; record the handover as a note under that milestone's table in TASKS.md.
-- Before committing, append the entry to the member's log in `workspace/logs/` and include it in the same commit.
-- Commit and push only when the user asks. Never force-push to `main`.
+- At the start of a session, find out which team member you're working for and which milestone/task (ask if it isn't clear; don't guess from `git config user.name`).
+- Before editing code, confirm that person is an owner of the milestone in `workspace/MILESTONES.md`, that you're on that milestone's branch, and that the task in `workspace/TASKS.md` has their name and `IN PROGRESS` (set it on the branch if not, and tell the user).
+- If the milestone isn't claimed, stop and tell the user. Claiming means pushing to `develop`, so only do it when they ask.
+- Never work on a task another owner has taken unless the user says it's been handed over; add a note under that milestone's table in TASKS.md.
+- Only claim rows in `MILESTONES.md` go directly onto `develop`. Never put code or `TASKS.md` changes directly on `develop` or `main`.
+- Before committing, add the entry to the member's log in `workspace/logs/` and include it in the same commit.
+- Commit and push only when the user asks. Never force-push any shared branch, and never push to `main`.
 
 ## 2. Team
 
-| Member  | Branch prefix | Log file |
-|---------|---------------|----------|
-| Ali     | `ali/`        | [workspace/logs/ali.md](workspace/logs/ali.md) |
-| Anum    | `anum/`       | [workspace/logs/anum.md](workspace/logs/anum.md) |
-| Hadi    | `hadi/`       | [workspace/logs/hadi.md](workspace/logs/hadi.md) |
-| Malaika | `malaika/`    | [workspace/logs/malaika.md](workspace/logs/malaika.md) |
-| Umaima  | `umaima/`     | [workspace/logs/umaima.md](workspace/logs/umaima.md) |
+| Member  | Log file |
+|---------|----------|
+| Ali     | [workspace/logs/ali.md](workspace/logs/ali.md) |
+| Anum    | [workspace/logs/anum.md](workspace/logs/anum.md) |
+| Hadi    | [workspace/logs/hadi.md](workspace/logs/hadi.md) |
+| Malaika | [workspace/logs/malaika.md](workspace/logs/malaika.md) |
+| Umaima  | [workspace/logs/umaima.md](workspace/logs/umaima.md) |
 
-Use the name exactly as spelled above as the Owner on the task board.
+Use the names exactly as spelled above in MILESTONES.md (Owners) and TASKS.md (Owner).
 
 ## 3. What we're building
 
 A recruitment portal for Pakistan Railways: admins create, approve and publish jobs; candidates keep one permanent profile (keyed by CNIC) and apply to jobs; staff screen applications through to merit lists and offers.
+
+**Current scope: the master flow up to §4.9 Application Tracking** (milestones M0–M6). Screening (§5), notifications, Urdu, reports and deployment (§6) are deferred. Don't build them unless a milestone for them exists in MILESTONES.md.
 
 The source of truth for the product flow is [docs/railway-job-portal-master-flow.md](docs/railway-job-portal-master-flow.md) (diagram: [docs/job-portal-initial-flow.drawio](docs/job-portal-initial-flow.drawio)). Items tagged **[Proposed]** there are not yet signed off. Don't build them as final behaviour without checking the task notes or [workspace/MILESTONES.md](workspace/MILESTONES.md).
 
@@ -46,14 +49,14 @@ The source of truth for the product flow is [docs/railway-job-portal-master-flow
 
 1. **One permanent `CandidateProfile` per CNIC.** It's created at signup and never deleted with a job or application. CNIC is unique at the database level.
 2. **Profile, Job and Application are separate entities.** An application stores only what the job needs, plus a reference to the candidate.
-3. **Submitted applications are frozen.** On submit, write an `ApplicationSnapshot`. Later profile edits must not change a submitted application.
+3. **Submitted applications are final.** On submit, write an `ApplicationSnapshot`. Later profile edits must not change a submitted application, and candidates can't edit or withdraw it. Don't add edit or withdraw endpoints.
 4. **One application per CNIC per job.** Enforce with a unique constraint, not only in the UI.
 5. **Eligibility runs on structured data.** `JobRequirement` rows (qualification level, discipline, min marks, experience years, age range, domicile, documents) are compared to structured profile fields. Uploaded resumes are supporting material, never the eligibility source.
 6. **BPS is a filter and classification, not an eligibility rule.** Below BPS-15 and BPS-15 and above share one data model; they differ only in how data is entered and which extra sections appear.
 7. **Age is never collected.** Calculate it from DOB, as of the job's closing date (or the advertisement's cutoff date if set).
 8. **A candidate never has to complete the whole profile to apply.** The application check shows only what's missing for that job.
-9. **Approved jobs are locked.** Any change after publication goes through a `Corrigendum` with its own approval.
-10. **Every admin action is audited** (create, approve, return, reject, publish, corrigendum, screening decisions) and every application status change writes a `StatusEvent`.
+9. **Approved jobs are locked, and published jobs are final.** No edits after publication and no corrigendum process. Don't add edit endpoints for published jobs.
+10. **Every admin action is audited** (create, approve, return, reject, publish, application status changes) and every application status change writes a `StatusEvent`.
 
 ## 4. Tech stack
 
@@ -140,8 +143,12 @@ workspace/             # tasks, milestones, workflow, per-member logs
 
 **React**
 - Functional components and hooks only. `PascalCase.jsx` for components, `camelCase.js` for everything else.
-- All user-facing text goes through `i18n/` (English and Urdu are both required).
+- All user-facing text goes through `i18n/`, never hard-coded. English only for now; Urdu is deferred but must be addable without touching components.
 - Build mobile-first and keep bundles small; many candidates are on low-bandwidth connections.
+- **Follow the brand guide** ([docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md)): only the 8 brand colours, via the CSS variables in `frontend/src/styles/tokens.css` (never raw hex in components); Instrument Sans; no gradients; no shadows (use borders); gold and pumpkin only for accents, badges and backgrounds, never body text on white.
+- Style components with CSS Modules (`Name.module.css` next to the component).
+- **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }`; the UI maps `code` to `errors.<code>` in `i18n/en.json`.
+- Frontend checks before pushing: `npm run lint`, `npm run format:check`, `npm test`, `npm run build` (run in `frontend/`).
 
 **Data and security**
 - CNIC, phone and uploaded documents are personal data. Don't log them, don't put them in URLs, don't commit real samples.
@@ -168,8 +175,10 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 
 ## 8. Git
 
-- `main` is always deployable. All code reaches `main` through a pull request reviewed by at least one other team member.
-- The only direct pushes to `main` allowed are task-board claims/status changes in `workspace/TASKS.md` (see WORKFLOW.md).
+- **`main`**: released milestones only. Changes arrive only by a PR from `develop`, merged with a merge commit and tagged (`m2`). Never push to it directly.
+- **`develop`**: integration branch and GitHub default. Milestone branches merge in by PR (squash, reviewed by a non-owner). The only direct push allowed is a claim change to `workspace/MILESTONES.md`.
+- **`m<N>-<name>`**: one branch per milestone, shared by its owners. `git pull --rebase` before pushing; merge `develop` in at least weekly.
+- **`fix/<desc>`**: fixes outside an open milestone, PR into `develop`.
 - Commit message format: `<type>(<scope>): <summary> [T-###]`
   - types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
   - example: `feat(auth): add CNIC signup endpoint [T-020]`
@@ -177,8 +186,9 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 ## 9. Key files
 
 - [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md): where code goes, naming, repo hygiene
+- [docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md): colours, type, logo rules for all UI
 - [workspace/WORKFLOW.md](workspace/WORKFLOW.md): the step-by-step team process
-- [workspace/TASKS.md](workspace/TASKS.md): central task board
-- [workspace/MILESTONES.md](workspace/MILESTONES.md): milestones and open questions
+- [workspace/MILESTONES.md](workspace/MILESTONES.md): milestone claim board, scope, open questions
+- [workspace/TASKS.md](workspace/TASKS.md): task checklist per milestone
 - [workspace/logs/](workspace/logs/): one work log per member
 - [docs/railway-job-portal-master-flow.md](docs/railway-job-portal-master-flow.md): product flow

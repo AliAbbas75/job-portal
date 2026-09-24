@@ -10,11 +10,11 @@ This table is the only thing pushed directly to `develop`. Everything else goes 
 
 | ID | Milestone                           | Owners | Branch                | Status      | Depends on |
 |----|-------------------------------------|--------|-----------------------|-------------|------------|
-| M0 | Project setup                       | Ali    | `m0-project-setup`    | In progress | -          |
-| M1 | Data model                          | -      | `m1-data-model`       | Not started | M0         |
+| M0 | Project setup                       | Ali    | `m0-project-setup`    | Done        | -          |
+| M1 | App setup and data model            | Ali    | `m1-foundation`       | In progress | M0         |
 | M2 | Authentication                      | -      | `m2-authentication`   | Not started | M1         |
 | M3 | Job creation, approval, publishing  | -      | `m3-job-admin`        | Not started | M1, T-023  |
-| M4 | Candidate portal: jobs and profile  | -      | `m4-candidate-portal` | Not started | M1         |
+| M4 | Candidate portal: jobs and profile  | Ali    | `m4-candidate-portal` | In progress | M1         |
 | M5 | BPS-15+ resume tier                 | -      | `m5-resume-tier`      | Not started | M4         |
 | M6 | Application flow and tracking       | -      | `m6-applications`     | Not started | M3, M4     |
 
@@ -37,18 +37,16 @@ Up to three milestones can run at once (M2, M3, M4, then M5 and M6). With five p
 
 Section numbers (§) refer to the master flow.
 
-### M0: Project setup
-Repo structure, Flask and React skeletons, PostgreSQL, tooling, CI.
+### M0: Project setup ✅
+Repo structure, team workflow, task board, structure guide, and product flow updates.
+
+### M1: App setup and data model
+Flask and React skeletons, PostgreSQL, tooling and CI, then all in-scope entities from §7 as SQLAlchemy models with migrations and seed data.
 
 **Done when**
 - `flask run` serves `/api/health`; `npm run dev` shows the app shell calling it.
 - A new team member can go from clone to running both apps using only the README.
 - CI runs lint and tests on pull requests into `develop` and `main`.
-
-### M1: Data model
-All in-scope entities from §7 as SQLAlchemy models with migrations and seed data. Backend only.
-
-**Done when**
 - `flask db upgrade` builds the full schema on an empty database.
 - Unique constraints exist for CNIC and for (candidate, job) applications.
 - The application status list includes the expanded §4.9 statuses, so later phases need no schema change.
@@ -124,3 +122,6 @@ Add a line whenever a milestone changes status, owners or scope.
 | 2026-09-24 | All       | Re-planned as phases up to §4.9; corrigendum removed; §5 and §6 deferred; milestone-based claiming | Ali |
 | 2026-09-24 | M0        | Claimed by Ali | Ali |
 | 2026-09-24 | M6        | Edit/withdraw application removed (open question 4 answered: no) | Ali |
+| 2026-09-24 | M0        | Done (repo structure + workflow). Setup tasks T-002 to T-009 moved to M1 | Ali |
+| 2026-09-24 | M1        | Renamed "App setup and data model", branch `m1-foundation` | Ali |
+| 2026-09-24 | M1, M4    | Claimed by Ali for frontend work; backend tasks open for co-owners. M4 UI starts early on mock API data | Ali |

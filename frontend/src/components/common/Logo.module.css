@@ -1,0 +1,29 @@
+.logo {
+  display: inline-flex;
+  flex-direction: column;
+  padding: var(--space-1) 0;
+  color: var(--pr-heritage-green);
+  line-height: 1.05;
+}
+
+.wordmark {
+  font-size: 1.25rem;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tag {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.inverted {
+  color: var(--pr-white);
+}
+
+.inverted .tag {
+  color: var(--pr-signal-gold);
+}
