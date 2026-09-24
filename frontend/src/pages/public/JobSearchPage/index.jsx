@@ -9,7 +9,6 @@ import { t } from '../../../i18n';
 import { FILTER_KEYS } from './filters';
 import { HomeHero } from './HomeHero';
 import { JobListItem } from './JobListItem';
-import styles from './JobSearchPage.module.css';
 import { MoreFilters } from './MoreFilters';
 import { SearchCard } from './SearchCard';
 
@@ -56,13 +55,9 @@ export default function JobSearchPage() {
         />
       </HomeHero>
 
-      <section
-        ref={resultsRef}
-        className={`container ${styles.results}`}
-        aria-labelledby="job-results-heading"
-      >
-        <div className={styles.resultsHeader}>
-          <h2 id="job-results-heading" className={styles.count} aria-live="polite">
+      <section ref={resultsRef} className="page pt-8" aria-labelledby="job-results-heading">
+        <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 border-b border-heritage pb-3">
+          <h2 id="job-results-heading" className="text-lg text-black" aria-live="polite">
             {data ? t('jobs.resultCount', { count: data.total }) : ' '}
           </h2>
           <MoreFilters
@@ -90,13 +85,13 @@ export default function JobSearchPage() {
         )}
         {data && data.total > 0 && (
           <>
-            <ul className={styles.list} aria-busy={results.loading}>
+            <ul aria-busy={results.loading}>
               {data.items.map((job) => (
                 <JobListItem key={job.id} job={job} />
               ))}
             </ul>
             {data.items.length < data.total && (
-              <div className={styles.more}>
+              <div className="flex justify-center pt-8">
                 <Button
                   variant="secondary"
                   loading={results.loading}

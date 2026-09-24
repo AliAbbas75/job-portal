@@ -2,7 +2,6 @@ import { CheckboxField } from '../../../components/forms/CheckboxField';
 import { TextField } from '../../../components/forms/TextField';
 import { t } from '../../../i18n';
 import { isBlank, isValidEmail } from '../../../utils/validators';
-import styles from './ProfilePage.module.css';
 import { SectionForm } from './SectionForm';
 
 function validate(draft) {
@@ -21,7 +20,7 @@ export function ContactSection({ profile, onSaved }) {
           Boolean(draft.currentAddress) && draft.currentAddress === draft.permanentAddress;
         return (
           <>
-            <div className={styles.grid}>
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
               <TextField
                 label={t('fields.mobile')}
                 value={draft.mobile}

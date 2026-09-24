@@ -17,6 +17,53 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-24 | Frontend: Tailwind v4 + 4-item dropdowns (M1/M4)
+- **Milestone:** M1 + M4 frontend (branch m1-foundation)
+- **Status:** Done
+- **What changed:**
+  - `frontend/src/index.css`: new single stylesheet. Tailwind v4 import; `@theme` removes the default palette and all shadows and defines only the 8 brand colours, Instrument Sans, radii and page width; base styles; `page` and `dropdown-list` utilities
+  - Deleted `src/styles/` (tokens.css, global.css) and all 22 `*.module.css` files; every component and page now styles with Tailwind classes
+  - `src/components/forms/Select.jsx` (new): accessible custom dropdown (WAI-ARIA select-only combobox: arrows, Home/End, Enter/Space, Escape, type-ahead) that always shows 4 options and scrolls beyond; `SelectField` now wraps it; `MoreFilters` uses it; no native `<select>` left
+  - `SelectField` `onChange` now receives the value (not an event); callers updated (gender, province, district, qualification, search filters)
+  - `src/utils/cx.js` (new): class-name joiner
+  - `DocumentUpload`: new `divider` prop (used by the eligibility check list)
+  - Tests: `Select.test.jsx` (5 tests); search test updated for the custom dropdown; jsdom `scrollIntoView` stub in `setupTests.js` (26 tests total)
+  - `vite.config.js` (Tailwind plugin), `.prettierrc.json` (Tailwind class sorting)
+  - `CLAUDE.md`, `docs/PROJECT_STRUCTURE.md`: Tailwind + single-stylesheet rules, dropdown rule, no conflicting utilities
+  - `workspace/TASKS.md`, `workspace/MILESTONES.md`: T-008 moved out of M1 to the Open questions table
+- **Database:** none
+- **Dependencies:** dev: `tailwindcss` 4.3.3, `@tailwindcss/vite` 4.3.3, `prettier-plugin-tailwindcss` 0.8.1 (requested move to Tailwind v4)
+- **Commits:**
+  - `refactor(frontend): Tailwind v4 single stylesheet and 4-item Select dropdown [M1]`
+- **How to test:** `cd frontend && npm install && npm run dev`; open any dropdown (hero filters, sort/type/qualification/deadline, profile gender/province/district/qualification) and check that 4 options show and the rest scroll. `npm test`, `npm run lint`, `npm run build` pass.
+- **Notes / follow-ups:** Screenshots caught two regressions from utility conflicts (timeline last marker offset, current step not bold), both fixed; rule added to CLAUDE.md.
+
+### 2026-09-24 | M1 backend: Flask app, database, data model, seed, tests, CI (T-002, T-003, T-005–T-007, T-010–T-018)
+- **Milestone:** M1 (branch m1-foundation)
+- **Status:** Done, except T-008 (open questions, needs stakeholders)
+- **What changed:**
+  - `backend/app/__init__.py`, `config.py`, `extensions.py`, `commands.py`, `wsgi.py`: app factory, env-based config (fails fast if secrets/DB URL missing), SQLAlchemy naming convention, `flask seed`
+  - `backend/app/controllers/health_controller.py`, `controllers/errors.py`, `utils/errors.py`: `GET /api/health`; every error returned as `{code, message}` (matches frontend `errors.<code>`)
+  - `backend/app/models/`: `reference.py` (departments, provinces, districts, qualification levels, document types), `staff_user.py`, `candidate.py` (account + permanent profile), `profile_records.py` (education, experience, registrations, publications, references), `document.py`, `job.py` (job, requirement, quotas, required documents, domicile provinces), `approval.py`, `application.py` (application, snapshot, status events), `audit_log.py`, `enums.py`, `base.py`
+  - Domain rules as DB constraints: unique CNIC + format check, one profile per account, one application per profile per job, one current document per type (partial unique index), BPS 1–22, closing after opening, valid age range, statuses limited to §4.9 (no "withdrawn")
+  - `backend/app/services/`: `health_service.py`, `audit_service.py` (T-017 helper), `storage_service.py` (T-013: type by file signature, 2 MB limit, random names), `reference_seed_service.py` (T-018, idempotent upsert, same codes as frontend mocks)
+  - `backend/migrations/`: Alembic setup; `49eef685e076_t_010_initial_data_model.py` (hand-added `application_no_seq`); `env.py` deprecated call removed
+  - `backend/tests/`: conftest rebuilds the test DB from migrations each run; 39 tests across models, services, controllers
+  - `docker-compose.yml`, `backend/scripts/create_test_db.sql`: PostgreSQL 16 on host port 5433 + test database
+  - `backend/requirements.txt`, `requirements-dev.txt`, `pyproject.toml`, `.env.example`
+  - `.pre-commit-config.yaml` (ruff, black, eslint, prettier), `.github/workflows/ci.yml` (backend + frontend jobs)
+  - `README.md` (database, backend, hooks setup), `docs/PROJECT_STRUCTURE.md` (backend items done; migration gotchas), `workspace/TASKS.md`
+- **Database:** migration `49eef685e076` (all M1 tables); `flask db check` reports no drift; downgrade/upgrade round trip tested
+- **Dependencies:** Flask, Flask-SQLAlchemy, SQLAlchemy, Flask-Migrate/Alembic, flask-marshmallow, marshmallow(-sqlalchemy), Flask-JWT-Extended, psycopg 3, python-dotenv; dev: pytest, ruff, black, pre-commit. All in CLAUDE.md's stack.
+- **Env vars:** `DATABASE_URL`, `TEST_DATABASE_URL`, `SECRET_KEY`, `JWT_SECRET_KEY`, `UPLOAD_FOLDER`, `FLASK_APP`, `FLASK_ENV`
+- **Commits:**
+  - `feat(backend): Flask app, PostgreSQL data model, seed, tests and CI [T-002]`
+- **How to test:** `docker compose up -d db`, then in `backend/`: `flask db upgrade && flask seed && pytest` (39 passed); `flask run` → `/api/health` returns `{"status": "ok", "database": true}`, also via the Vite proxy at `localhost:5173/api/health`
+- **Notes / follow-ups:**
+  - Found and fixed: a CHECK that evaluates to NULL passes in SQL; the experience-dates rule now requires `end_date IS NOT NULL` for past jobs
+  - District list is a starter set; load the full official list before launch
+  - CI workflow runs for the first time on the next push/PR; check the Actions tab
+
 ### 2026-09-24 | Frontend: scaffold, brand theme and candidate pages (T-004, T-005, T-009, T-025, T-045–T-048, T-066–T-068)
 - **Milestone:** M1 + M4 frontend (branch m1-foundation)
 - **Status:** Done, except T-005 (Python half) and T-068 (admin status UI)

@@ -23,7 +23,6 @@ import {
   provinceName,
   qualificationName,
 } from '../../../utils/referenceLabels';
-import styles from './ApplicationReviewPage.module.css';
 import { ReviewSection } from './ReviewSection';
 
 async function loadAll(jobId) {
@@ -49,7 +48,7 @@ export default function ApplicationReviewPage() {
 
   if (error) {
     return (
-      <div className="container">
+      <div className="page">
         <ErrorState error={error} onRetry={reload} />
       </div>
     );
@@ -86,13 +85,13 @@ export default function ApplicationReviewPage() {
   }
 
   return (
-    <div className={`container ${styles.page}`}>
+    <div className="mx-auto flex w-full max-w-215 flex-col gap-5 px-4 pt-8">
       <ApplySteps current="review" />
       <div>
-        <h1 className={styles.title}>{t('review.title')}</h1>
+        <h1 className="text-2xl">{t('review.title')}</h1>
         <p>{t('review.lead')}</p>
       </div>
-      <div className={styles.jobCard}>
+      <div className="rounded-md bg-cream p-4">
         <JobSummary job={job} />
       </div>
 
@@ -125,7 +124,7 @@ export default function ApplicationReviewPage() {
         ]}
       />
       <ReviewSection title={t('profile.sections.education')} editTo={editLink('education')}>
-        <ul className={styles.entries}>
+        <ul className="grid list-disc gap-2 pl-5">
           {profile.education.map((e) => (
             <li key={e.id}>
               <strong>{qualificationName(ref, e.level)}</strong> · {e.discipline} ·{' '}
@@ -140,7 +139,7 @@ export default function ApplicationReviewPage() {
       </ReviewSection>
       {profile.experience.length > 0 && (
         <ReviewSection title={t('profile.sections.experience')} editTo={editLink('experience')}>
-          <ul className={styles.entries}>
+          <ul className="grid list-disc gap-2 pl-5">
             {profile.experience.map((e) => (
               <li key={e.id}>
                 <strong>{e.designation}</strong> · {e.organization}
@@ -150,7 +149,7 @@ export default function ApplicationReviewPage() {
         </ReviewSection>
       )}
       <ReviewSection title={t('review.documentsTitle')} editTo={editLink('documents')}>
-        <ul className={styles.entries}>
+        <ul className="grid list-disc gap-2 pl-5">
           {job.requirements.documents.map((type, i) => (
             <li key={type}>
               <strong>{documentName(ref, type)}</strong> · {jobDocuments[i]?.fileName}
@@ -159,12 +158,15 @@ export default function ApplicationReviewPage() {
         </ul>
       </ReviewSection>
 
-      <section className={styles.declaration} aria-labelledby="declaration-title">
-        <h2 id="declaration-title" className={styles.sectionTitle}>
+      <section
+        className="flex flex-col gap-4 rounded-md border-2 border-heritage bg-surface p-5"
+        aria-labelledby="declaration-title"
+      >
+        <h2 id="declaration-title" className="text-lg">
           {t('review.declarationTitle')}
         </h2>
         {job.fee > 0 && (
-          <p className={styles.fee}>
+          <p className="font-bold [&>span]:font-normal">
             {t('review.fee', { amount: formatCurrency(job.fee) })}
             <span> {t('review.feeNote')}</span>
           </p>
@@ -185,7 +187,7 @@ export default function ApplicationReviewPage() {
           {t('review.finalBody')}
         </Alert>
         {submitError && <Alert variant="error">{errorMessage(submitError)}</Alert>}
-        <div className={styles.actions}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <Button to={paths.applyCheck(jobId)} variant="ghost">
             {t('review.back')}
           </Button>

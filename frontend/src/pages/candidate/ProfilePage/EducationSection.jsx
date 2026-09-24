@@ -4,7 +4,6 @@ import { t } from '../../../i18n';
 import { qualificationName } from '../../../utils/referenceLabels';
 import { isBlank } from '../../../utils/validators';
 import { ListSection } from './ListSection';
-import styles from './ProfilePage.module.css';
 
 const EMPTY = { level: '', discipline: '', institution: '', year: '', marksPercent: '' };
 const thisYear = new Date().getFullYear();
@@ -44,7 +43,7 @@ export function EducationSection({ profile, reference, onSaved }) {
         }),
       })}
       renderFields={({ draft, setField, errors }) => (
-        <div className={styles.grid}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
           <SelectField
             label={t('fields.qualification')}
             placeholder={t('common.select')}
@@ -53,7 +52,7 @@ export function EducationSection({ profile, reference, onSaved }) {
               label: l.name,
             }))}
             value={draft.level}
-            onChange={(e) => setField('level')(e.target.value)}
+            onChange={setField('level')}
             error={errors.level}
             required
           />

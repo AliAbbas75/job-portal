@@ -11,7 +11,7 @@ This table is the only thing pushed directly to `develop`. Everything else goes 
 | ID | Milestone                           | Owners | Branch                | Status      | Depends on |
 |----|-------------------------------------|--------|-----------------------|-------------|------------|
 | M0 | Project setup                       | Ali    | `m0-project-setup`    | Done        | -          |
-| M1 | App setup and data model            | Ali    | `m1-foundation`       | In progress | M0         |
+| M1 | App setup and data model            | Ali    | `m1-foundation`       | Done        | M0         |
 | M2 | Authentication                      | -      | `m2-authentication`   | Not started | M1         |
 | M3 | Job creation, approval, publishing  | -      | `m3-job-admin`        | Not started | M1, T-023  |
 | M4 | Candidate portal: jobs and profile  | Ali    | `m4-candidate-portal` | In progress | M1         |
@@ -103,7 +103,7 @@ These wait until M6 is done. They'll be broken into tasks when a new milestone i
 
 ## Open questions (from §9)
 
-Record the decision here, and as a note on the affected tasks in TASKS.md.
+These are decisions for stakeholders, not a milestone task (formerly T-008). Record each decision here, and as a note on the affected tasks in TASKS.md.
 
 | # | Question | Blocks | Decision | Decided on |
 |---|----------|--------|----------|------------|
@@ -125,3 +125,5 @@ Add a line whenever a milestone changes status, owners or scope.
 | 2026-09-24 | M0        | Done (repo structure + workflow). Setup tasks T-002 to T-009 moved to M1 | Ali |
 | 2026-09-24 | M1        | Renamed "App setup and data model", branch `m1-foundation` | Ali |
 | 2026-09-24 | M1, M4    | Claimed by Ali for frontend work; backend tasks open for co-owners. M4 UI starts early on mock API data | Ali |
+| 2026-09-24 | M1        | All tasks done by Ali (frontend + backend); T-008 moved out of M1 to the Open questions table | Ali |
+| 2026-09-24 | M1        | Done; PR into `develop` for review by Malaika | Ali |
