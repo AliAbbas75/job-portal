@@ -1,0 +1,39 @@
+{
+  "backToJobs": "All jobs",
+  "closesOn": "Closes {date}",
+  "vacancies": "{count} vacancies",
+  "vacancies_one": "1 vacancy",
+  "aboutHeading": "About the job",
+  "eligibilityHeading": "Who can apply",
+  "documentsHeading": "Documents you'll need",
+  "quotaHeading": "Seats by quota",
+  "quotaCategory": "Category",
+  "quotaSeats": "Seats",
+  "applyPanel": "Apply for this job",
+  "apply": "Apply now",
+  "applyNote": "You'll only be asked for details that aren't already in your profile.",
+  "closedTitle": "Applications closed",
+  "closedBody": "The deadline for this job has passed.",
+  "facts": {
+    "vacancies": "Vacancies",
+    "opening": "Opened",
+    "closing": "Deadline",
+    "advertisement": "Advertisement no.",
+    "fee": "Application fee",
+    "noFee": "None"
+  },
+  "req": {
+    "education": "Education",
+    "educationValue": "{level} or higher",
+    "educationWithMarks": "{level} or higher, with at least {marks}% marks",
+    "experience": "Experience",
+    "experienceValue": "At least {count} years",
+    "experienceValue_one": "At least 1 year",
+    "experienceNone": "Not required",
+    "age": "Age",
+    "ageValue": "{min} to {max} years",
+    "ageNote": "Age is worked out from your date of birth on the closing date.",
+    "domicile": "Domicile",
+    "domicileAny": "Any province"
+  }
+}

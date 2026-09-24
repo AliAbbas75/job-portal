@@ -6,22 +6,23 @@ This file is the entry point for everyone working on this repo: the five team me
 
 Work is claimed by **milestone** (development phase), not by single task. Every change follows this order, including small fixes.
 
-1. **Claim a milestone** in [workspace/MILESTONES.md](workspace/MILESTONES.md) (alone or as a co-owner) and push that one-file change to `develop` before starting.
+1. **Claim a milestone** yourself (no one's permission needed): edit the **Claim** block of its file in [workspace/milestones/](workspace/milestones/) (alone or as a co-owner) and push that one file to `develop` before starting. Overview and dependencies: [workspace/MILESTONES.md](workspace/MILESTONES.md).
 2. **Work on the milestone branch** (`m<N>-<name>`, e.g. `m2-authentication`), created from `develop`.
-3. **Mark your tasks** in [workspace/TASKS.md](workspace/TASKS.md) on that branch: your name + `IN PROGRESS`, then `DONE`.
+3. **Mark your tasks** in the **Tasks** tables of that milestone file, on the branch: your name + `IN PROGRESS`, then `DONE`.
 4. **Log your work** in your own file under [workspace/logs/](workspace/logs/): what changed, which files, migrations, follow-ups.
 5. **Commit with the task ID** and push to the milestone branch.
-6. **When the milestone is done:** merge `develop` into your branch locally, run the checks, and open one PR into `develop`. A non-owner reviews and merges it with **"Create a merge commit"** (never squash), and the branch is deleted. Then a release PR goes from `develop` into `main` (merge commit + tag).
+6. **When the milestone is done:** merge `develop` into your branch locally, run the checks, and open one PR into `develop`. A non-owner reviews and merges it with **"Create a merge commit"** (never squash), and the branch is deleted. Only the **project lead (Ali)** releases `develop` into `main` (merge commit + tag).
 
 The full procedure, with commands, branch rules and repo settings, is in [workspace/WORKFLOW.md](workspace/WORKFLOW.md).
 
 ### Rules for Claude Code sessions
 
 - At the start of a session, find out which team member you're working for and which milestone/task (ask if it isn't clear; don't guess from `git config user.name`).
-- Before editing code, confirm that person is an owner of the milestone in `workspace/MILESTONES.md`, that you're on that milestone's branch, and that the task in `workspace/TASKS.md` has their name and `IN PROGRESS` (set it on the branch if not, and tell the user).
+- Before editing code, confirm that person is an owner in the milestone's file in `workspace/milestones/`, that you're on that milestone's branch, and that the task in that file has their name and `IN PROGRESS` (set it on the branch if not, and tell the user).
 - If the milestone isn't claimed, stop and tell the user. Claiming means pushing to `develop`, so only do it when they ask.
-- Never work on a task another owner has taken unless the user says it's been handed over; add a note under that milestone's table in TASKS.md.
-- Only claim rows in `MILESTONES.md` go directly onto `develop`. Never put code or `TASKS.md` changes directly on `develop` or `main`.
+- Never work on a task another owner has taken unless the user says it's been handed over; add a line under **Notes** in the milestone file.
+- Only a claim (the **Claim** block of one milestone file) goes directly onto `develop`. Everything else goes through a PR; nothing is ever pushed to `main`.
+- To avoid merge conflicts: in `workspace/`, edit only the current milestone's file and the member's own log; add lines to shared registry files (`models/__init__.py`, `controllers/__init__.py`, `routes/AppRoutes.jsx`, `routes/paths.js`) in alphabetical position, never at the end; put UI text in `frontend/src/i18n/en/<area>.json`; don't reformat, rename or move files the task doesn't need. See WORKFLOW.md → How we avoid merge conflicts.
 - Before committing, add the entry to the member's log in `workspace/logs/` and include it in the same commit.
 - Commit and push only when the user asks. Never force-push any shared branch, and never push to `main`.
 
@@ -35,7 +36,9 @@ The full procedure, with commands, branch rules and repo settings, is in [worksp
 | Malaika | [workspace/logs/malaika.md](workspace/logs/malaika.md) |
 | Umaima  | [workspace/logs/umaima.md](workspace/logs/umaima.md) |
 
-Use the names exactly as spelled above in MILESTONES.md (Owners) and TASKS.md (Owner).
+Use the names exactly as spelled above in milestone files (Owners, task Owner).
+
+**Project lead: Ali.** The lead's only special job is releasing `develop` → `main` (plus repo settings and recording stakeholder decisions). Everyone claims, builds, reviews and merges milestones themselves.
 
 ## 3. What we're building
 
@@ -128,14 +131,14 @@ workspace/             # tasks, milestones, workflow, per-member logs
 
 **React**
 - Functional components and hooks only. `PascalCase.jsx` for components, `camelCase.js` for everything else.
-- All user-facing text goes through `i18n/`, never hard-coded. English only for now; Urdu is deferred but must be addable without touching components.
+- All user-facing text goes through `t()` with strings in `i18n/en/<area>.json` (one file per namespace, e.g. `jobs.json` for `t('jobs.…')`; a new file needs no registration), never hard-coded. English only for now; Urdu is deferred but must be addable without touching components.
 - Build mobile-first and keep bundles small; many candidates are on low-bandwidth connections.
 - **Styling is Tailwind CSS v4, controlled from one file: `frontend/src/index.css`.** Components use Tailwind utility classes only. No other `.css` files, no CSS Modules, no inline `style` except for computed values (e.g. a progress width).
 - **Follow the brand guide** ([docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md)). `index.css` enforces most of it: the `@theme` removes Tailwind's default palette and shadows, so only the 8 brand colours exist (`heritage`, `ember`, `gold`, `pumpkin`, `surface`, `cream`, `white`, `black`). Never use arbitrary colours (`bg-[#...]`), gradients (`bg-linear-*`), or gold/pumpkin for body text on white. New design tokens go in `@theme` in `index.css`, nowhere else.
 - **Dropdowns:** always use `components/forms/Select.jsx` (or `SelectField` with a label), never a native `<select>`. It always shows 4 options and scrolls beyond that, and is keyboard- and screen-reader-accessible.
 - Join conditional classes with `cx()` (`utils/cx.js`). Never put two utilities for the same property in one class list (e.g. `font-medium` and `font-bold`): Tailwind doesn't guarantee which wins. Put alternatives in the two branches of a condition instead.
 - Prettier sorts Tailwind classes automatically (`prettier-plugin-tailwindcss`).
-- **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }`; the UI maps `code` to `errors.<code>` in `i18n/en.json`.
+- **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }`; the UI maps `code` to `errors.<code>` in `i18n/en/errors.json`.
 - There is **no CI** (no GitHub Actions); don't add any. Checks run locally: pre-commit hooks on every commit, and the four pre-PR checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci) before a PR is opened or approved. Before saying work is done, run them and report the results.
 
 **Data and security**
@@ -164,7 +167,7 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 ## 8. Git
 
 - **`main`**: released milestones only. Changes arrive only by a PR from `develop`, merged with a merge commit and tagged (`m2`). Never push to it directly.
-- **`develop`**: integration branch and GitHub default. Milestone branches merge in by PR with **"Create a merge commit"** (never squash or rebase), reviewed and merged by a non-owner. One PR per branch, then the branch is deleted; follow-up work gets a new branch. The only direct push allowed is a claim change to `workspace/MILESTONES.md`.
+- **`develop`**: integration branch and GitHub default. Milestone branches merge in by PR with **"Create a merge commit"** (never squash or rebase), reviewed and merged by a non-owner. One PR per branch, then the branch is deleted; follow-up work gets a new branch. The only direct push allowed is a claim (one milestone file's Claim block).
 - **`m<N>-<name>`**: one branch per milestone, shared by its owners. `git pull --rebase` before pushing; merge `develop` in at least weekly.
 - **`fix/<desc>`**: fixes outside an open milestone, PR into `develop`.
 - Only two PR directions: branch → `develop`, and `develop` → `main`. Never use GitHub's "Update branch" button; merge `develop` in locally (WORKFLOW.md Step 5). Never force-push.
@@ -177,7 +180,7 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 - [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md): where code goes, naming, repo hygiene
 - [docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md): colours, type, logo rules for all UI
 - [workspace/WORKFLOW.md](workspace/WORKFLOW.md): the step-by-step team process
-- [workspace/MILESTONES.md](workspace/MILESTONES.md): milestone claim board, scope, open questions
-- [workspace/TASKS.md](workspace/TASKS.md): task checklist per milestone
+- [workspace/MILESTONES.md](workspace/MILESTONES.md): milestone overview, dependencies, deferred work, open questions
+- [workspace/milestones/](workspace/milestones/): one file per milestone: claim, status, scope, done-when, tasks
 - [workspace/logs/](workspace/logs/): one work log per member
 - [docs/railway-job-portal-master-flow.md](docs/railway-job-portal-master-flow.md): product flow

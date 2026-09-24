@@ -17,6 +17,21 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-24 | Self-serve milestones and conflict-proof layout
+- **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)
+- **Status:** Done
+- **What changed:**
+  - `workspace/milestones/M0…M6-*.md` (new): one file per milestone with its Claim block (owners, status, branch, depends on), scope, done-when, tasks and notes. Claims and task updates for different milestones can no longer conflict
+  - `workspace/TASKS.md` deleted (tasks moved into the milestone files); `workspace/MILESTONES.md` is now a static overview (index, dependencies, deferred, open questions); changelog table dropped (git history covers it)
+  - `workspace/WORKFLOW.md`: roles (owners self-serve; any non-owner reviews and merges; project lead only releases `develop` → `main`); "How we avoid merge conflicts" rules (own files only, sync same day, alphabetical inserts in registry files, one migration head, fast reviews); daily sync check; package-lock and multiple-heads fixes
+  - `frontend/src/i18n/en.json` split into `frontend/src/i18n/en/<namespace>.json` (24 files, auto-loaded via `import.meta.glob` in `i18n/index.js`)
+  - `CLAUDE.md`, `README.md`, `docs/PROJECT_STRUCTURE.md`: updated to match
+- **Database:** none
+- **Commits:**
+  - `docs(workflow): self-serve milestones, per-milestone files, conflict-avoidance rules`
+- **How to test:** four checks in WORKFLOW.md pass; `grep -H -e "Owners:" -e "Status:" workspace/milestones/*.md` lists every milestone
+- **Notes / follow-ups:** none
+
 ### 2026-09-24 | Branch cleanup and merge process
 - **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)
 - **Status:** Done

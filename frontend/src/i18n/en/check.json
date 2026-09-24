@@ -1,0 +1,33 @@
+{
+  "title": "Check your eligibility",
+  "lead": "We've compared this job's requirements with your profile. Fill in anything missing. It's saved to your profile for next time.",
+  "needsAttention": "Needs your attention ({count})",
+  "alreadyMet": "Already in your profile ({count} of {total})",
+  "items": {
+    "education": "Education:",
+    "experience": "Experience:",
+    "age": "Age:",
+    "domicile": "Domicile:",
+    "document": "Required document"
+  },
+  "status": {
+    "met": "Meets the requirement",
+    "missing": "Missing",
+    "not_met": "Doesn't meet the requirement"
+  },
+  "detail": {
+    "educationLow": "your highest qualification is below the requirement",
+    "marksLow": "your marks are below the minimum",
+    "experienceShort": "{count} years recorded in your profile",
+    "age": "you'll be {count} on the closing date",
+    "domicileOther": "this job is only open to the domicile shown"
+  },
+  "fixInProfile": "Add in profile",
+  "notEligibleTitle": "You're not eligible for this job",
+  "notEligibleBody": "One or more requirements can't be met with your current details. If something is wrong, correct it in your profile.",
+  "alreadyApplied": "You've already applied for this job.",
+  "viewApplication": "View application",
+  "continue": "Continue to review",
+  "continueHint": "Complete the missing items above to continue.",
+  "backToJob": "Back to job"
+}

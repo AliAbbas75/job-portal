@@ -66,7 +66,7 @@ job-portal/
         ├── hooks/                ✅ custom hooks (useAuth, useJobs, ...)
         ├── context/              ✅ React context providers (auth, language)
         ├── routes/               ✅ route table + route guards (candidate/admin)
-        ├── i18n/                 ✅ en.json / ur.json and i18n setup
+        ├── i18n/                 ✅ index.js (t()) + en/<area>.json, one file per namespace
         ├── utils/                ✅ pure helpers (formatters, validators)
         └── assets/               ✅ images, icons, fonts imported by code
 ```
@@ -90,7 +90,7 @@ job-portal/
 | A piece of UI used on 2+ pages | `frontend/src/components/<group>/<Name>.jsx` | `components/forms/CnicInput.jsx` |
 | UI used by only one page | A folder next to that page | `pages/candidate/ProfilePage/EducationSection.jsx` |
 | Stateful logic reused by components | `frontend/src/hooks/use<Name>.js` | `hooks/useApplicationCheck.js` |
-| User-facing text | `frontend/src/i18n/en.json` (and `ur.json` once Urdu is in scope) | `"jobs.apply": "Apply"` |
+| User-facing text | `frontend/src/i18n/en/<area>.json` (a new area = a new file, auto-loaded) | `en/jobs.json` → `"apply": "Apply"`, used as `t('jobs.apply')` |
 | Styles for a component or page | Tailwind classes in its JSX; shared tokens/utilities only in `frontend/src/index.css` | `className="rounded-md bg-surface p-4"` |
 | A dropdown of any kind | `components/forms/Select` / `SelectField` (4 visible items, scrolls) | `<SelectField label=… options=… />` |
 | Mock response for an endpoint not built yet | `frontend/src/api/mocks/<resource>Mock.js` | `api/mocks/jobsMock.js` |

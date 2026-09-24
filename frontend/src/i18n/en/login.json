@@ -1,0 +1,7 @@
+{
+  "title": "Log in",
+  "lead": "Enter the CNIC and mobile number you signed up with.",
+  "mobileHint": "The number registered with your account",
+  "submit": "Send code",
+  "noAccount": "New here?"
+}

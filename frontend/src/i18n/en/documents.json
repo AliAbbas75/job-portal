@@ -1,0 +1,9 @@
+{
+  "upload": "Upload",
+  "replace": "Replace",
+  "notUploaded": "Not uploaded",
+  "requiredTag": "(required)",
+  "uploadedMeta": "{name} · {size} · uploaded {date}",
+  "chooseFileFor": "Choose a file for {name}",
+  "removeNamed": "Remove {name}"
+}
