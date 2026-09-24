@@ -20,6 +20,19 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 
 ## M0: Project setup
 
+**Shared**
+
+| ID    | Task                               | Owner | Status |
+|-------|------------------------------------|-------|--------|
+| T-001 | Repo structure, .gitignore, README | Ali   | DONE   |
+
+**Notes**
+- M0 is done. Its remaining setup tasks (T-002 to T-009) moved to M1.
+
+---
+
+## M1: App setup and data model (§7)
+
 **Backend**
 
 | ID    | Task                                                       | Owner | Status |
@@ -27,47 +40,36 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 | T-002 | Flask app factory, config, extensions, /api/health         | -     | TODO   |
 | T-003 | PostgreSQL (docker-compose), .env.example, first migration | -     | TODO   |
 | T-006 | pytest setup with a test database                          | -     | TODO   |
+| T-010 | CandidateAccount + CandidateProfile (unique CNIC)          | -     | TODO   |
+| T-011 | Profile section models                                     | -     | TODO   |
+| T-012 | BPS-15+ section models                                     | -     | TODO   |
+| T-013 | Document model + file storage service                      | -     | TODO   |
+| T-014 | Job + JobRequirement models                                | -     | TODO   |
+| T-015 | ApprovalRecord model                                       | -     | TODO   |
+| T-016 | Application, ApplicationSnapshot, StatusEvent              | -     | TODO   |
+| T-017 | AuditLog model + helper                                    | -     | TODO   |
+| T-018 | Seed data (departments, BPS, districts, qualifications)    | -     | TODO   |
 
 **Frontend**
 
 | ID    | Task                                              | Owner | Status |
 |-------|---------------------------------------------------|-------|--------|
-| T-004 | React (Vite) scaffold: router, API client, layout | -     | TODO   |
-| T-009 | Vitest + React Testing Library setup              | -     | TODO   |
+| T-004 | React (Vite) scaffold: router, API client, layout | Ali   | DONE   |
+| T-009 | Vitest + React Testing Library setup              | Ali   | DONE   |
 
 **Shared**
 
-| ID    | Task                                                   | Owner | Status |
-|-------|--------------------------------------------------------|-------|--------|
-| T-001 | Repo structure, .gitignore, README                     | Ali   | DONE   |
-| T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit | -     | TODO   |
-| T-007 | CI on pull requests (GitHub Actions)                   | -     | TODO   |
-| T-008 | Get answers to open questions                          | -     | TODO   |
+| ID    | Task                                                   | Owner | Status      |
+|-------|--------------------------------------------------------|-------|-------------|
+| T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit | Ali   | IN PROGRESS |
+| T-007 | CI on pull requests (GitHub Actions)                   | -     | TODO        |
+| T-008 | Get answers to open questions                          | -     | TODO        |
 
 **Notes**
-- T-001: README setup steps get filled in by T-002, T-003, T-004.
+- Do T-002 to T-004 first; everything else builds on them. They also fill in the README setup steps.
+- T-005: frontend half done (ESLint + Prettier in `frontend/`); Ruff/Black and pre-commit still to do.
 - T-007: run on pull requests into `develop` and `main`.
 - T-008: record decisions in MILESTONES.md.
-
----
-
-## M1: Data model (§7)
-
-**Backend**
-
-| ID    | Task                                                    | Owner | Status |
-|-------|---------------------------------------------------------|-------|--------|
-| T-010 | CandidateAccount + CandidateProfile (unique CNIC)       | -     | TODO   |
-| T-011 | Profile section models                                  | -     | TODO   |
-| T-012 | BPS-15+ section models                                  | -     | TODO   |
-| T-013 | Document model + file storage service                   | -     | TODO   |
-| T-014 | Job + JobRequirement models                             | -     | TODO   |
-| T-015 | ApprovalRecord model                                    | -     | TODO   |
-| T-016 | Application, ApplicationSnapshot, StatusEvent           | -     | TODO   |
-| T-017 | AuditLog model + helper                                 | -     | TODO   |
-| T-018 | Seed data (departments, BPS, districts, qualifications) | -     | TODO   |
-
-**Notes**
 - T-011: personal, contact/address, domicile, education, experience, skills, additional eligibility.
 - T-012: professional registration, publications, references, statement of purpose.
 - T-013: enforce file size and format limits.
@@ -92,13 +94,14 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 
 | ID    | Task                            | Owner | Status |
 |-------|---------------------------------|-------|--------|
-| T-025 | Signup / OTP / login pages      | -     | TODO   |
+| T-025 | Signup / OTP / login pages      | Ali   | DONE   |
 | T-026 | Staff login page + route guards | -     | TODO   |
 
 **Notes**
 - T-020: CNIC format + duplicate check; signup creates the permanent profile.
 - T-023: roles are job creator, approver, admin. Do this first; M3 depends on it. Depends on open question 2.
 - T-024: stub until NADRA integration is available.
+- T-025: built on the mock API (`src/api/mocks/authMock.js`). T-020 to T-022 must match its request/response shapes.
 
 ---
 
@@ -142,15 +145,16 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 
 | ID    | Task                                 | Owner | Status |
 |-------|--------------------------------------|-------|--------|
-| T-045 | Landing page, latest jobs, search UI | -     | TODO   |
-| T-046 | Job details page                     | -     | TODO   |
-| T-047 | Profile section forms (mobile-first) | -     | TODO   |
-| T-048 | Document vault UI                    | -     | TODO   |
+| T-045 | Landing page, latest jobs, search UI | Ali   | DONE   |
+| T-046 | Job details page                     | Ali   | DONE   |
+| T-047 | Profile section forms (mobile-first) | Ali   | DONE   |
+| T-048 | Document vault UI                    | Ali   | DONE   |
 
 **Notes**
 - T-040: filters are BPS, department, location, education, employment type, deadline.
 - T-044: age from DOB as of closing date or advertisement cutoff date.
 - T-048: client-side compression before upload.
+- T-045 to T-048: UI built early on mock data. T-040 to T-043 must match the shapes in `src/api/mocks/`.
 
 ---
 
@@ -195,15 +199,17 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 
 **Frontend**
 
-| ID    | Task                                    | Owner | Status |
-|-------|-----------------------------------------|-------|--------|
-| T-066 | Application check UI                    | -     | TODO   |
-| T-067 | Review and submit UI (declaration, fee) | -     | TODO   |
-| T-068 | Tracking UI + admin status update UI    | -     | TODO   |
+| ID    | Task                                    | Owner | Status      |
+|-------|-----------------------------------------|-------|-------------|
+| T-066 | Application check UI                    | Ali   | DONE        |
+| T-067 | Review and submit UI (declaration, fee) | Ali   | DONE        |
+| T-068 | Tracking UI + admin status update UI    | Ali   | IN PROGRESS |
 
 **Notes**
 - T-060: core logic; compares JobRequirement to profile, needs thorough tests.
 - T-061: items filled here are saved back to the profile.
 - T-062: one application per CNIC per job; profile data frozen into the snapshot; no edit or withdraw after submit.
 - T-065: manual status changes until automated screening (deferred); every change writes a StatusEvent.
+- T-066, T-067: UI built early on mock data; the mock eligibility check (`eligibilityMock.js`) shows T-060 the expected output.
+- T-068: candidate tracking UI done; admin status update UI still to do (needs the admin area).
 - T-066 to T-068: submitted applications are final; no edit or withdraw UI.
