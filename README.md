@@ -63,7 +63,7 @@ Needs Python 3.11 or later.
 ```bash
 cd backend
 python -m venv .venv
-.venv\Scriptsctivate          # macOS/Linux: source .venv/bin/activate
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -r requirements-dev.txt
 cp .env.example .env            # defaults match docker-compose.yml
 flask db upgrade                # create the tables
@@ -80,7 +80,9 @@ flask run                       # http://localhost:5000/api/health
 
 ### Git hooks
 
-Once per clone, from the repo root: `pre-commit install` (it's in `requirements-dev.txt`). Commits then run Ruff, Black, ESLint and Prettier on the files you changed. CI runs the same checks plus all tests on every pull request into `develop` and `main`.
+Once per clone, from the repo root: `pre-commit install` (it's in `requirements-dev.txt`). Commits then run Ruff, Black, ESLint and Prettier on the files you changed.
+
+There is no CI. Before opening a pull request, run the four checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci); reviewers run them too before approving.
 
 ## Team
 
