@@ -1,0 +1,13 @@
+{
+  "title": "Application {id}",
+  "back": "My applications",
+  "applicationId": "Application ID",
+  "submittedOn": "Submitted on {date}",
+  "submittedTitle": "Application submitted",
+  "submittedBody": "Your application ID is {id}. Keep it for your records. We'll let you know when the status changes.",
+  "viewJob": "View job",
+  "progressTitle": "Progress",
+  "upcoming": "Not yet",
+  "finalNote": "Submitted applications are final and can't be edited or withdrawn.",
+  "findMore": "Find more jobs"
+}

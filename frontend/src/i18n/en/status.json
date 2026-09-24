@@ -1,0 +1,13 @@
+{
+  "submitted": "Submitted",
+  "under_review": "Under review",
+  "rejected": "Rejected",
+  "shortlisted": "Shortlisted",
+  "admit_card_issued": "Admit card issued",
+  "test_interview": "Test / interview",
+  "result": "Result",
+  "merit_list": "Merit list",
+  "document_verification": "Document verification",
+  "medical": "Medical",
+  "offer": "Offer"
+}

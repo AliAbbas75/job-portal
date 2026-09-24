@@ -26,11 +26,11 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
   - `frontend/package.json`: added `react-icons` dependency
   - `frontend/public/`: added `pakrail-logo-vertical.png` and `pakrail-logo-horizontal.png` official logo assets
   - `frontend/src/components/common/Logo.jsx`: updated to render horizontal logo image
-  - `frontend/src/components/layout/FaqSection.jsx` & `FaqSection.module.css`: created FAQ section component with 2-column grid, Instrument Sans typography, and closed-by-default state
+  - `frontend/src/components/layout/FaqSection.jsx`: created FAQ section component with 2-column grid, Instrument Sans typography, and closed-by-default state
   - `frontend/src/components/layout/AppLayout.jsx`: embedded `FaqSection` above `SiteFooter`
-  - `frontend/src/components/layout/SiteHeader.jsx` & `SiteHeader.module.css`: top header bar set to Ember Red (`#A63A2C`), announcement text centered, removed demo badge
+  - `frontend/src/components/layout/SiteHeader.jsx`: top header bar set to Ember Red (`#A63A2C`), announcement text centered, removed demo badge
   - `frontend/src/components/layout/SiteFooter.jsx`: redesigned footer with vertical logo, bottom-to-top fill hover effect for social icons with colorful default brand borders, removed unnecessary link groups/app banners, white policy links
-  - `frontend/src/pages/public/JobSearchPage/JobSearchPage.module.css`: updated `.itemClosingSoon` for jobs closing in 1 week or less with a soft red row background highlight (`#f8d7da`), removed left vertical bar
+  - `frontend/src/pages/public/JobSearchPage/JobListItem.jsx`: updated jobs closing in 1 week or less with soft red row background highlight (`#f8d7da`), removed left vertical bar
   - `frontend/src/setupTests.js`: added `scrollIntoView` polyfill to fix Vitest DOM test suite
 - **Database:** none
 - **Dependencies:** `react-icons`
@@ -39,6 +39,38 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
   - `feat(frontend): add FaqSection, brand header/footer & closing date row highlight [T-045]`
 - **How to test:** `npm test` in `frontend` (21 tests pass); launch `npm run dev` and view `http://localhost:5173/`
 - **Notes / follow-ups:** UI enhancements aligned with brand guidelines.
+
+### 2026-09-24 | Self-serve milestones and conflict-proof layout
+- **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)
+- **Status:** Done
+- **What changed:**
+  - `workspace/milestones/M0…M6-*.md` (new): one file per milestone with its Claim block (owners, status, branch, depends on), scope, done-when, tasks and notes. Claims and task updates for different milestones can no longer conflict
+  - `workspace/TASKS.md` deleted (tasks moved into the milestone files); `workspace/MILESTONES.md` is now a static overview (index, dependencies, deferred, open questions); changelog table dropped (git history covers it)
+  - `workspace/WORKFLOW.md`: roles (owners self-serve; any non-owner reviews and merges; project lead only releases `develop` → `main`); "How we avoid merge conflicts" rules (own files only, sync same day, alphabetical inserts in registry files, one migration head, fast reviews); daily sync check; package-lock and multiple-heads fixes
+  - `frontend/src/i18n/en.json` split into `frontend/src/i18n/en/<namespace>.json` (24 files, auto-loaded via `import.meta.glob` in `i18n/index.js`)
+  - `CLAUDE.md`, `README.md`, `docs/PROJECT_STRUCTURE.md`: updated to match
+- **Database:** none
+- **Commits:**
+  - `docs(workflow): self-serve milestones, per-milestone files, conflict-avoidance rules`
+- **How to test:** four checks in WORKFLOW.md pass; `grep -H -e "Owners:" -e "Status:" workspace/milestones/*.md` lists every milestone
+- **Notes / follow-ups:** none
+
+### 2026-09-24 | Branch cleanup and merge process
+- **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)
+- **Status:** Done
+- **What changed:**
+  - Removed `.github/workflows/ci.yml` again: a squash merge (PR #10) had silently re-added it
+  - Merged `main` into the branch with no file changes (history sync), so the release PR `develop` → `main` merges without conflicts; `main` had only an old front end snapshot from PR #7
+  - To do after merge: delete the finished `m1-foundation` branch (merged four times via PRs #7–#10)
+  - `workspace/WORKFLOW.md`: rewritten as a fixed step-by-step process: 7 golden rules (merge commits only, two PR directions, one PR per branch, reviewer merges, no "Update branch", no force-push), local sync from `develop`, review/merge steps, troubleshooting table, repo settings (merge commits only)
+  - `CLAUDE.md`: Git rules updated to match
+- **Database:** none
+- **Commits:**
+  - `chore: remove ci.yml re-added by a squash merge (no CI in this project)`
+  - `Merge main into develop: history sync only, develop's files unchanged`
+  - `docs(workflow): merge-commit-only process to stop merge conflicts loops`
+- **How to test:** after both PRs merge, `git diff origin/main origin/develop` is empty
+- **Notes / follow-ups:** Repo admin must apply the new Pull Request settings (see WORKFLOW.md → Repo settings)
 
 ### 2026-09-24 | Remove GitHub Actions; local checks instead
 - **Milestone:** M1 (branch m1-foundation)

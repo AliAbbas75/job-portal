@@ -1,4 +1,9 @@
-import en from './en.json';
+// English strings, one file per area: en/<namespace>.json is available as t('<namespace>.<key>').
+// Adding a new area = adding a new file; nothing else to register. Split files keep merge conflicts rare.
+const files = import.meta.glob('./en/*.json', { eager: true, import: 'default' });
+const en = Object.fromEntries(
+  Object.entries(files).map(([path, messages]) => [path.match(/([^/]+)\.json$/)[1], messages]),
+);
 
 const messages = { en };
 let language = 'en';

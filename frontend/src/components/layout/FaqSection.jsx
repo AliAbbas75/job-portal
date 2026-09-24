@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './FaqSection.module.css';
 
 const ALL_FAQS = [
   {
@@ -68,12 +67,12 @@ export function FaqSection() {
           FAQs
         </h2>
 
-        <div className={styles.gridContainer}>
+        <div className="faq-grid">
           <div className="flex flex-col gap-5">
             {col1Questions.map((q) => {
               const isOpen = openId === q.id;
               return (
-                <div key={q.id} className={styles.equalCard}>
+                <div key={q.id} className="faq-card">
                   <button
                     type="button"
                     className="w-full flex justify-between items-center text-left gap-4 bg-none border-none p-0 cursor-pointer"
@@ -104,7 +103,7 @@ export function FaqSection() {
             {col2Questions.map((q) => {
               const isOpen = openId === q.id;
               return (
-                <div key={q.id} className={styles.equalCard}>
+                <div key={q.id} className="faq-card">
                   <button
                     type="button"
                     className="w-full flex justify-between items-center text-left gap-4 bg-none border-none p-0 cursor-pointer"

@@ -1,0 +1,7 @@
+{
+  "title": "My applications",
+  "lead": "Track every application you've submitted.",
+  "idAndDate": "Application {id} · submitted {date}",
+  "emptyTitle": "No applications yet",
+  "emptyDescription": "When you apply for a job, you can follow its progress here."
+}
