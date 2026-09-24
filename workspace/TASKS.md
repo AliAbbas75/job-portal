@@ -62,11 +62,10 @@ The checklist for each milestone. You claim a **milestone** in [MILESTONES.md](M
 | ID    | Task                                                   | Owner | Status |
 |-------|--------------------------------------------------------|-------|--------|
 | T-005 | Lint/format: Ruff, Black, ESLint, Prettier, pre-commit | Ali   | DONE   |
-| T-007 | CI on pull requests (GitHub Actions)                   | Ali   | DONE   |
 
 **Notes**
 - Do T-002 to T-004 first; everything else builds on them. They also fill in the README setup steps.
-- T-007: run on pull requests into `develop` and `main`.
+- T-007 (CI) dropped: the project doesn't use GitHub Actions. Checks run locally (see WORKFLOW.md).
 - T-011: personal, contact/address, domicile, education, experience, skills, additional eligibility.
 - T-012: professional registration, publications, references, statement of purpose.
 - T-013: enforce file size and format limits.

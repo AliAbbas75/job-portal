@@ -136,7 +136,7 @@ workspace/             # tasks, milestones, workflow, per-member logs
 - Join conditional classes with `cx()` (`utils/cx.js`). Never put two utilities for the same property in one class list (e.g. `font-medium` and `font-bold`): Tailwind doesn't guarantee which wins. Put alternatives in the two branches of a condition instead.
 - Prettier sorts Tailwind classes automatically (`prettier-plugin-tailwindcss`).
 - **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }`; the UI maps `code` to `errors.<code>` in `i18n/en.json`.
-- Frontend checks before pushing: `npm run lint`, `npm run format:check`, `npm test`, `npm run build` (run in `frontend/`).
+- There is **no CI** (no GitHub Actions); don't add any. Checks run locally: pre-commit hooks on every commit, and the four pre-PR checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci) before a PR is opened or approved. Before saying work is done, run them and report the results.
 
 **Data and security**
 - CNIC, phone and uploaded documents are personal data. Don't log them, don't put them in URLs, don't commit real samples.

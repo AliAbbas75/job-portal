@@ -12,7 +12,6 @@ job-portal/
 ├── README.md                     ✅ overview + setup steps
 ├── .gitignore  .gitattributes  .editorconfig   ✅
 ├── .pre-commit-config.yaml       ✅ ruff, black, eslint, prettier hooks
-├── .github/workflows/ci.yml      ✅ CI: backend lint + tests, frontend lint + tests + build
 ├── docker-compose.yml            ✅ PostgreSQL 16 for local dev (host port 5433)
 │
 ├── docs/                         ✅ product and technical docs
@@ -162,7 +161,7 @@ Use the same domain words everywhere: `job`, `candidate_profile`, `application`,
 8. **No debug leftovers:** `print()`, `console.log`, `breakpoint()`, `debugger`, temporary test routes.
 9. **No hard-coded secrets, URLs, or credentials.** Use config / env vars and document new ones in `.env.example`.
 10. **No real personal data** (CNICs, phone numbers, documents) in code, tests, fixtures, logs or commits. Use obviously fake values like `00000-0000000-0`.
-11. **Formatters and linters must pass** (Ruff + Black, ESLint + Prettier) before pushing.
+11. **Formatters, linters and tests must pass locally** before a PR (see the checks in workspace/WORKFLOW.md). There is no CI, and no `.github/workflows/`: don't add one.
 12. **Tests live with the layer they test** (backend) or next to the component (frontend).
 
 ### What never gets committed

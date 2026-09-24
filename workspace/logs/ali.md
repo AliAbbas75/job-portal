@@ -17,6 +17,20 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-24 | Remove GitHub Actions; local checks instead
+- **Milestone:** M1 (branch m1-foundation)
+- **Status:** Done
+- **What changed:**
+  - Deleted `.github/workflows/ci.yml` (team decision: no CI)
+  - `workspace/WORKFLOW.md`: new "Checks (there is no CI)" section (one-time setup incl. `pre-commit install`, four pre-PR checks); reviewer re-runs the checks; only the reviewer merges, after approving; removed the CI branch-protection step; checklist updated
+  - `CLAUDE.md`, `README.md`, `docs/PROJECT_STRUCTURE.md`, `workspace/MILESTONES.md`, `workspace/TASKS.md` (T-007 dropped), `backend/pyproject.toml` comment: CI references removed
+  - Fixed a corrupted `.venv\Scripts\activate` line in README and WORKFLOW (an invisible control character had replaced `\a`)
+- **Database:** none
+- **Commits:**
+  - `chore: remove GitHub Actions CI; document local checks [M1]`
+- **How to test:** follow WORKFLOW.md → Checks; all four pass
+- **Notes / follow-ups:** none
+
 ### 2026-09-24 | M1 fix: CI pytest import error
 - **Milestone:** M1 (branch m1-foundation)
 - **Status:** Done

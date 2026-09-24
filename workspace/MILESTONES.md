@@ -41,12 +41,12 @@ Section numbers (§) refer to the master flow.
 Repo structure, team workflow, task board, structure guide, and product flow updates.
 
 ### M1: App setup and data model
-Flask and React skeletons, PostgreSQL, tooling and CI, then all in-scope entities from §7 as SQLAlchemy models with migrations and seed data.
+Flask and React skeletons, PostgreSQL, tooling, then all in-scope entities from §7 as SQLAlchemy models with migrations and seed data.
 
 **Done when**
 - `flask run` serves `/api/health`; `npm run dev` shows the app shell calling it.
 - A new team member can go from clone to running both apps using only the README.
-- CI runs lint and tests on pull requests into `develop` and `main`.
+- Pre-commit hooks and the local pre-PR checks (workflow) pass.
 - `flask db upgrade` builds the full schema on an empty database.
 - Unique constraints exist for CNIC and for (candidate, job) applications.
 - The application status list includes the expanded §4.9 statuses, so later phases need no schema change.
@@ -127,3 +127,4 @@ Add a line whenever a milestone changes status, owners or scope.
 | 2026-09-24 | M1, M4    | Claimed by Ali for frontend work; backend tasks open for co-owners. M4 UI starts early on mock API data | Ali |
 | 2026-09-24 | M1        | All tasks done by Ali (frontend + backend); T-008 moved out of M1 to the Open questions table | Ali |
 | 2026-09-24 | M1        | Done; PR into `develop` for review by Malaika | Ali |
+| 2026-09-24 | All       | GitHub Actions CI removed (not needed); checks run locally, see WORKFLOW.md | Ali |
