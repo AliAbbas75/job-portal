@@ -39,6 +39,8 @@ npm run dev               # http://localhost:5173
 
 In mock mode, sign up with any valid CNIC and mobile number and use the code **123456**. Data is kept in your browser's localStorage.
 
+**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Job search and job details work against the database. Profile and documents also need M2's login, so keep mock mode for those until M2 lands.
+
 | Command | Does |
 |---|---|
 | `npm run dev` | Dev server (proxies `/api` to Flask on port 5000) |
@@ -68,6 +70,7 @@ pip install -r requirements-dev.txt
 cp .env.example .env            # defaults match docker-compose.yml
 flask db upgrade                # create the tables
 flask seed                      # load departments, provinces, qualifications, document types
+flask seed-demo                 # optional, dev only: 6 sample published jobs
 flask run                       # http://localhost:5000/api/health
 ```
 

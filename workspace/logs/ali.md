@@ -17,28 +17,24 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
-### 2026-09-24 | Frontend: FAQ Section, Header/Footer Brand Redesign & Job Highlight (T-045)
+### 2026-09-24 | M4 backend: jobs, reference, profile, documents APIs (T-040–T-044)
 - **Milestone:** M4 (branch m4-candidate-portal)
-- **Status:** In progress
+- **Status:** Done (M4 complete)
 - **What changed:**
-  - `CLAUDE.md`: updated Section 4 Tech Stack table to full 24-layer overall architecture definition
-  - `frontend/index.html`: added Tailwind CSS CDN & Instrument Sans Google font
-  - `frontend/package.json`: added `react-icons` dependency
-  - `frontend/public/`: added `pakrail-logo-vertical.png` and `pakrail-logo-horizontal.png` official logo assets
-  - `frontend/src/components/common/Logo.jsx`: updated to render horizontal logo image
-  - `frontend/src/components/layout/FaqSection.jsx`: created FAQ section component with 2-column grid, Instrument Sans typography, and closed-by-default state
-  - `frontend/src/components/layout/AppLayout.jsx`: embedded `FaqSection` above `SiteFooter`
-  - `frontend/src/components/layout/SiteHeader.jsx`: top header bar set to Ember Red (`#A63A2C`), announcement text centered, removed demo badge
-  - `frontend/src/components/layout/SiteFooter.jsx`: redesigned footer with vertical logo, bottom-to-top fill hover effect for social icons with colorful default brand borders, removed unnecessary link groups/app banners, white policy links
-  - `frontend/src/pages/public/JobSearchPage/JobListItem.jsx`: updated jobs closing in 1 week or less with soft red row background highlight (`#f8d7da`), removed left vertical bar
-  - `frontend/src/setupTests.js`: added `scrollIntoView` polyfill to fix Vitest DOM test suite
-- **Database:** none
-- **Dependencies:** `react-icons`
+  - `backend/app/controllers/`: `job_controller.py` (GET /jobs, /jobs/stats, /jobs/<id>), `reference_controller.py` (GET /reference), `profile_controller.py` (profile sections + education/experience CRUD), `document_controller.py` (vault list/upload/remove), `auth_guard.py` (`@candidate_required`, JWT contract for M2); `__init__.py` registers them alphabetically; `errors.py` returns `validation_error` with `fields`, and JWT failures as `unauthorized`
+  - `backend/app/services/`: `job_service.py` (open published jobs only; keyword, BPS, department, type, location, qualification-rank, closing filters; sort; pagination; stats), `reference_service.py`, `profile_service.py` (domicile district must be in province; edit history in audit log: section + field names, no values), `document_service.py` (type-checked upload, replace/remove archive instead of delete), `candidate_service.py`, `demo_seed_service.py`
+  - `backend/app/schemas/`: `job_schema.py`, `reference_schema.py`, `profile_schema.py` (per-section input validation, blank strings → missing, read-only cnic/mobile ignored), `document_schema.py`; JSON shapes match the frontend mocks
+  - `backend/app/models/`: `constants.py` (BPS ranges, closing windows, labels), `Job.is_open()`, `Job.department` and `CandidateProfile.domicile_district` relationships (no schema change)
+  - `backend/app/utils/dates.py`: `age_on()` (T-044)
+  - `backend/app/commands.py`: `flask seed-demo` (dev only, gated on config name, since `flask` CLI overrides DEBUG); `config.py`: `ENV_NAME`, 32+ byte test keys; `.env.example`: longer keys + `FLASK_DEBUG=1`
+  - Tests: jobs (11), reference, profile (10), documents (6), dates (6), demo seed; conftest `publish_job` + `auth_headers` fixtures, session cleared between tests (74 backend tests)
+  - Frontend: quotas use a `category` code translated via new `i18n/en/quota.json` (mock data updated); `.env.example` note
+  - Docs: README (seed-demo, real-API mode), CLAUDE.md (auth contract, validation error shape), M2 note on the token T-022 must issue, M4 tasks done
+- **Database:** none (relationships only; `flask db check` clean)
 - **Commits:**
-  - `docs(claude): update tech stack table in CLAUDE.md`
-  - `feat(frontend): add FaqSection, brand header/footer & closing date row highlight [T-045]`
-- **How to test:** `npm test` in `frontend` (21 tests pass); launch `npm run dev` and view `http://localhost:5173/`
-- **Notes / follow-ups:** UI enhancements aligned with brand guidelines.
+  - `feat(api): M4 jobs, reference, profile and document endpoints [T-040]`
+- **How to test:** four checks in WORKFLOW.md; manual: `flask seed-demo`, `frontend/.env.local` with `VITE_USE_MOCKS=false`, `npm run dev`: job search and details show database jobs
+- **Notes / follow-ups:** profile/document pages need M2's login to use the real API from the browser
 
 ### 2026-09-24 | Self-serve milestones and conflict-proof layout
 - **Milestone:** none (repo maintenance, branch `fix/branch-cleanup`, PR into `develop`)

@@ -5,7 +5,7 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 ## Claim
 
 - **Owners:** Ali, Malaika
-- **Status:** In progress
+- **Status:** Done
 - **Branch:** `m4-candidate-portal`
 - **Depends on:** M1
 
@@ -25,11 +25,11 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 
 | ID    | Task                                     | Owner | Status |
 |-------|------------------------------------------|-------|--------|
-| T-040 | Job search API with filters + pagination | -     | TODO   |
-| T-041 | Job details API                          | -     | TODO   |
-| T-042 | Profile section APIs + edit history      | -     | TODO   |
-| T-043 | Document vault API (upload once, reuse)  | -     | TODO   |
-| T-044 | Age calculation utility + tests          | -     | TODO   |
+| T-040 | Job search API with filters + pagination | Ali   | DONE   |
+| T-041 | Job details API                          | Ali   | DONE   |
+| T-042 | Profile section APIs + edit history      | Ali   | DONE   |
+| T-043 | Document vault API (upload once, reuse)  | Ali   | DONE   |
+| T-044 | Age calculation utility + tests          | Ali   | DONE   |
 
 **Frontend**
 
@@ -46,3 +46,6 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 - T-044: age from DOB as of closing date or advertisement cutoff date.
 - T-048: client-side compression before upload.
 - T-045 to T-048: UI built early on mock data. T-040 to T-043 must match the shapes in `src/api/mocks/`.
+- Backend endpoints: `GET /api/jobs`, `GET /api/jobs/stats`, `GET /api/jobs/<id>`, `GET /api/reference`, `GET|PUT /api/profile[/<section>]`, `POST|PUT|DELETE /api/profile/<education|experience>[/<id>]`, `GET|POST /api/documents`, `DELETE /api/documents/<id>`. Shapes match the frontend mocks.
+- Profile and document endpoints need a candidate login token (issued by M2, T-022). Until M2 lands, the UI uses mock mode for those pages; job search and details already work against the real API (`flask seed-demo` for sample jobs).
+- Profile edits are recorded in the audit log (edit history: section + field names, never values). Replacing or removing a document archives it, so submitted applications keep their files.

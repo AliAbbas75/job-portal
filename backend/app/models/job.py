@@ -5,7 +5,7 @@ so it can be checked against the profile. The description stays free text.
 Once published, a job is final: no edits and no corrigendum.
 """
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
 from sqlalchemy import (
@@ -87,11 +87,17 @@ class Job(TimestampMixin, db.Model):
     quotas: Mapped[list["JobQuota"]] = relationship(
         back_populates="job", cascade="all, delete-orphan"
     )
+    department = relationship("Department")
     required_documents = relationship("DocumentType", secondary=job_required_documents)
     domicile_provinces = relationship("Province", secondary=job_domicile_provinces)
     approvals = relationship(
         "ApprovalRecord", back_populates="job", order_by="ApprovalRecord.created_at"
     )
+
+    def is_open(self, now=None):
+        """Published, past its opening date and before its closing date."""
+        now = now or datetime.now(UTC)
+        return self.status == JobStatus.PUBLISHED and self.opening_date <= now < self.closing_date
 
 
 class JobRequirement(db.Model):
