@@ -1,12 +1,12 @@
 # Work Log: Umaima
 
-Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#step-4-log-the-work).
+Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#step-4-work-and-log).
 
 <!-- Copy this block for each entry:
 
 ### YYYY-MM-DD | T-### Task title
 - **Status:** Done / Partial / In progress
-- **Branch:** umaima/T-###-short-desc
+- **Milestone:** M# (branch m#-milestone-name)
 - **What changed:**
   - `path/to/file`: what and why
 - **Database:** migrations, or "none"

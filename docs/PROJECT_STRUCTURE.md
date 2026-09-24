@@ -133,7 +133,7 @@ Keep controllers thin. A controller function should read like: validate input â†
 | Frontend tests | next to the file, `.test.jsx` | `JobCard.test.jsx` |
 | Migrations | message starts with task ID | `flask db migrate -m "T-013 add jobs tables"` |
 
-Use the same domain words everywhere: `job`, `candidate_profile`, `application`, `snapshot`, `requirement`, `corrigendum`, `approval`, `status_event`, matching the data model in the flow doc. Don't mix synonyms (`vacancy`/`post`/`job`, `user`/`applicant`/`candidate`).
+Use the same domain words everywhere: `job`, `candidate_profile`, `application`, `snapshot`, `requirement`, `approval`, `status_event`, matching the data model in the flow doc. Don't mix synonyms (`vacancy`/`post`/`job`, `user`/`applicant`/`candidate`).
 
 ## 5. Repo hygiene rules
 

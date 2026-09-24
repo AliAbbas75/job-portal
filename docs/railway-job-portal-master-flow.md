@@ -4,6 +4,8 @@ Status: Draft. This will change as the portal is developed.
 
 Items tagged **[Proposed]** came out of brainstorming and still need sign-off. Everything else reflects the agreed flow.
 
+> **Current development scope:** sections 1 to 4.9 (admin job flow through candidate application tracking). Section 5 (post-deadline screening) and section 6 (cross-cutting requirements) are **deferred** to a later phase. The data model still reserves the statuses they will use.
+
 ## 1. Core Principles
 
 1. **Permanent candidate profile.** Every candidate gets one permanent profile, keyed to their CNIC. It's created at signup, persists across every job and every year, and is never tied to or deleted with a single job. The candidate can update it at any time.
@@ -45,15 +47,10 @@ Items tagged **[Proposed]** came out of brainstorming and still need sign-off. E
 - Every action recorded in an audit trail **[Proposed]**
 
 ### 3.3 Publish
-- Job is locked once approved **[Proposed]**
+- Job is locked once approved. **Once published, a job is final: it can't be edited and there is no corrigendum process.**
 - Advertisement number assigned, newspaper advertisement attached **[Proposed]**
 - Scheduled publish on the opening date, auto-close at the deadline **[Proposed]**
 - Job becomes visible on the candidate portal
-
-### 3.4 Corrigendum **[Proposed]**
-- Any change after publication (deadline extension, added seats, corrected eligibility) goes through a corrigendum
-- Corrigendum needs approval
-- Existing applicants are notified
 
 ## 4. Candidate Flow
 
@@ -139,7 +136,7 @@ Compare Job Requirements against the Candidate Profile. Show only what's missing
 - On submit, the relevant profile data is frozen into an application snapshot
 - Later profile edits don't affect submitted applications
 - One application per CNIC per job; applying to multiple jobs is allowed
-- Edit or withdraw before deadline: pending (see open question 4)
+- **Submitted applications are final: they can't be edited or withdrawn.**
 
 ### 4.9 Application Tracking
 - Application ID
@@ -172,7 +169,7 @@ Submitted, Under Review, Rejected (with reason), Shortlisted, Admit Card Issued,
 - SMS and email notification on every status change
 - Urdu and English support
 - Mobile-first, low-bandwidth friendly
-- Full audit trail on admin actions (creation, approval, corrigendum, screening decisions)
+- Full audit trail on admin actions (creation, approval, publication, screening decisions)
 - Reports per job: applications received, eligible, shortlisted, quota-wise breakdown
 
 ## 7. Data Model Overview **[Proposed]**
@@ -185,7 +182,6 @@ Submitted, Under Review, Rejected (with reason), Shortlisted, Admit Card Issued,
 | Job | Details, BPS, quota breakdown, status, advertisement number |
 | JobRequirement | Structured eligibility rules for one job |
 | ApprovalRecord | Each approver's action and comments |
-| Corrigendum | Post-publication change with approval |
 | Application | Links candidate to job, holds status |
 | ApplicationSnapshot | Frozen profile data at submission |
 | StatusEvent | Every status change, drives tracking and notifications |
@@ -201,9 +197,7 @@ flowchart TD
         A4 -- "Returned with comments" --> A2
         A4 -- "Rejected" --> A5["Job closed as rejected"]
         A4 -- "Approved" --> A6["Job locked and scheduled"]
-        A6 --> A7["Job published with advertisement number"]
-        A7 -.-> A8["Corrigendum: approved change, applicants notified"]
-        A8 -.-> A7
+        A6 --> A7["Job published with advertisement number (final, no edits)"]
     end
 
     subgraph CAND["Candidate Portal"]
@@ -233,7 +227,6 @@ flowchart TD
         C19 --> C20["Fee payment if applicable"]
         C20 --> C21["Eligibility confirmation and declaration"]
         C21 --> C22["Submit: snapshot created, application ID issued"]
-        C22 -.-> C23["Edit or withdraw before deadline: TBD"]
     end
 
     A7 --> C1
@@ -270,4 +263,3 @@ flowchart TD
 1. Is BPS-15 the right tier boundary, or should it be BPS-16, where posts start looking more officer-like?
 2. Who creates the job: the department that needs the post, or a central recruitment cell on its behalf?
 3. Is the written test conducted in-house or by an external testing agency?
-4. Can a candidate edit or withdraw an application before the deadline?
