@@ -16,12 +16,10 @@ The goal is that anyone can open `workspace/TASKS.md` and see who is doing what 
    git pull
    ```
 2. Open [TASKS.md](TASKS.md) and find the task. If it doesn't exist, add a row at the bottom of the right milestone table using the next free ID.
-3. Check the Owner column is empty. If someone else owns it, pick another task or talk to them first.
+3. Check the Owner is `-` (unassigned). If someone else owns it, pick another task or talk to them first.
 4. Fill in your row:
    - **Owner:** your name (Ali, Anum, Hadi, Malaika or Umaima)
    - **Status:** `IN PROGRESS`
-   - **Branch:** the branch you're about to create
-   - **Started:** today's date (`YYYY-MM-DD`)
 5. Commit and push the claim to `main` straight away, on its own:
    ```bash
    git add workspace/TASKS.md
@@ -47,11 +45,12 @@ Lowercase, hyphens, no spaces.
 ## Step 3: Do the work
 
 - Follow the architecture and conventions in [CLAUDE.md](../CLAUDE.md).
+- Put every new file where [docs/PROJECT_STRUCTURE.md](../docs/PROJECT_STRUCTURE.md) says, named by its conventions. Don't create files the task doesn't need.
 - Commit often on your branch. Every commit message includes the task ID:
   ```
   feat(profile): add education section endpoints [T-043]
   ```
-- If you get stuck waiting on someone else, set Status to `BLOCKED` and say why in Notes (push that board change to `main` the same way as a claim).
+- If you get stuck waiting on someone else, set Status to `BLOCKED` and say why in a note under that milestone's table (push that board change to `main` the same way as a claim).
 - If the task grows, split it: add new task rows rather than silently widening the scope.
 
 ## Step 4: Log the work
@@ -93,8 +92,8 @@ git push -u origin <your-branch>
 Then:
 1. Open a pull request into `main`. Title: `[T-043] Profile section APIs`. In the description, link the task and paste the log entry.
 2. On your branch, set the task's Status to `IN REVIEW` in `TASKS.md` so it merges with the PR.
-3. Ask at least one other team member to review. Reviewers check the architecture rules in CLAUDE.md, tests, migrations, and that the log entry is there.
-4. After merge, set Status to `DONE` and fill in **Done** with the date (push to `main` like a claim).
+3. Ask at least one other team member to review. Reviewers check the architecture rules in CLAUDE.md, file placement and naming against PROJECT_STRUCTURE.md, no debug leftovers or stray files, tests, migrations, and that the log entry is there.
+4. After merge, set Status to `DONE` (push to `main` like a claim).
 5. Delete the branch.
 
 ## Status values
@@ -103,14 +102,14 @@ Then:
 |--------|---------|
 | `TODO` | Nobody is on it |
 | `IN PROGRESS` | Claimed and being worked on |
-| `BLOCKED` | Can't continue; reason in Notes |
+| `BLOCKED` | Can't continue; reason in the milestone's notes |
 | `IN REVIEW` | Pull request open |
 | `DONE` | Merged into `main` |
 
 ## Handing over or dropping a task
 
-- **Dropping:** set Owner back to empty, Status to `TODO`, and write a Notes line saying what's done and where the branch is. Add a matching log entry.
-- **Handing over:** change Owner, add `handed over from <name> on <date>` to Notes. Both people add a log entry.
+- **Dropping:** set Owner back to `-`, Status to `TODO`, and add a note saying what's done and where the branch is. Add a matching log entry.
+- **Handing over:** change Owner, add a note `handed over from <name> on <date>`. Both people add a log entry.
 
 ## Milestones
 
@@ -125,6 +124,7 @@ Claude Code reads [CLAUDE.md](../CLAUDE.md) and follows this same workflow. Tell
 - [ ] Pulled latest `main`
 - [ ] Task claimed in TASKS.md and pushed to `main`
 - [ ] Working on `<name>/<task-id>-<desc>` branch
+- [ ] New files placed and named per PROJECT_STRUCTURE.md; no stray/debug files
 - [ ] Commits include `[T-###]`
 - [ ] Log entry added to `workspace/logs/<name>.md`
 - [ ] Rebased on `main`, pushed, PR opened

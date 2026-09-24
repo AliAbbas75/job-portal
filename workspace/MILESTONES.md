@@ -96,7 +96,7 @@ Notifications, Urdu/English, reports, audit viewer, security, deployment (§6).
 
 ## Open questions (from §9)
 
-These block some tasks. Record the decision here and in the affected task's Notes when it's made.
+These block some tasks. Record the decision here and as a note on the affected tasks in TASKS.md when it's made.
 
 | # | Question | Blocks | Decision | Decided on |
 |---|----------|--------|----------|------------|
