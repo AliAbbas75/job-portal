@@ -27,24 +27,21 @@ const ALL_FAQS = [
   {
     id: 'q4',
     col: 2,
-    question:
-      'What is the procedure to sign up for Pakistan Railways Public Recruitment Service?',
+    question: 'What is the procedure to sign up for Pakistan Railways Public Recruitment Service?',
     answer:
       'Navigate to the signup page, input your CNIC number, complete the SMS OTP verification step, and build your candidate profile to start applying for positions.',
   },
   {
     id: 'q5',
     col: 2,
-    question:
-      'How do I enroll in the Pakistan Railways Public Recruitment Service system?',
+    question: 'How do I enroll in the Pakistan Railways Public Recruitment Service system?',
     answer:
       'Enrollment requires entering your CNIC and registered test details. Follow the step-by-step verification wizard to establish your candidate account.',
   },
   {
     id: 'q6',
     col: 2,
-    question:
-      'Steps to register for Pakistan Railways Public Recruitment Service online?',
+    question: 'Steps to register for Pakistan Railways Public Recruitment Service online?',
     answer:
       '1. Visit the portal homepage. 2. Click Register. 3. Enter CNIC & Mobile Number. 4. Verify OTP. 5. Fill out mandatory profile sections.',
   },
@@ -61,9 +58,9 @@ export function FaqSection() {
   };
 
   return (
-    <section className="bg-gray-50 py-16 px-4 border-t border-gray-100 font-['Instrument_Sans',sans-serif]">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-10 tracking-tight font-['Instrument_Sans',sans-serif]">
+    <section className="bg-gray-50 border-gray-100 border-t px-4 py-16 font-['Instrument_Sans',sans-serif]">
+      <div className="mx-auto max-w-6xl">
+        <h2 className="text-gray-900 mb-10 text-center font-['Instrument_Sans',sans-serif] text-3xl font-bold tracking-tight md:text-4xl">
           FAQs
         </h2>
 
@@ -75,21 +72,21 @@ export function FaqSection() {
                 <div key={q.id} className="faq-card">
                   <button
                     type="button"
-                    className="w-full flex justify-between items-center text-left gap-4 bg-none border-none p-0 cursor-pointer"
+                    className="flex w-full cursor-pointer items-center justify-between gap-4 border-none bg-none p-0 text-left"
                     onClick={() => toggleQuestion(q.id)}
                     aria-expanded={isOpen}
                   >
-                    <span className="text-[15px] font-semibold text-gray-800 leading-snug font-['Instrument_Sans',sans-serif]">
+                    <span className="text-gray-800 font-['Instrument_Sans',sans-serif] text-[15px] leading-snug font-semibold">
                       {q.question}
                     </span>
-                    <span className="text-lg text-gray-500 font-normal flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                    <span className="text-gray-500 flex h-6 w-6 flex-shrink-0 items-center justify-center text-lg font-normal">
                       {isOpen ? '✕' : '+'}
                     </span>
                   </button>
                   {isOpen && (
                     <div className="mt-1">
-                      <div className="border-t border-dashed border-gray-200 my-3.5" />
-                      <p className="text-sm text-gray-600 leading-relaxed font-normal m-0 font-['Instrument_Sans',sans-serif]">
+                      <div className="border-gray-200 my-3.5 border-t border-dashed" />
+                      <p className="text-gray-600 m-0 font-['Instrument_Sans',sans-serif] text-sm leading-relaxed font-normal">
                         {q.answer}
                       </p>
                     </div>
@@ -106,21 +103,21 @@ export function FaqSection() {
                 <div key={q.id} className="faq-card">
                   <button
                     type="button"
-                    className="w-full flex justify-between items-center text-left gap-4 bg-none border-none p-0 cursor-pointer"
+                    className="flex w-full cursor-pointer items-center justify-between gap-4 border-none bg-none p-0 text-left"
                     onClick={() => toggleQuestion(q.id)}
                     aria-expanded={isOpen}
                   >
-                    <span className="text-[15px] font-semibold text-gray-800 leading-snug font-['Instrument_Sans',sans-serif]">
+                    <span className="text-gray-800 font-['Instrument_Sans',sans-serif] text-[15px] leading-snug font-semibold">
                       {q.question}
                     </span>
-                    <span className="text-lg text-gray-500 font-normal flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                    <span className="text-gray-500 flex h-6 w-6 flex-shrink-0 items-center justify-center text-lg font-normal">
                       {isOpen ? '✕' : '+'}
                     </span>
                   </button>
                   {isOpen && (
                     <div className="mt-1">
-                      <div className="border-t border-dashed border-gray-200 my-3.5" />
-                      <p className="text-sm text-gray-600 leading-relaxed font-normal m-0 font-['Instrument_Sans',sans-serif]">
+                      <div className="border-gray-200 my-3.5 border-t border-dashed" />
+                      <p className="text-gray-600 m-0 font-['Instrument_Sans',sans-serif] text-sm leading-relaxed font-normal">
                         {q.answer}
                       </p>
                     </div>

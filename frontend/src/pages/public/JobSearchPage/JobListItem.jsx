@@ -11,7 +11,7 @@ export function JobListItem({ job }) {
 
   return (
     <li
-      className={`group relative grid grid-cols-1 items-center gap-x-5 gap-y-4 border-b [border-bottom-style:dashed] border-b-heritage py-5 px-4 transition-colors duration-200 md:grid-cols-[1fr_auto] ${
+      className={`group relative grid grid-cols-1 items-center gap-x-5 gap-y-4 border-b [border-bottom-style:dashed] border-b-heritage px-4 py-5 transition-colors duration-200 md:grid-cols-[1fr_auto] ${
         closingSoon ? 'bg-[#f8d7da] hover:bg-[#f1aeb5]' : 'hover:bg-surface'
       }`}
     >
