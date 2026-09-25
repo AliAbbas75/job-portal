@@ -1,10 +1,14 @@
-"""Flask CLI commands: `flask seed` (reference data) and `flask seed-demo` (dev sample jobs)."""
+"""Flask CLI commands: `flask seed` (reference data), `flask seed-demo` (dev sample jobs) and
+`flask create-staff` (staff accounts; there is no admin screen for this yet)."""
 
 import click
 from flask import current_app
 
+from app.models.enums import StaffRole
 from app.services.demo_seed_service import seed_demo_jobs
 from app.services.reference_seed_service import seed_reference_data
+from app.services.staff_service import create_staff
+from app.utils.errors import AppError
 
 
 def register_commands(app):
@@ -23,3 +27,17 @@ def register_commands(app):
                 "seed-demo only runs in development (FLASK_ENV=development)."
             )
         click.echo(f"demo jobs added: {seed_demo_jobs()}")
+
+    @app.cli.command("create-staff")
+    @click.option("--name", prompt=True)
+    @click.option("--email", prompt=True)
+    @click.option("--role", prompt=True, type=click.Choice([r.value for r in StaffRole]))
+    @click.option("--department", default=None, help="Department code, e.g. TRF.")
+    @click.password_option(help="At least 12 characters. Prompted if omitted.")
+    def create_staff_command(name, email, role, department, password):
+        """Create a staff account (job creator, approver or admin)."""
+        try:
+            user = create_staff(name, email, password, StaffRole(role), department)
+        except AppError as error:
+            raise click.ClickException(error.message) from None
+        click.echo(f"created {user.role.value} {user.email} (id {user.id})")

@@ -8,6 +8,7 @@ from app.models.audit_log import AuditLog
 from app.models.candidate import CandidateAccount, CandidateProfile
 from app.models.document import Document
 from app.models.job import Job, JobQuota, JobRequirement
+from app.models.otp_challenge import OtpChallenge
 from app.models.profile_records import (
     CandidateReference,
     EducationRecord,
@@ -16,6 +17,7 @@ from app.models.profile_records import (
     Publication,
 )
 from app.models.reference import Department, District, DocumentType, Province, QualificationLevel
+from app.models.revoked_token import RevokedToken
 from app.models.staff_user import StaffUser
 
 __all__ = [
@@ -35,10 +37,12 @@ __all__ = [
     "Job",
     "JobQuota",
     "JobRequirement",
+    "OtpChallenge",
     "ProfessionalRegistration",
     "Province",
     "Publication",
     "QualificationLevel",
+    "RevokedToken",
     "StaffUser",
     "StatusEvent",
 ]

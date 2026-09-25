@@ -9,8 +9,11 @@ import NotFoundPage from '../pages/public/NotFoundPage';
 import SignupPage from '../pages/public/SignupPage';
 import { paths } from './paths';
 import { RequireCandidate } from './RequireCandidate';
+import { RequireStaff } from './RequireStaff';
 
-// Candidate pages load on demand to keep the first download small.
+// Candidate and staff pages load on demand to keep the first download small.
+const AdminHomePage = lazy(() => import('../pages/admin/AdminHomePage'));
+const StaffLoginPage = lazy(() => import('../pages/admin/StaffLoginPage'));
 const ProfilePage = lazy(() => import('../pages/candidate/ProfilePage'));
 const ApplicationCheckPage = lazy(() => import('../pages/candidate/ApplicationCheckPage'));
 const ApplicationReviewPage = lazy(() => import('../pages/candidate/ApplicationReviewPage'));
@@ -33,6 +36,11 @@ export function AppRoutes() {
             <Route path={paths.applyReview()} element={<ApplicationReviewPage />} />
             <Route path={paths.applications} element={<MyApplicationsPage />} />
             <Route path={paths.application()} element={<ApplicationDetailPage />} />
+          </Route>
+
+          <Route path={paths.adminLogin} element={<StaffLoginPage />} />
+          <Route element={<RequireStaff />}>
+            <Route path={paths.admin} element={<AdminHomePage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

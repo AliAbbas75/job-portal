@@ -58,3 +58,8 @@ class ApplicationStatus(StrEnum):
     DOCUMENT_VERIFICATION = "document_verification"
     MEDICAL = "medical"
     OFFER = "offer"
+
+
+class OtpPurpose(StrEnum):
+    SIGNUP = "signup"
+    LOGIN = "login"

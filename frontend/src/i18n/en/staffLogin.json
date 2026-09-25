@@ -1,0 +1,8 @@
+{
+  "title": "Staff login",
+  "lead": "For Pakistan Railways recruitment staff. Candidates log in with their CNIC instead.",
+  "email": "Work email",
+  "password": "Password",
+  "submit": "Log in",
+  "demoHint": "Demo mode: log in as admin@example.com, approver@example.com or creator@example.com with the password demo-password."
+}

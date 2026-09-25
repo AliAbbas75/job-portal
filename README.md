@@ -37,9 +37,9 @@ npm install
 npm run dev               # http://localhost:5173
 ```
 
-In mock mode, sign up with any valid CNIC and mobile number and use the code **123456**. Data is kept in your browser's localStorage.
+In mock mode, sign up with any valid CNIC and mobile number and use the code **123456**. Data is kept in your browser's localStorage. Staff log in at `/admin/login` as `admin@example.com`, `approver@example.com` or `creator@example.com` with the password `demo-password`.
 
-**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Job search and job details work against the database. Profile and documents also need M2's login, so keep mock mode for those until M2 lands.
+**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Everything built so far then runs against the database. When you sign up or log in, the SMS code is printed in the `flask run` output (`SMS to 0300*****67: Your ... code is 123456`); there's no SMS gateway yet. For staff login, create an account with `flask create-staff`.
 
 | Command | Does |
 |---|---|
@@ -71,6 +71,7 @@ cp .env.example .env            # defaults match docker-compose.yml
 flask db upgrade                # create the tables
 flask seed                      # load departments, provinces, qualifications, document types
 flask seed-demo                 # optional, dev only: 6 sample published jobs
+flask create-staff              # optional: a staff login (asks for name, email, role, password)
 flask run                       # http://localhost:5000/api/health
 ```
 

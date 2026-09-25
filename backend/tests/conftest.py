@@ -4,6 +4,7 @@ The test database (TEST_DATABASE_URL) is rebuilt once per run from the real migr
 seeded with reference data. After each test every non-reference table is truncated.
 """
 
+import re
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -22,8 +23,9 @@ from app.models import (
     JobRequirement,
     Province,
 )
-from app.models.enums import EmploymentType, JobStatus, QuotaCategory
+from app.models.enums import EmploymentType, JobStatus, QuotaCategory, StaffRole
 from app.services.reference_seed_service import seed_reference_data
+from app.services.staff_service import create_staff
 
 REFERENCE_TABLES = {
     "departments",
@@ -135,5 +137,44 @@ def auth_headers():
             identity=str(account.id), additional_claims={"role": "candidate"}
         )
         return {"Authorization": f"Bearer {token}"}
+
+    return _headers
+
+
+@pytest.fixture
+def sms_outbox(app):
+    """SMS sent during the test as (mobile, message) pairs (SMS_BACKEND=memory in tests)."""
+    outbox = app.extensions.setdefault("sms_outbox", [])
+    outbox.clear()
+    yield outbox
+    outbox.clear()
+
+
+@pytest.fixture
+def last_otp(sms_outbox):
+    """The 6-digit code in the most recent SMS."""
+    return lambda: re.search(r"\b(\d{6})\b", sms_outbox[-1][1]).group(1)
+
+
+STAFF_PASSWORD = "correct-horse-battery"
+
+
+@pytest.fixture
+def make_staff():
+    def _make(role=StaffRole.ADMIN, email="admin@example.com"):
+        return create_staff("Test Staff", email, STAFF_PASSWORD, role)
+
+    return _make
+
+
+@pytest.fixture
+def staff_headers(client):
+    """Logs a staff user in through the API and returns the Authorization header."""
+
+    def _headers(user):
+        body = client.post(
+            "/api/admin/auth/login", json={"email": user.email, "password": STAFF_PASSWORD}
+        ).get_json()
+        return {"Authorization": f"Bearer {body['token']}"}
 
     return _headers
