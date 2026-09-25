@@ -84,6 +84,9 @@ DOCUMENT_TYPES = [
     ("pec_registration", "PEC registration"),
     ("noc", "No-objection certificate (NOC)"),
     ("disability_certificate", "Disability certificate"),
+    ("trade_certificate", "Trade certificate"),
+    ("quota_proof", "Quota proof"),
+    ("age_relaxation_proof", "Age relaxation proof"),
 ]
 
 

@@ -8,6 +8,8 @@
 - Every status change writes a StatusEvent and an audit entry.
 """
 
+from flask import current_app
+from itsdangerous import BadSignature, URLSafeTimedSerializer
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
@@ -15,15 +17,25 @@ from sqlalchemy.orm import selectinload
 from app.extensions import db
 from app.models import Application, ApplicationSnapshot, Job, StatusEvent
 from app.models.constants import next_application_statuses
-from app.models.enums import ApplicationStatus
+from app.models.enums import ApplicationStatus, OtpPurpose
 from app.schemas.profile_schema import ProfileSchema
-from app.services import audit_service, eligibility_service
+from app.services import audit_service, eligibility_service, otp_service
 from app.services.candidate_service import profile_of
 from app.services.document_service import current_documents
 from app.utils.dates import age_on
 from app.utils.errors import AppError
 
-SNAPSHOT_SECTIONS = ("personal", "contact", "domicile", "education", "experience", "additional")
+SNAPSHOT_SECTIONS = (
+    "personal",
+    "contact",
+    "domicile",
+    "education",
+    "experience",
+    "additional",
+    "claims",
+)
+# The apply wizard's identity check (SMS code) is valid for this long before submitting.
+APPLY_PASS_SECONDS = 30 * 60
 
 
 def _job(job_id):
@@ -56,6 +68,39 @@ def application_check(account, job_id):
     }
 
 
+def _pass_serializer():
+    return URLSafeTimedSerializer(current_app.config["SECRET_KEY"], salt="apply-identity")
+
+
+def request_apply_code(account, job_id, cnic, mobile):
+    """Apply wizard steps 1-2: the CNIC and mobile must be the account's; texts a code."""
+    job = _job(job_id)
+    if not job.is_open():
+        raise AppError("job_closed", "Applications for this job have closed.", 409)
+    if cnic != account.cnic or mobile != account.mobile:
+        raise AppError("identity_mismatch", "Use the CNIC and mobile number you registered.", 422)
+    ttl = otp_service.issue(OtpPurpose.APPLY, account.cnic, account.mobile)
+    db.session.commit()
+    return ttl
+
+
+def verify_apply_code(account, job_id, code):
+    """Checks the code and returns a pass the submit call needs (valid 30 minutes)."""
+    _job(job_id)
+    otp_service.verify(OtpPurpose.APPLY, account.cnic, account.mobile, code)
+    db.session.commit()
+    return _pass_serializer().dumps({"account": account.id, "job": job_id})
+
+
+def _check_pass(account, job_id, apply_pass):
+    try:
+        data = _pass_serializer().loads(apply_pass or "", max_age=APPLY_PASS_SECONDS)
+    except BadSignature:
+        data = None
+    if data != {"account": account.id, "job": job_id}:
+        raise AppError("identity_check_required", "Verify your mobile number again to submit.", 403)
+
+
 def _snapshot_data(profile, job, check):
     dumped = ProfileSchema().dump(profile)
     data = {section: dumped[section] for section in SNAPSHOT_SECTIONS}
@@ -66,10 +111,11 @@ def _snapshot_data(profile, job, check):
     return data
 
 
-def submit(account, job_id, declaration_accepted):
+def submit(account, job_id, declaration_accepted, apply_pass):
     job = _job(job_id)
     if not job.is_open():
         raise AppError("job_closed", "Applications for this job have closed.", 409)
+    _check_pass(account, job_id, apply_pass)
     profile = profile_of(account)
     if _existing(profile, job):
         raise AppError("already_applied", "You've already applied for this job.", 409)

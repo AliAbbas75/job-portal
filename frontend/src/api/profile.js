@@ -3,22 +3,19 @@ import * as mock from './mocks/profileMock';
 
 export async function getProfile() {
   if (USE_MOCKS) return mock.getProfile();
-  try {
-    const { data } = await client.get('/profile');
-    return data;
-  } catch {
-    return mock.getProfile();
-  }
+  const { data } = await client.get('/profile');
+  return data;
 }
 
+/**
+ * Saves the one-page profile form: { fullName, fatherName, dob, gender, province, district,
+ * email, address, highestQualification, tradeCertificate, quota, ageRelaxation } (codes for the
+ * dropdowns). Returns the full profile.
+ */
 export async function updateProfile(values) {
-  if (USE_MOCKS) return mock.updateSection('personal', values);
-  try {
-    const { data } = await client.put('/profile/personal', values);
-    return data;
-  } catch {
-    return values;
-  }
+  if (USE_MOCKS) return mock.updateSection('summary', values);
+  const { data } = await client.put('/profile/summary', values);
+  return data;
 }
 
 /** section: 'personal' | 'contact' | 'domicile' | 'additional' | 'skills'. Returns the full profile. */

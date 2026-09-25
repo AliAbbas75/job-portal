@@ -34,4 +34,7 @@ def dump_reference(data):
             for code, name, low, high in data["bps_ranges"]
         ],
         "genders": pairs(data["genders"]),
+        "quotaClaims": pairs(data["quota_claims"]),
+        "ageRelaxations": pairs(data["age_relaxations"]),
+        "tradeCertificates": pairs(data["trade_certificates"]),
     }

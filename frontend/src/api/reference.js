@@ -13,6 +13,9 @@ export async function getReferenceData() {
       employmentTypes,
       bpsRanges,
       genders,
+      quotaClaims,
+      ageRelaxations,
+      tradeCertificates,
     } = mock;
     return {
       departments,
@@ -23,6 +26,9 @@ export async function getReferenceData() {
       employmentTypes,
       bpsRanges,
       genders,
+      quotaClaims,
+      ageRelaxations,
+      tradeCertificates,
     };
   }
   const { data } = await client.get('/reference');

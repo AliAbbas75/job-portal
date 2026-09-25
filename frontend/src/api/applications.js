@@ -8,7 +8,24 @@ export async function getApplicationCheck(jobId) {
   return data;
 }
 
-/** Submits and freezes the application. Submitted applications can't be edited or withdrawn. */
+/** Wizard steps 1-2: the registered CNIC + mobile; an SMS code is sent. */
+export async function requestApplyCode(jobId, { cnic, mobile }) {
+  if (USE_MOCKS) return mock.requestApplyCode(jobId, { cnic, mobile });
+  const { data } = await client.post(`/jobs/${jobId}/apply-code`, { cnic, mobile });
+  return data;
+}
+
+/** Returns { applyPass }, which submitApplication needs (valid 30 minutes). */
+export async function verifyApplyCode(jobId, otp) {
+  if (USE_MOCKS) return mock.verifyApplyCode(jobId, otp);
+  const { data } = await client.post(`/jobs/${jobId}/apply-code/verify`, { otp });
+  return data;
+}
+
+/**
+ * Submits and freezes the application: { declarationAccepted, applyPass }. Submitted
+ * applications can't be edited or withdrawn.
+ */
 export async function submitApplication(jobId, payload) {
   if (USE_MOCKS) return mock.submitApplication(jobId, payload);
   const { data } = await client.post(`/jobs/${jobId}/applications`, payload);

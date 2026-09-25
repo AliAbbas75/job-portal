@@ -56,6 +56,35 @@ def _resolve_domicile(values):
     return {"domicile_province_code": province.code, "domicile_district_id": district.id}
 
 
+def update_summary(account, profile, values):
+    """Saves the one-page profile form. The single address fills the current address, and the
+    permanent address too when it is still empty."""
+    if not db.session.get(QualificationLevel, values["highest_qualification"]):
+        raise _invalid("highestQualification", "Unknown qualification level.")
+    domicile = _resolve_domicile({"province": values["province"], "district": values["district"]})
+    updates = {
+        "full_name": values["full_name"],
+        "father_name": values["father_name"],
+        "dob": values["dob"],
+        "gender": values["gender"],
+        "email": values["email"],
+        "current_address": values["address"],
+        "permanent_address": profile.permanent_address or values["address"],
+        "highest_qualification_code": values["highest_qualification"],
+        "trade_certificate": values["trade_certificate"],
+        "quota_claim": values["quota"],
+        "age_relaxation_claim": values["age_relaxation"],
+        **domicile,
+    }
+    changed = [name for name, value in updates.items() if getattr(profile, name) != value]
+    for name, value in updates.items():
+        setattr(profile, name, value)
+    if changed:
+        _record_edit(account, profile, "summary", changed)
+    db.session.commit()
+    return profile
+
+
 def update_skills(account, profile, skills):
     cleaned = list(dict.fromkeys(s.strip() for s in skills if s.strip()))  # dedupe, keep order
     if cleaned != profile.skills:

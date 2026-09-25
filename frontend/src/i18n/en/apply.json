@@ -1,8 +1,0 @@
-{
-  "stepsLabel": "Application steps",
-  "steps": {
-    "check": "Check eligibility",
-    "review": "Review and submit",
-    "submitted": "Submitted"
-  }
-}

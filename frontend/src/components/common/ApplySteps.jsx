@@ -1,36 +1,33 @@
-/** Candidate application 6-step pill progress bar matching user design specs. */
-const CANDIDATE_STEPS = [
-  { id: 1, key: 'identity', label: '1. Identity' },
-  { id: 2, key: 'otp', label: '2. OTP' },
-  { id: 3, key: 'profile', label: '3. Profile' },
-  { id: 4, key: 'documents', label: '4. Documents' },
-  { id: 5, key: 'review', label: '5. Review' },
-  { id: 6, key: 'confirm', label: '6. Confirm' },
-];
+import { t } from '../../i18n';
+import { cx } from '../../utils/cx';
+import { Icon } from './Icon';
 
+const APPLY_STEPS = ['identity', 'otp', 'profile', 'documents', 'review', 'confirm'];
+
+/** The apply wizard's 6 step pills. `current` is a step key; 'submitted' marks all as done. */
 export function ApplySteps({ current = 'identity' }) {
-  const currentIndex = CANDIDATE_STEPS.findIndex((s) => s.key === current);
+  const currentIndex =
+    current === 'submitted' ? APPLY_STEPS.length : Math.max(0, APPLY_STEPS.indexOf(current));
 
   return (
-    <nav aria-label="Application Progress" className="w-full my-4 font-['Instrument_Sans',sans-serif]">
-      <ol className="flex flex-wrap items-center justify-center gap-2 text-xs">
-        {CANDIDATE_STEPS.map((step, idx) => {
-          const isDone = idx < currentIndex;
-          const isCurrent = idx === currentIndex || (currentIndex === -1 && idx === 0);
-
+    <nav aria-label={t('wizard.progress')} className="w-full">
+      <ol className="flex flex-wrap items-center justify-center gap-2 text-sm">
+        {APPLY_STEPS.map((step, index) => {
+          const done = index < currentIndex;
+          const isCurrent = index === currentIndex;
           return (
             <li
-              key={step.key}
-              className={`px-3 py-1.5 rounded-full border transition-all flex items-center gap-1 font-medium ${
-                isCurrent
-                  ? 'border-[#1f4d36] bg-[#f0fdf4] text-[#1f4d36] font-semibold shadow-2xs'
-                  : isDone
-                  ? 'border-emerald-600 bg-emerald-50 text-emerald-700 font-semibold'
-                  : 'border-gray-200 text-gray-400 bg-white'
-              }`}
+              key={step}
+              aria-current={isCurrent ? 'step' : undefined}
+              className={cx(
+                'flex items-center gap-1 rounded-full border px-3 py-1.5',
+                isCurrent && 'border-heritage bg-surface font-bold text-heritage',
+                done && 'border-heritage bg-white font-bold text-heritage',
+                !isCurrent && !done && 'border-surface bg-white text-black',
+              )}
             >
-              {isDone && <span className="text-emerald-700 font-bold">✓</span>}
-              <span>{step.label}</span>
+              {done && <Icon name="check" size={14} />}
+              <span>{t(`wizard.steps.${step}`)}</span>
             </li>
           );
         })}

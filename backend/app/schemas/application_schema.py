@@ -3,7 +3,9 @@
 The public id of an application is its number (PR-2026-000123).
 """
 
-from marshmallow import EXCLUDE, fields, validate
+import re
+
+from marshmallow import EXCLUDE, fields, pre_load, validate
 
 from app.extensions import ma
 from app.models.constants import next_application_statuses
@@ -15,6 +17,28 @@ class SubmitInput(ma.Schema):
         unknown = EXCLUDE
 
     declaration_accepted = fields.Bool(data_key="declarationAccepted", load_default=False)
+    apply_pass = fields.Str(data_key="applyPass", load_default=None, allow_none=True)
+
+
+class ApplyCodeRequestInput(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    cnic = fields.Str(required=True, validate=validate.Length(max=15))
+    mobile = fields.Str(required=True, validate=validate.Length(max=13))
+
+    @pre_load
+    def normalize_mobile(self, data, **kwargs):
+        if isinstance(data, dict) and isinstance(data.get("mobile"), str):
+            data = {**data, "mobile": re.sub(r"[\s-]", "", data["mobile"])}
+        return data
+
+
+class ApplyCodeVerifyInput(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    otp = fields.Str(required=True, validate=validate.Regexp(r"^\d{6}$", error="Enter 6 digits."))
 
 
 class StatusChangeInput(ma.Schema):

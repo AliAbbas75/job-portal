@@ -19,6 +19,7 @@ export function emptyProfile(account) {
     experience: [],
     skills: [],
     additional: { governmentEmployee: false, disability: false, minority: false },
+    claims: { highestQualification: '', tradeCertificate: '', quota: '', ageRelaxation: '' },
   };
 }
 
@@ -38,6 +39,27 @@ export function updateSection(section, data) {
   if (!profile) return fail('unauthorized');
   if (section === 'skills') {
     profile.skills = data;
+  } else if (section === 'summary') {
+    profile.personal = {
+      ...profile.personal,
+      fullName: data.fullName,
+      fatherName: data.fatherName,
+      dob: data.dob,
+      gender: data.gender,
+    };
+    profile.contact = {
+      ...profile.contact,
+      email: data.email ?? '',
+      currentAddress: data.address,
+      permanentAddress: profile.contact.permanentAddress || data.address,
+    };
+    profile.domicile = { province: data.province, district: data.district };
+    profile.claims = {
+      highestQualification: data.highestQualification,
+      tradeCertificate: data.tradeCertificate,
+      quota: data.quota,
+      ageRelaxation: data.ageRelaxation,
+    };
   } else if (FIELD_SECTIONS.includes(section)) {
     // CNIC and mobile are fixed at signup.
     const { cnic: _cnic, mobile: _mobile, ...editable } = data;

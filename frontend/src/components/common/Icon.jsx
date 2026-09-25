@@ -25,6 +25,14 @@ const PATHS = {
   plus: 'M12 5v14M5 12h14',
   menu: 'M4 6h16M4 12h16M4 18h16',
   lock: 'M6 11h12v10H6zM8 11V7a4 4 0 1 1 8 0v4',
+  idCard:
+    'M3 4h18v16H3zM15 8h2m-2 4h2M6 17c0-2 2-3 3-3s3 1 3 3M9 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
+  phone: 'M7 3h10v18H7zM11 18h2',
+  signal: 'M12 18v3M6 15a9 9 0 0 1 12 0M8.5 11.5a6 6 0 0 1 7 0M11 10.5a3 3 0 0 1 2 0',
+  camera: 'M3 7h4l2-3h6l2 3h4v13H3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z',
+  bell: 'M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4',
+  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+  hourglass: 'M6 2h12M6 22h12M7 2c0 6 10 6 10 10S7 16 7 22M17 2c0 6-10 6-10 10s10 4 10 10',
 };
 
 export function Icon({ name, size = 18, title, className }) {

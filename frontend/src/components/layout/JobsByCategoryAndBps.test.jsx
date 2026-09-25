@@ -1,23 +1,23 @@
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { JobsByCategoryAndBps } from './JobsByCategoryAndBps';
 
 describe('JobsByCategoryAndBps', () => {
-  it('renders Jobs By Category heading and all category items', () => {
+  it('shows live job counts linking to the filtered job list', async () => {
     render(
-      <BrowserRouter>
+      <MemoryRouter>
         <JobsByCategoryAndBps />
-      </BrowserRouter>,
+      </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: /Jobs By Category/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Jobs By BPS/i })).toBeInTheDocument();
-
-    expect(screen.getByText('Carpenter')).toBeInTheDocument();
-    expect(screen.getByText('Gateman')).toBeInTheDocument();
-    expect(screen.getByText('Welder')).toBeInTheDocument();
-    expect(screen.getByText('BPS - 14')).toBeInTheDocument();
-    expect(screen.getByText('BPS - 5')).toBeInTheDocument();
+    const categories = await screen.findByRole('region', { name: 'Jobs By Category' });
+    expect(
+      within(categories).getByRole('link', { name: /Engineering\s*3 jobs available/ }),
+    ).toHaveAttribute('href', '/jobs?category=engineering');
+    const scales = screen.getByRole('region', { name: 'Jobs By BPS' });
+    expect(within(scales).getByRole('link', { name: /BPS - 17/ })).toHaveAttribute(
+      'href',
+      '/jobs?scale=17',
+    );
   });
 });

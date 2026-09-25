@@ -10,5 +10,5 @@
   "percent": "Enter a percentage from 0 to 100.",
   "endBeforeStart": "End date must be after the start date.",
   "confirmRequired": "Please tick this box to continue.",
-  "operator": "Select your mobile network."
+  "operator": "Please select a telecom operator"
 }

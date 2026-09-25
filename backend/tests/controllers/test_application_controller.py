@@ -6,10 +6,24 @@ from app.models import Application, AuditLog, StatusEvent
 from app.models.enums import StaffRole
 
 
-def _submit(client, job, headers, declaration=True):
+def _apply_pass(client, job, headers):
+    """Wizard steps 1-2: confirm CNIC + mobile, then the SMS code, for the submit pass."""
+    contact = client.get("/api/profile", headers=headers).get_json()
+    identity = {"cnic": contact["personal"]["cnic"], "mobile": contact["contact"]["mobile"]}
+    client.post(f"/api/jobs/{job.id}/apply-code", json=identity, headers=headers)
+    outbox = client.application.extensions.get("sms_outbox", [])
+    code = re.search(r"\b(\d{6})\b", outbox[-1][1]).group(1) if outbox else "000000"
+    body = client.post(
+        f"/api/jobs/{job.id}/apply-code/verify", json={"otp": code}, headers=headers
+    ).get_json()
+    return body.get("applyPass")
+
+
+def _submit(client, job, headers, declaration=True, apply_pass=None):
+    apply_pass = apply_pass or _apply_pass(client, job, headers)
     return client.post(
         f"/api/jobs/{job.id}/applications",
-        json={"declarationAccepted": declaration},
+        json={"declarationAccepted": declaration, "applyPass": apply_pass},
         headers=headers,
     )
 
@@ -68,15 +82,18 @@ def test_submit_creates_application_snapshot_and_event(
 
 def test_submit_rules(client, publish_job, make_candidate, eligible_candidate, auth_headers):
     job = publish_job()
-    incomplete = auth_headers(make_candidate(cnic="00000-0000000-9"))
+    incomplete = auth_headers(make_candidate(cnic="00000-0000000-9", mobile="03000000009"))
     assert _submit(client, job, incomplete).get_json()["code"] == "requirements_incomplete"
 
     headers = auth_headers(eligible_candidate())
-    assert _submit(client, job, headers, declaration=False).get_json()["code"] == (
-        "declaration_required"
+    assert _submit(client, job, headers, apply_pass="forged").get_json()["code"] == (
+        "identity_check_required"
     )
-    assert _submit(client, job, headers).status_code == 201
-    second = _submit(client, job, headers)
+    apply_pass = _apply_pass(client, job, headers)  # valid for 30 minutes
+    no_declaration = _submit(client, job, headers, declaration=False, apply_pass=apply_pass)
+    assert no_declaration.get_json()["code"] == "declaration_required"
+    assert _submit(client, job, headers, apply_pass=apply_pass).status_code == 201
+    second = _submit(client, job, headers, apply_pass=apply_pass)
     assert second.status_code == 409 and second.get_json()["code"] == "already_applied"
 
 
@@ -146,3 +163,37 @@ def test_status_list_filter(client, publish_job, make_staff, staff_headers):
         client.get(f"/api/admin/jobs/{job.id}/applications?status=x", headers=headers).status_code
         == 422
     )
+
+
+def test_apply_code_needs_the_registered_identity(
+    client, publish_job, eligible_candidate, auth_headers, sms_outbox
+):
+    job = publish_job()
+    headers = auth_headers(eligible_candidate())
+    wrong = client.post(
+        f"/api/jobs/{job.id}/apply-code",
+        json={"cnic": "00000-0000000-1", "mobile": "0300-1111111"},
+        headers=headers,
+    )
+    assert wrong.status_code == 422 and wrong.get_json()["code"] == "identity_mismatch"
+    assert sms_outbox == []
+    ok = client.post(
+        f"/api/jobs/{job.id}/apply-code",
+        json={"cnic": "00000-0000000-1", "mobile": "0300-0000000"},
+        headers=headers,
+    )
+    assert ok.get_json() == {"expiresInSeconds": 300}
+    real = re.search(r"(\d{6})", sms_outbox[-1][1]).group(1)
+    wrong_code = "000000" if real != "000000" else "111111"
+    bad = client.post(
+        f"/api/jobs/{job.id}/apply-code/verify", json={"otp": wrong_code}, headers=headers
+    )
+    assert bad.get_json()["code"] == "invalid_otp"
+
+
+def test_pass_is_for_one_job(client, publish_job, eligible_candidate, auth_headers):
+    first, second = publish_job(), publish_job(title="Other job")
+    headers = auth_headers(eligible_candidate())
+    apply_pass = _apply_pass(client, first, headers)
+    response = _submit(client, second, headers, apply_pass=apply_pass)
+    assert response.get_json()["code"] == "identity_check_required"

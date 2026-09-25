@@ -31,7 +31,7 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 | T-044 | Age calculation utility + tests                                               | Ali   | DONE   |
 | T-147 | Job category (trade) + counts by category and BPS                             | Ali   | DONE   |
 | T-148 | Job detail fields: gender, criteria, ad file, quota %                         | -     | TODO   |
-| T-149 | Profile: trade certificate, quota + age-relaxation claims, new document types | -     | TODO   |
+| T-149 | Profile: trade certificate, quota + age-relaxation claims, new document types | Ali   | DONE   |
 
 **Frontend**
 
@@ -47,7 +47,7 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 | T-142 | Home page sections to match Figma                    | Ali     | DONE   |
 | T-143 | Available Jobs page (`/jobs`, table)                 | Ali     | DONE   |
 | T-144 | Job details to match Figma                           | Ali     | DONE   |
-| T-145 | My Profile page to match Figma                       | -       | TODO   |
+| T-145 | My Profile page to match Figma                       | Malaika, Ali| DONE   |
 | T-146 | Bring FAQ, footer, news bar in line with conventions | Ali     | DONE   |
 
 ## Notes
@@ -85,3 +85,6 @@ Design: [docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journ
 - T-146: FAQ, footer and news bar use `i18n/en/` text and brand colours only. FAQ answers were rewritten to match how the portal works (CNIC + SMS code, no password). The footer's newsletter form and the legal links (pages that don't exist) were removed. `react-icons` stays for the four social icons (only those are bundled).
 - T-147: `job_categories` reference table (16 categories, `flask seed`), optional `jobs.category_code` (the job form requires it), `?category=` and `?scale=` filters, and `byCategory` / `byBps` counts in `GET /api/jobs/stats`. Migration `904db39c53bf`.
 - Still open: T-145 (profile page restyle; most of its new content is T-149), T-148, T-149 (open questions 5 and 8).
+- T-145, T-149 (done): My profile uses Malaika's one-page design (profile picture = the "photo" document, contact, personal details, education and quota, Save Profile), saved in one call `PUT /api/profile/summary`. New profile fields `highest_qualification_code`, `trade_certificate`, `quota_claim`, `age_relaxation_claim` (migration `69cb5fc8dd8f`); lists in `GET /api/reference` (`quotaClaims`, `ageRelaxations`, `tradeCertificates`); document types `trade_certificate`, `quota_proof`, `age_relaxation_proof`. The education, experience and document vault sections stay below the form (jobs with minimum marks or experience need them). Eligibility accepts the highest level when there is no full education record, unless the job sets minimum marks. The claim lists are provisional (open question 8); age relaxation is recorded but doesn't change the age check yet.
+- Upload limit is now 5 MB (design; open question 5).
+- `GET /api/documents/<id>/file` returns the candidate's own file (used for the profile picture).

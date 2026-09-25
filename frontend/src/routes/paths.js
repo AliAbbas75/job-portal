@@ -11,7 +11,6 @@ export const paths = {
   jobs: '/jobs',
   job: (id = ':jobId') => `/jobs/${id}`,
   applyCheck: (id = ':jobId') => `/jobs/${id}/apply`,
-  applyReview: (id = ':jobId') => `/jobs/${id}/apply/review`,
   signup: '/signup',
   login: '/login',
   profile: '/profile',

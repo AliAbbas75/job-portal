@@ -22,7 +22,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
 from app.models.base import TimestampMixin, enum_type
-from app.models.enums import Gender, MobileOperator
+from app.models.enums import (
+    AgeRelaxationClaim,
+    Gender,
+    MobileOperator,
+    QuotaClaim,
+    TradeCertificate,
+)
 
 if TYPE_CHECKING:
     from app.models.document import Document
@@ -86,6 +92,19 @@ class CandidateProfile(TimestampMixin, db.Model):
 
     skills: Mapped[list[str]] = mapped_column(
         ARRAY(String(120)), server_default=text("'{}'"), nullable=False
+    )
+
+    # Quick profile (Figma "My profile"): highest education without the full record, trade
+    # certificate, and the quota / age-relaxation the candidate claims. Staff verify claims.
+    highest_qualification_code: Mapped[str | None] = mapped_column(
+        ForeignKey("qualification_levels.code")
+    )
+    trade_certificate: Mapped[TradeCertificate | None] = mapped_column(
+        enum_type(TradeCertificate, "trade_certificate")
+    )
+    quota_claim: Mapped[QuotaClaim | None] = mapped_column(enum_type(QuotaClaim, "quota_claim"))
+    age_relaxation_claim: Mapped[AgeRelaxationClaim | None] = mapped_column(
+        enum_type(AgeRelaxationClaim, "age_relaxation_claim")
     )
 
     # BPS-15+ tier (§4.5).

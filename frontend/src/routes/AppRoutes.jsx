@@ -23,7 +23,6 @@ const JobFormPage = lazy(() => import('../pages/admin/JobFormPage'));
 const StaffLoginPage = lazy(() => import('../pages/admin/StaffLoginPage'));
 const ProfilePage = lazy(() => import('../pages/candidate/ProfilePage'));
 const ApplicationCheckPage = lazy(() => import('../pages/candidate/ApplicationCheckPage'));
-const ApplicationReviewPage = lazy(() => import('../pages/candidate/ApplicationReviewPage'));
 const MyApplicationsPage = lazy(() => import('../pages/candidate/MyApplicationsPage'));
 const ApplicationDetailPage = lazy(() => import('../pages/candidate/ApplicationDetailPage'));
 
@@ -41,7 +40,6 @@ export function AppRoutes() {
           <Route element={<RequireCandidate />}>
             <Route path={paths.profile} element={<ProfilePage />} />
             <Route path={paths.applyCheck()} element={<ApplicationCheckPage />} />
-            <Route path={paths.applyReview()} element={<ApplicationReviewPage />} />
             <Route path={paths.applications} element={<MyApplicationsPage />} />
             <Route path={paths.application()} element={<ApplicationDetailPage />} />
           </Route>

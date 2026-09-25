@@ -20,6 +20,13 @@ export async function uploadDocument(type, file) {
   return data;
 }
 
+/** The file itself as a Blob (e.g. the photo shown as the profile picture). Null in mock mode. */
+export async function getDocumentFile(id) {
+  if (USE_MOCKS) return null;
+  const { data } = await client.get(`/documents/${id}/file`, { responseType: 'blob' });
+  return data;
+}
+
 export async function deleteDocument(id) {
   if (USE_MOCKS) return mock.deleteDocument(id);
   await client.delete(`/documents/${id}`);

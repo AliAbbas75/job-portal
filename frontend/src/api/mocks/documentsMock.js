@@ -1,6 +1,6 @@
 import { fail, getDb, nextSeq, respond, save, sessionCandidateId } from './store';
 
-export const MAX_FILE_BYTES = 2 * 1024 * 1024;
+export const MAX_FILE_BYTES = 5 * 1024 * 1024;
 export const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 
 /** Vault of the logged-in candidate, or null. Only metadata is kept in mock mode. */

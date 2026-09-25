@@ -1,311 +1,224 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listMyApplications } from '../../api/applications';
+import { Badge } from '../../components/common/Badge';
+import { Button } from '../../components/common/Button';
+import { Icon } from '../../components/common/Icon';
+import { EmptyState, ErrorState, LoadingState } from '../../components/common/PageState';
+import { Pagination } from '../../components/common/Pagination';
+import { CandidateTabs } from '../../components/layout/CandidateTabs';
 import { useAsync } from '../../hooks/useAsync';
 import { useAuth } from '../../hooks/useAuth';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { t } from '../../i18n';
 import { paths } from '../../routes/paths';
+import { formatDate } from '../../utils/format';
+import { jobCode } from '../../utils/jobCode';
 
+// Dashboard groups for the §4.9 statuses (open question 6). There are no draft applications:
+// an application only exists once it's submitted.
+const GROUP = {
+  submitted: 'under_review',
+  under_review: 'under_review',
+  document_verification: 'action',
+  medical: 'action',
+  rejected: 'rejected',
+};
+const groupOf = (status) => GROUP[status] ?? 'approved';
+const BADGE = { under_review: 'gold', approved: 'green', rejected: 'red', action: 'cream' };
+const BADGE_ICON = { under_review: 'hourglass', approved: 'check', rejected: 'x', action: 'alert' };
+const PAGE_SIZES = [5, 10];
+
+function GroupBadge({ status }) {
+  const group = groupOf(status);
+  return (
+    <Badge variant={BADGE[group]}>
+      <Icon name={BADGE_ICON[group]} size={14} />
+      {t(`dashboard.group.${group}`)}
+    </Badge>
+  );
+}
+
+/** Candidate dashboard (design: Malaika): stats, applications table, latest updates. */
 export default function MyApplicationsPage() {
   const { candidate } = useAuth();
-  useDocumentTitle('Candidate Dashboard');
-  const { data: applicationsData, error, reload } = useAsync(listMyApplications, []);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  useDocumentTitle(t('dashboard.tabs.dashboard'));
+  const { data: applications, error, reload } = useAsync(listMyApplications, []);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
 
-  const name = candidate?.name || 'Tariq Ahmed';
+  if (error) {
+    return (
+      <div className="page">
+        <ErrorState error={error} onRetry={reload} />
+      </div>
+    );
+  }
+  if (!applications) return <LoadingState />;
 
-  // Demo fallback rows matching the user design image
-  const defaultApplications = [
-    {
-      id: 'PR-2026-61504DF90A',
-      jobId: 'JD-1001',
-      jobPost: 'Carpenter',
-      scale: 'BPS - 06',
-      dateApplied: '20-11-24, 08:10 PM',
-      status: 'under_review',
-      statusLabel: 'Under Review',
-    },
-    {
-      id: 'PR-2026-61504DF90B',
-      jobId: 'JD-1002',
-      jobPost: 'Fitter',
-      scale: 'BPS - 05',
-      dateApplied: '20-11-24, 08:10 PM',
-      status: 'under_review',
-      statusLabel: 'Under Review',
-    },
-    {
-      id: 'PR-2026-61504DF90C',
-      jobId: 'JD-1003',
-      jobPost: 'Welder',
-      scale: 'BPS - 06',
-      dateApplied: '19-11-24, 09:15 AM',
-      status: 'approved',
-      statusLabel: 'Approved',
-    },
-    {
-      id: 'PR-2026-61504DF90D',
-      jobId: 'JD-1004',
-      jobPost: 'Points man',
-      scale: 'BPS - 05',
-      dateApplied: '18-11-24, 10:20 AM',
-      status: 'rejected',
-      statusLabel: 'Rejected',
-    },
+  const count = (group) => applications.filter((a) => groupOf(a.status) === group).length;
+  const stats = [
+    { key: 'applications', value: applications.length, icon: 'file' },
+    { key: 'drafts', value: 0, icon: 'edit' },
+    { key: 'underReview', value: count('under_review'), icon: 'clock' },
+    { key: 'actionRequired', value: count('action'), icon: 'alert' },
+    { key: 'approved', value: count('approved'), icon: 'check' },
   ];
-
-  const appsList = applicationsData && applicationsData.length > 0
-    ? applicationsData.map((a, i) => ({
-        id: a.id || `PR-2026-61504DF${i}`,
-        jobId: `JD-100${i + 1}`,
-        jobPost: a.job?.title || 'Position',
-        scale: a.job?.bps ? `BPS - ${a.job.bps}` : 'BPS - 05',
-        dateApplied: '20-11-24, 08:10 PM',
-        status: a.status || 'under_review',
-        statusLabel: a.status === 'submitted' ? 'Under Review' : a.status || 'Under Review',
-      }))
-    : defaultApplications;
+  const rows = applications.slice((page - 1) * pageSize, page * pageSize);
+  const updates = applications
+    .flatMap((a) => a.events.map((event) => ({ ...event, application: a })))
+    .sort((x, y) => new Date(y.at) - new Date(x.at))
+    .slice(0, 5);
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8 px-4 sm:px-6 lg:px-8 font-['Instrument_Sans',sans-serif]">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Top Header & Breadcrumb */}
+    <div className="bg-cream py-8">
+      <div className="page flex flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-gray-400 font-medium">Candidate Portal</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-              Welcome, {name}
+            <p className="text-sm">{t('dashboard.eyebrow')}</p>
+            <h1 className="text-2xl text-black md:text-3xl">
+              {candidate?.name
+                ? t('dashboard.welcome', { name: candidate.name })
+                : t('dashboard.welcomeNoName')}
             </h1>
-            <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              Your applications and next steps, in one place.
-            </p>
+            <p className="mt-0.5 text-sm">{t('dashboard.lead')}</p>
           </div>
-
-          {/* Top Page Toggle Tabs */}
-          <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-gray-200 shadow-2xs">
-            <Link
-              to={paths.applications}
-              className="px-4 py-1.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-900 no-underline shadow-2xs"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to={paths.profile}
-              className="px-4 py-1.5 rounded-md text-xs font-medium text-gray-500 hover:text-gray-900 no-underline transition-colors"
-            >
-              My Profile
-            </Link>
-          </div>
+          <CandidateTabs current="dashboard" />
         </div>
 
-        {/* 5 Stat Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {/* Card 1: My Applications */}
-          <div className="bg-white rounded-xl border border-gray-200/80 p-5 flex items-center justify-between shadow-2xs">
-            <div>
-              <p className="text-xs font-semibold text-gray-500 mb-1">My applications</p>
-              <p className="text-3xl font-extrabold text-gray-900">{appsList.length}</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg">
-              📄
-            </div>
-          </div>
-
-          {/* Card 2: Drafts to finish */}
-          <div className="bg-white rounded-xl border border-gray-200/80 p-5 flex items-center justify-between shadow-2xs">
-            <div>
-              <p className="text-xs font-semibold text-gray-500 mb-1">Drafts to finish</p>
-              <p className="text-3xl font-extrabold text-gray-900">0</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center font-bold text-lg">
-              ✏️
-            </div>
-          </div>
-
-          {/* Card 3: Under review */}
-          <div className="bg-white rounded-xl border border-gray-200/80 p-5 flex items-center justify-between shadow-2xs">
-            <div>
-              <p className="text-xs font-semibold text-gray-500 mb-1">Under review</p>
-              <p className="text-3xl font-extrabold text-gray-900">
-                {appsList.filter((a) => a.status === 'under_review').length || 1}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg">
-              🕒
-            </div>
-          </div>
-
-          {/* Card 4: Action required */}
-          <div className="bg-white rounded-xl border border-gray-200/80 p-5 flex items-center justify-between shadow-2xs">
-            <div>
-              <p className="text-xs font-semibold text-gray-500 mb-1">Action required</p>
-              <p className="text-3xl font-extrabold text-gray-900">1</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold text-lg">
-              ⚠️
-            </div>
-          </div>
-
-          {/* Card 5: Approved */}
-          <div className="bg-white rounded-xl border border-gray-200/80 p-5 flex items-center justify-between shadow-2xs">
-            <div>
-              <p className="text-xs font-semibold text-gray-500 mb-1">Approved</p>
-              <p className="text-3xl font-extrabold text-gray-900">
-                {appsList.filter((a) => a.status === 'approved').length || 1}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg">
-              ✓
-            </div>
-          </div>
-        </div>
-
-        {/* Main Grid: My Applications Table & Latest Updates Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column: My Applications Table */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200/80 p-5 shadow-2xs">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span>📄</span> My applications
-              </h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-gray-600 border-collapse">
-                <thead>
-                  <tr className="border-b border-gray-200 text-gray-400 font-semibold uppercase tracking-wider text-[11px]">
-                    <th className="py-3 px-2">Job ID</th>
-                    <th className="py-3 px-2">Job Post</th>
-                    <th className="py-3 px-2">Scale</th>
-                    <th className="py-3 px-2">Application Reference ID</th>
-                    <th className="py-3 px-2">Date Applied</th>
-                    <th className="py-3 px-2">Status</th>
-                    <th className="py-3 px-2 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {appsList.map((app) => (
-                    <tr key={app.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="py-3 px-2 font-medium text-gray-900">{app.jobId}</td>
-                      <td className="py-3 px-2 font-semibold text-gray-900">{app.jobPost}</td>
-                      <td className="py-3 px-2">{app.scale}</td>
-                      <td className="py-3 px-2 font-mono text-[11px] text-gray-500 truncate max-w-[140px]">
-                        {app.id}
-                      </td>
-                      <td className="py-3 px-2 text-gray-500 whitespace-nowrap">{app.dateApplied}</td>
-                      <td className="py-3 px-2 whitespace-nowrap">
-                        {app.status === 'under_review' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                            ⏳ Under Review
-                          </span>
-                        )}
-                        {app.status === 'approved' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            ✓ Approved
-                          </span>
-                        )}
-                        {app.status === 'rejected' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-red-50 text-red-700 border border-red-200">
-                            ✕ Rejected
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-3 px-2 text-right">
-                        <Link
-                          to={paths.application(app.id)}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-md border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 no-underline transition-colors"
-                        >
-                          👁 View
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="flex flex-wrap items-center justify-between gap-3 mt-6 pt-4 border-t border-gray-100 text-xs text-gray-500">
-              <div className="flex items-center gap-2">
-                <span>Result per page</span>
-                <select className="border border-gray-200 rounded px-2 py-1 text-xs bg-white text-gray-700">
-                  <option>5</option>
-                  <option>10</option>
-                </select>
-                <span>1-5 of 29</span>
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {stats.map((stat) => (
+            <li
+              key={stat.key}
+              className="flex items-center justify-between rounded-md border border-heritage bg-white p-5"
+            >
+              <div>
+                <p className="mb-1 text-sm font-bold">{t(`dashboard.stats.${stat.key}`)}</p>
+                <p className="text-3xl font-extrabold">{stat.value}</p>
               </div>
-              <div className="flex items-center gap-1">
-                <button type="button" className="px-2.5 py-1 rounded border border-gray-200 hover:bg-gray-100 text-gray-600">
-                  &lt;
-                </button>
-                <button type="button" className="px-2.5 py-1 rounded bg-[#1f4d36] text-white font-semibold">
-                  1
-                </button>
-                <button type="button" className="px-2.5 py-1 rounded border border-gray-200 hover:bg-gray-100 text-gray-600">
-                  2
-                </button>
-                <button type="button" className="px-2.5 py-1 rounded border border-gray-200 hover:bg-gray-100 text-gray-600">
-                  3
-                </button>
-                <span className="px-1 text-gray-400">...</span>
-                <button type="button" className="px-2.5 py-1 rounded border border-gray-200 hover:bg-gray-100 text-gray-600">
-                  8
-                </button>
-                <button type="button" className="px-2.5 py-1 rounded border border-gray-200 hover:bg-gray-100 text-gray-600">
-                  &gt;
-                </button>
-              </div>
-            </div>
-          </div>
+              <span className="flex size-10 items-center justify-center rounded-sm bg-surface text-heritage">
+                <Icon name={stat.icon} size={20} />
+              </span>
+            </li>
+          ))}
+        </ul>
 
-          {/* Right Column: Latest Updates Sidebar */}
-          <div className="bg-white rounded-xl border border-gray-200/80 p-5 shadow-2xs space-y-4">
-            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 pb-3 border-b border-gray-100">
-              <span>🔔</span> Latest updates
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <section
+            className="rounded-md border border-heritage bg-white p-5 lg:col-span-2"
+            aria-labelledby="applications-heading"
+          >
+            <h2
+              id="applications-heading"
+              className="mb-4 flex items-center gap-2 border-b border-surface pb-3 text-base text-black"
+            >
+              <Icon name="file" size={18} className="text-heritage" />
+              {t('dashboard.tableTitle')}
             </h2>
-
-            <div className="space-y-4 divide-y divide-gray-100">
-              {/* Item 1 */}
-              <div className="pt-2 first:pt-0 space-y-1.5">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200">
-                    ⏳ Under Review
-                  </span>
-                  <span className="text-gray-400">20-11-24, 08:10 PM</span>
+            {applications.length === 0 ? (
+              <EmptyState
+                title={t('dashboard.empty')}
+                action={<Button to={paths.jobs}>{t('dashboard.findJobs')}</Button>}
+              />
+            ) : (
+              <>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[40rem] border-collapse text-left text-sm [&_td]:border-b [&_td]:border-surface [&_td]:px-2 [&_td]:py-3 [&_th]:border-b [&_th]:border-heritage [&_th]:px-2 [&_th]:py-3 [&_th]:font-bold [&_th]:text-heritage">
+                    <thead>
+                      <tr>
+                        <th scope="col">{t('dashboard.table.jobId')}</th>
+                        <th scope="col">{t('dashboard.table.post')}</th>
+                        <th scope="col">{t('dashboard.table.scale')}</th>
+                        <th scope="col">{t('dashboard.table.reference')}</th>
+                        <th scope="col">{t('dashboard.table.date')}</th>
+                        <th scope="col">{t('dashboard.table.status')}</th>
+                        <th scope="col" className="text-right">
+                          {t('dashboard.table.action')}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((a) => (
+                        <tr key={a.id} className="hover:bg-cream">
+                          <td className="whitespace-nowrap">{jobCode({ id: a.jobId })}</td>
+                          <td className="font-bold">{a.job.title}</td>
+                          <td className="whitespace-nowrap">{t('jobs.bps', { bps: a.job.bps })}</td>
+                          <td className="font-mono text-xs">{a.id}</td>
+                          <td className="whitespace-nowrap">{formatDate(a.submittedAt)}</td>
+                          <td className="whitespace-nowrap">
+                            <GroupBadge status={a.status} />
+                          </td>
+                          <td className="text-right">
+                            <Link
+                              to={paths.application(a.id)}
+                              className="inline-flex items-center gap-1 rounded-sm border border-heritage px-3 py-1 no-underline hover:bg-surface"
+                            >
+                              <Icon name="eye" size={14} />
+                              {t('dashboard.table.view')}
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm">Application Under Review</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Your application for Carpenter is now awaiting for review.
-                </p>
-                <Link
-                  to={paths.applications}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#3b82f6] hover:underline pt-1"
-                >
-                  View Application →
-                </Link>
-              </div>
-
-              {/* Item 2 */}
-              <div className="pt-4 space-y-1.5">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
-                    ✓ Approved
-                  </span>
-                  <span className="text-gray-400">20-11-24, 08:10 PM</span>
+                <div className="mt-6 border-t border-surface pt-4">
+                  <Pagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={applications.length}
+                    sizes={PAGE_SIZES}
+                    onPage={setPage}
+                    onPageSize={(size) => {
+                      setPageSize(size);
+                      setPage(1);
+                    }}
+                  />
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm">Application submitted</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Your application for Carpenter is now awaiting for review.
-                </p>
-                <Link
-                  to={paths.applications}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#3b82f6] hover:underline pt-1"
-                >
-                  View Application →
-                </Link>
-              </div>
-            </div>
-          </div>
+              </>
+            )}
+          </section>
+
+          <section
+            className="flex flex-col gap-4 rounded-md border border-heritage bg-white p-5"
+            aria-labelledby="updates-heading"
+          >
+            <h2
+              id="updates-heading"
+              className="flex items-center gap-2 border-b border-surface pb-3 text-base text-black"
+            >
+              <Icon name="bell" size={18} className="text-heritage" />
+              {t('dashboard.updatesTitle')}
+            </h2>
+            {updates.length === 0 && <p className="text-sm">{t('dashboard.noUpdates')}</p>}
+            <ol className="flex flex-col divide-y divide-surface">
+              {updates.map((update) => {
+                const status = t(`status.${update.status}`);
+                return (
+                  <li
+                    key={`${update.application.id}-${update.status}-${update.at}`}
+                    className="flex flex-col gap-1.5 py-3 first:pt-0"
+                  >
+                    <div className="flex items-center justify-between gap-2 text-xs">
+                      <GroupBadge status={update.status} />
+                      <span>{formatDate(update.at)}</span>
+                    </div>
+                    <h3 className="text-sm text-black">{t('dashboard.updateTitle', { status })}</h3>
+                    <p className="text-sm">
+                      {update.note ||
+                        t('dashboard.updateBody', { job: update.application.job.title, status })}
+                    </p>
+                    <Link
+                      to={paths.application(update.application.id)}
+                      className="text-sm font-bold"
+                    >
+                      {t('dashboard.viewApplication')} →
+                    </Link>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
         </div>
       </div>
     </div>

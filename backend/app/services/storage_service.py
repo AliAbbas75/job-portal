@@ -46,7 +46,8 @@ def save_upload(stream):
     max_bytes = current_app.config["MAX_UPLOAD_BYTES"]
     data = stream.read(max_bytes + 1)
     if len(data) > max_bytes:
-        raise AppError("file_too_large", "Files can be at most 2 MB.", status=413)
+        limit_mb = max_bytes // (1024 * 1024)
+        raise AppError("file_too_large", f"Files can be at most {limit_mb} MB.", status=413)
     file_type = detect_type(data[:8])
     if file_type is None:
         raise AppError("file_type_not_allowed", "Only PDF, JPG or PNG files.", status=422)
@@ -55,6 +56,10 @@ def save_upload(stream):
     storage_key = f"{uuid.uuid4().hex}{extension}"
     (_upload_dir() / storage_key).write_bytes(data)
     return StoredFile(storage_key=storage_key, content_type=content_type, size_bytes=len(data))
+
+
+def path_of(storage_key):
+    return _upload_dir() / storage_key
 
 
 def delete_stored(storage_key):

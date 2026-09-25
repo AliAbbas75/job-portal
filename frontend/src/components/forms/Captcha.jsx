@@ -1,6 +1,5 @@
 import { useEffect, useId, useRef } from 'react';
 import { t } from '../../i18n';
-import { CheckboxField } from './CheckboxField';
 
 const SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 const SCRIPT_URL = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
@@ -51,14 +50,29 @@ export function Captcha({ value, onChange, error }) {
   }, [onChange]);
 
   if (!SITE_KEY) {
+    // Development stand-in, styled like the CAPTCHA box in the design.
     return (
-      <CheckboxField
-        label={t('captcha.placeholder')}
-        description={t('captcha.placeholderNote')}
-        checked={Boolean(value)}
-        onChange={(event) => onChange(event.target.checked ? 'dev-placeholder' : null)}
-        error={error}
-      />
+      <div>
+        <div className="flex items-center justify-between rounded-md border border-heritage bg-cream p-3">
+          <label className="flex cursor-pointer items-center gap-3 text-sm font-medium select-none">
+            <input
+              type="checkbox"
+              className="size-4 accent-heritage"
+              checked={Boolean(value)}
+              aria-invalid={Boolean(error) || undefined}
+              aria-describedby={error ? errorId : undefined}
+              onChange={(event) => onChange(event.target.checked ? 'dev-placeholder' : null)}
+            />
+            {t('captcha.placeholder')}
+          </label>
+          <span className="text-xs">{t('auth.captchaPrivacy')}</span>
+        </div>
+        {error && (
+          <p id={errorId} className="mt-1 text-sm font-medium text-ember">
+            {error}
+          </p>
+        )}
+      </div>
     );
   }
   return (

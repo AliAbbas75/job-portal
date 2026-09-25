@@ -3,7 +3,12 @@
 from flask import Blueprint, g, request
 
 from app.controllers.auth_guard import candidate_required
-from app.schemas.application_schema import ApplicationSchema, SubmitInput
+from app.schemas.application_schema import (
+    ApplicationSchema,
+    ApplyCodeRequestInput,
+    ApplyCodeVerifyInput,
+    SubmitInput,
+)
 from app.services import application_service
 
 application_bp = Blueprint("applications", __name__)
@@ -15,11 +20,28 @@ def application_check(job_id):
     return application_service.application_check(g.candidate, job_id)
 
 
+@application_bp.post("/jobs/<int:job_id>/apply-code")
+@candidate_required
+def request_apply_code(job_id):
+    data = ApplyCodeRequestInput().load(request.get_json(silent=True) or {})
+    ttl = application_service.request_apply_code(g.candidate, job_id, data["cnic"], data["mobile"])
+    return {"expiresInSeconds": ttl}
+
+
+@application_bp.post("/jobs/<int:job_id>/apply-code/verify")
+@candidate_required
+def verify_apply_code(job_id):
+    data = ApplyCodeVerifyInput().load(request.get_json(silent=True) or {})
+    return {"applyPass": application_service.verify_apply_code(g.candidate, job_id, data["otp"])}
+
+
 @application_bp.post("/jobs/<int:job_id>/applications")
 @candidate_required
 def submit(job_id):
     data = SubmitInput().load(request.get_json(silent=True) or {})
-    application = application_service.submit(g.candidate, job_id, data["declaration_accepted"])
+    application = application_service.submit(
+        g.candidate, job_id, data["declaration_accepted"], data["apply_pass"]
+    )
     return ApplicationSchema().dump(application), 201
 
 

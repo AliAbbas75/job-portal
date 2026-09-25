@@ -62,11 +62,40 @@ class ApplicationStatus(StrEnum):
 
 class MobileOperator(StrEnum):
     JAZZ = "jazz"
+    ONIC = "onic"
     TELENOR = "telenor"
     UFONE = "ufone"
     ZONG = "zong"
 
 
+class QuotaClaim(StrEnum):
+    """The quota a candidate applies under; staff verify the proof. Open question 8."""
+
+    OPEN_MERIT = "open_merit"
+    RAILWAY_EMPLOYEE_CHILD = "railway_employee_child"
+    MINORITY = "minority"
+    DISABILITY = "disability"
+    EX_SERVICEMAN = "ex_serviceman"
+    ORPHAN = "orphan"
+
+
+class AgeRelaxationClaim(StrEnum):
+    """One age-relaxation claim per candidate (staff verify it). Rules pending open question 8."""
+
+    NONE = "none"
+    RAILWAY_EMPLOYEE_CHILD = "railway_employee_child"
+    GOVERNMENT_SERVANT = "government_servant"
+
+
+class TradeCertificate(StrEnum):
+    NONE = "none"
+    CARPENTER = "carpenter"
+    ELECTRICIAN = "electrician"
+    FITTER = "fitter"
+    WELDER = "welder"
+
+
 class OtpPurpose(StrEnum):
     SIGNUP = "signup"
     LOGIN = "login"
+    APPLY = "apply"  # identity re-check in the apply wizard

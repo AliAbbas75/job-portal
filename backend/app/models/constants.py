@@ -18,6 +18,26 @@ CLOSING_WINDOWS = {"week": timedelta(days=7), "month": timedelta(days=30)}
 
 EMPLOYMENT_TYPE_NAMES = [("permanent", "Permanent"), ("contract", "Contract")]
 GENDER_NAMES = [("male", "Male"), ("female", "Female"), ("transgender", "Transgender")]
+QUOTA_CLAIM_NAMES = [
+    ("open_merit", "Open merit"),
+    ("railway_employee_child", "Railway employee child"),
+    ("minority", "Minority"),
+    ("disability", "Person with disability"),
+    ("ex_serviceman", "Ex-serviceman"),
+    ("orphan", "Orphan"),
+]
+AGE_RELAXATION_NAMES = [
+    ("none", "None"),
+    ("railway_employee_child", "Railway employee child"),
+    ("government_servant", "Government servant"),
+]
+TRADE_CERTIFICATE_NAMES = [
+    ("none", "None"),
+    ("carpenter", "Carpenter certificate"),
+    ("electrician", "Electrician certificate"),
+    ("fitter", "Fitter certificate"),
+    ("welder", "Welder certificate"),
+]
 
 
 def next_application_statuses(status):

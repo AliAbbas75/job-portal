@@ -32,7 +32,7 @@ function sessionFor(account) {
   const db = getDb();
   db.session = account.candidateId;
   save();
-  const name = db.profiles[account.candidateId]?.personal?.fullName || 'Tariq Ahmed';
+  const name = db.profiles[account.candidateId]?.personal?.fullName || '';
   return {
     token: `mock-token-${account.candidateId}`,
     candidate: { id: account.candidateId, cnic: account.cnic, name },

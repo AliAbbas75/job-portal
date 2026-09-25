@@ -97,3 +97,9 @@ def test_sms_backend_must_be_configured(app, sms_outbox):
     finally:
         app.config["SMS_BACKEND"] = "memory"
     assert sms_outbox == []
+
+
+def test_limits_are_per_purpose(sms_outbox):
+    otp_service.issue(SIGNUP, CNIC, MOBILE)
+    otp_service.issue(OtpPurpose.APPLY, CNIC, MOBILE)  # straight after signup: allowed
+    assert _error_code(otp_service.issue, OtpPurpose.APPLY, CNIC, MOBILE) == "otp_too_soon"

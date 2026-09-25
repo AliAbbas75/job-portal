@@ -1,7 +1,13 @@
 from flask import Blueprint, abort, g, request
 
 from app.controllers.auth_guard import candidate_required
-from app.schemas.profile_schema import ITEM_INPUTS, SECTION_INPUTS, ProfileSchema, SkillsInput
+from app.schemas.profile_schema import (
+    ITEM_INPUTS,
+    SECTION_INPUTS,
+    ProfileSchema,
+    SkillsInput,
+    SummaryInput,
+)
 from app.services import profile_service
 from app.services.candidate_service import profile_of
 
@@ -22,6 +28,9 @@ def get_profile():
 @candidate_required
 def update_section(section):
     profile = profile_of(g.candidate)
+    if section == "summary":
+        values = SummaryInput().load(request.get_json(silent=True) or {})
+        return _profile_response(profile_service.update_summary(g.candidate, profile, values))
     if section == "skills":
         skills = SkillsInput.deserialize(request.get_json(silent=True))
         return _profile_response(profile_service.update_skills(g.candidate, profile, skills))

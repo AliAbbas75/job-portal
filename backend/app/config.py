@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MAX_UPLOAD_BYTES = 2 * 1024 * 1024
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # design: 5 MB (open question 5)
 
 
 class Config:
@@ -22,7 +22,8 @@ class Config:
     MAX_CONTENT_LENGTH = MAX_UPLOAD_BYTES + 512 * 1024
 
     # OTP (T-021): a code lives 5 minutes; resend after 60 s; at most 5 codes per CNIC or
-    # mobile number per hour; 5 wrong guesses end a code.
+    # mobile number per hour, counted per purpose (signup, login, apply); 5 wrong guesses end a
+    # code.
     OTP_TTL_SECONDS = 300
     OTP_RESEND_SECONDS = 60
     OTP_MAX_SENDS_PER_HOUR = 5

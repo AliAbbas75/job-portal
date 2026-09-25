@@ -19,12 +19,15 @@ def _hash(purpose, cnic, code):
     return hmac.new(key, f"{purpose}:{cnic}:{code}".encode(), hashlib.sha256).hexdigest()
 
 
-def _check_rate_limits(cnic, mobile, now):
+def _check_rate_limits(purpose, cnic, mobile, now):
+    """Per purpose, so signing up and then applying straight away both work."""
     config = current_app.config
     recent = OtpChallenge.created_at > now - timedelta(hours=1)
     same_person = or_(OtpChallenge.cnic == cnic, OtpChallenge.mobile == mobile)
     count, last_sent = db.session.execute(
-        select(func.count(), func.max(OtpChallenge.created_at)).where(recent, same_person)
+        select(func.count(), func.max(OtpChallenge.created_at)).where(
+            recent, same_person, OtpChallenge.purpose == purpose
+        )
     ).one()
     if last_sent and last_sent > now - timedelta(seconds=config["OTP_RESEND_SECONDS"]):
         raise AppError("otp_too_soon", "Please wait a minute before asking for a new code.", 429)
@@ -36,7 +39,7 @@ def issue(purpose, cnic, mobile):
     """Sends a new code by SMS, replacing any unused one. Returns its lifetime in seconds.
     The caller commits."""
     now = datetime.now(UTC)
-    _check_rate_limits(cnic, mobile, now)
+    _check_rate_limits(purpose, cnic, mobile, now)
 
     for old in db.session.scalars(
         select(OtpChallenge).where(

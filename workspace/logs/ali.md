@@ -17,6 +17,20 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-25 | Malaika's candidate screens merged and connected to the backend (M4 T-145, T-149; M6 T-069, T-160 to T-162)
+- **Milestone:** M4, M6
+- **Status:** Done for those tasks
+- **What happened:** Malaika pushed a redesign of the header, signup/login, code step, profile, apply wizard and dashboard (commit `7f1b755`) while my design commit was unpushed. Decision (Ali): her screens and flow win, the backend adapts. Her screens were static (hard-coded sample person, no submit call, login check removed, silent demo-data fallbacks, password fields, colours outside the palette), so each was rebuilt on her layout and text with real data, brand colours and `i18n`. Candidate login stays SMS-code only (no passwords).
+- **What changed:**
+  - Backend: `QuotaClaim`, `AgeRelaxationClaim`, `TradeCertificate`, `MobileOperator.ONIC`, `OtpPurpose.APPLY`; profile columns for highest education, trade certificate and claims; `PUT /api/profile/summary` (`SummaryInput`, `profile_service.update_summary`); profile JSON `claims`; reference lists; 3 document types; `GET /api/documents/<id>/file`; apply-code endpoints + `applyPass` required to submit (`application_service`, `application_schema`, `application_controller`); eligibility counts the highest level without full records; OTP limits per purpose; 5 MB uploads. Migration `69cb5fc8dd8f` (also widens the operator and OTP-purpose checks). Tests: `test_profile_summary.py`, apply-code and pass tests, per-purpose OTP test (143 backend tests).
+  - Frontend (her design): `SiteHeader` (account menu; "Reset Password" removed), `AuthCard`, `OtpStep` (6 boxes, auto-verify, success screen), `SignupPage`, `LoginPage`, `MyApplicationsPage` (dashboard), `ProfilePage/` (`ProfileForm`, `ProfilePicture`, index with education/experience/documents below), `ApplicationCheckPage/` (wizard: `index`, `IdentityStep`, `DocumentsStep`, `ReviewStep`, test), `ApplySteps`, `JobsByCategoryAndBps` (live counts), `AppLayout` (footer on every page); new `components/forms/{IconField,ProfileFields}.jsx`, `components/layout/CandidateTabs.jsx`, `utils/{age,profileForm}.js`; `RequireCandidate` login check restored; `api/profile.js` fallbacks removed; `api/applications.js` apply-code calls; `api/documents.js` file download; mocks updated (summary, claims, apply code, 5 MB, highest-education rule). Moved `FaqSection` back to `components/layout/`. Deleted: `ApplicationReviewPage/`, `ProfilePage/{Personal,Contact,Domicile,Additional,Skills}Section.jsx`, `SectionForm.jsx`, `sections.js`, `ApplicationCheckPage/CheckItem.jsx`, `components/forms/OtpInput.jsx`, `HomePage/JobCountCards.jsx`, i18n `applications`, `apply`, `check`, `login`, `review`, `signup`. New i18n: `auth`, `dashboard`, `profileForm`, `wizard`. Tests updated/added (47 frontend tests).
+  - Docs: M4, M6, MILESTONES (open questions 5, 6, 7 decided)
+- **Database:** migration `69cb5fc8dd8f`. Run `flask db upgrade` and `flask seed`.
+- **Commits:**
+  - `feat(ui): Malaika's candidate screens on the real API; profile claims, apply identity check [T-160]`
+- **How to test:** four checks. Mock mode: sign up (code 123456), fill My profile, apply to Ticket Checker (code 123456 again), see it on the dashboard. Real API: the same with codes from the `flask run` log.
+- **Notes / follow-ups:** open question 8 (quota and age-relaxation rules) still open. Tell Malaika her screens were kept and why the internals changed.
+
 ### 2026-09-25 | Figma design: header, home, Available jobs, job details, auth screens, categories (M4 T-141 to T-144, T-146, T-147; M2 T-027, T-028)
 - **Milestone:** M4, M2
 - **Status:** Done for those tasks (M2 complete; M4 still has T-145, T-148, T-149)

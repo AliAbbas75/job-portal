@@ -50,7 +50,24 @@ export function getApplicationCheck(jobId) {
   });
 }
 
-export function submitApplication(jobId, { declarationAccepted }) {
+export const MOCK_APPLY_PASS = 'mock-apply-pass';
+
+export function requestApplyCode(jobId, { cnic, mobile }) {
+  const profile = currentProfile();
+  if (!profile) return fail('unauthorized');
+  const registered = profile.contact.mobile.replace(/\D/g, '');
+  if (cnic !== profile.personal.cnic || mobile.replace(/\D/g, '') !== registered) {
+    return fail('identity_mismatch');
+  }
+  return respond({ expiresInSeconds: 300 });
+}
+
+export function verifyApplyCode(jobId, otp) {
+  if (!currentProfile()) return fail('unauthorized');
+  return otp === '123456' ? respond({ applyPass: MOCK_APPLY_PASS }) : fail('invalid_otp');
+}
+
+export function submitApplication(jobId, { declarationAccepted, applyPass }) {
   const profile = currentProfile();
   if (!profile) return fail('unauthorized');
   const job = findJob(jobId);
@@ -58,6 +75,7 @@ export function submitApplication(jobId, { declarationAccepted }) {
   if (job.status !== 'published') return fail('job_closed');
   const applications = currentApplications();
   if (applications.some((a) => a.jobId === jobId)) return fail('already_applied');
+  if (applyPass !== MOCK_APPLY_PASS) return fail('identity_check_required');
   if (!declarationAccepted) return fail('declaration_required');
 
   const documents = currentDocuments();

@@ -1,0 +1,42 @@
+{
+  "eyebrow": "Candidate Portal",
+  "welcome": "Welcome, {name}",
+  "welcomeNoName": "Welcome",
+  "lead": "Your applications and next steps, in one place.",
+  "tabs": {
+    "label": "Candidate portal pages",
+    "dashboard": "Dashboard",
+    "profile": "My Profile"
+  },
+  "stats": {
+    "applications": "My applications",
+    "drafts": "Drafts to finish",
+    "underReview": "Under review",
+    "actionRequired": "Action required",
+    "approved": "Approved"
+  },
+  "tableTitle": "My applications",
+  "table": {
+    "jobId": "Job ID",
+    "post": "Job Post",
+    "scale": "Scale",
+    "reference": "Application Reference ID",
+    "date": "Date Applied",
+    "status": "Status",
+    "action": "Action",
+    "view": "View"
+  },
+  "group": {
+    "under_review": "Under Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "action": "Action required"
+  },
+  "empty": "You haven't applied for any jobs yet.",
+  "findJobs": "Find jobs",
+  "updatesTitle": "Latest updates",
+  "noUpdates": "No updates yet.",
+  "updateTitle": "Application {status}",
+  "updateBody": "Your application for {job} is now: {status}.",
+  "viewApplication": "View Application"
+}

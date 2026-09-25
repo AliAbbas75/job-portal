@@ -7,10 +7,14 @@ import { JobsByCategoryAndBps } from './JobsByCategoryAndBps';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 
+/**
+ * Public header (not on admin pages), the page, and on the home page only "Jobs by category /
+ * BPS", the FAQ and the footer (layout rules from Malaika's design).
+ */
 export function AppLayout() {
   const { pathname } = useLocation();
-  const isHome = pathname === '/' || pathname === paths.home;
-  const isAdmin = pathname.startsWith('/admin');
+  const isHome = pathname === paths.home;
+  const isAdmin = pathname.startsWith(paths.admin);
 
   return (
     <div className="flex min-h-screen flex-col">

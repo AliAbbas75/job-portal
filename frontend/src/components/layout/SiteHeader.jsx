@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { t } from '../../i18n';
@@ -8,62 +8,44 @@ import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
 import { Logo } from '../common/Logo';
 
+/** Announcement bar, logo, "Find jobs" and the account menu (design: Malaika). */
 export function SiteHeader() {
   const { status, candidate, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [menuPath, setMenuPath] = useState(location.pathname);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [resetModalOpen, setResetModalOpen] = useState(false);
-
-  // Reset password form states
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [resetError, setResetError] = useState(null);
-  const [resetSuccess, setResetSuccess] = useState(false);
-  const [resetBusy, setResetBusy] = useState(false);
-
+  const accountRef = useRef(null);
   const signedIn = status === 'authenticated';
 
+  // Close menus after navigating.
   if (menuPath !== location.pathname) {
     setMenuPath(location.pathname);
     setMenuOpen(false);
-    setDropdownOpen(false);
+    setAccountOpen(false);
   }
 
-  const handleSignOut = async () => {
-    setDropdownOpen(false);
+  // Close the account menu on an outside click or Escape.
+  useEffect(() => {
+    if (!accountOpen) return undefined;
+    const onClick = (event) => {
+      if (!accountRef.current?.contains(event.target)) setAccountOpen(false);
+    };
+    const onKey = (event) => event.key === 'Escape' && setAccountOpen(false);
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [accountOpen]);
+
+  async function logOut() {
+    setAccountOpen(false);
     await signOut();
     navigate(paths.home);
-  };
-
-  const handleResetSubmit = (e) => {
-    e.preventDefault();
-    setResetError(null);
-    setResetSuccess(false);
-
-    if (!newPassword || newPassword.length < 6) {
-      setResetError('Password must be at least 6 characters');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setResetError('Passwords do not match');
-      return;
-    }
-
-    setResetBusy(true);
-    setTimeout(() => {
-      setResetBusy(false);
-      setResetSuccess(true);
-      setNewPassword('');
-      setConfirmPassword('');
-      setTimeout(() => {
-        setResetModalOpen(false);
-        setResetSuccess(false);
-      }, 1500);
-    }, 600);
-  };
+  }
 
   const navClass = ({ isActive }) =>
     cx(
@@ -72,13 +54,14 @@ export function SiteHeader() {
         ? 'border-b-3 border-gold text-heritage'
         : 'border-b border-surface text-black md:border-b-3 md:border-transparent',
     );
+  const menuItem =
+    'flex w-full cursor-pointer items-center gap-2.5 px-4 py-2 text-left text-sm font-medium no-underline hover:bg-surface';
+  const name = candidate?.name || t('header.account');
 
   return (
-    <header className="border-b border-heritage bg-white font-['Instrument_Sans',sans-serif] relative z-40">
-      <div className="bg-[#A63A2C] text-sm text-white">
-        <div className="page flex flex-wrap items-center justify-center gap-x-4 gap-y-2 py-2 text-center">
-          <p className="w-full text-center font-medium">{t('header.announcement')}</p>
-        </div>
+    <header className="relative z-40 border-b border-heritage bg-white">
+      <div className="bg-ember text-sm text-white">
+        <p className="page py-2 text-center font-medium">{t('header.announcement')}</p>
       </div>
 
       <div className="page flex min-h-18 flex-wrap items-center justify-between gap-4 py-2">
@@ -107,182 +90,85 @@ export function SiteHeader() {
         >
           <ul className="flex flex-col md:flex-row md:gap-5">
             <li>
-              <NavLink to={paths.home} end className={navClass}>
+              <NavLink to={paths.jobs} className={navClass}>
                 {t('nav.findJobs')}
               </NavLink>
             </li>
           </ul>
 
           <div className="flex flex-wrap items-center gap-3">
-            {signedIn ? (
-              <div className="relative">
+            {signedIn && (
+              <div className="relative" ref={accountRef}>
                 <button
                   type="button"
-                  onClick={() => setDropdownOpen((prev) => !prev)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200 shadow-2xs bg-white"
-                  aria-expanded={dropdownOpen}
+                  onClick={() => setAccountOpen((open) => !open)}
+                  className="flex cursor-pointer items-center gap-2 rounded-full border border-heritage bg-white px-3 py-1.5 hover:bg-surface"
+                  aria-expanded={accountOpen}
+                  aria-haspopup="menu"
+                  aria-label={t('header.accountMenu')}
                 >
-                  {candidate?.avatarUrl ? (
-                    <img
-                      src={candidate.avatarUrl}
-                      alt={candidate.name || 'Candidate Avatar'}
-                      className="w-8 h-8 rounded-full object-cover border border-emerald-600"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-[#1f4d36] text-white flex items-center justify-center font-bold text-xs border border-emerald-600">
-                      {(candidate?.name || 'Tariq Ahmed').charAt(0)}
-                    </div>
-                  )}
-                  <span className="text-xs font-bold text-gray-800 hidden sm:inline-block">
-                    {candidate?.name || 'Tariq Ahmed'}
+                  <span className="flex size-8 items-center justify-center rounded-full bg-heritage text-sm font-bold text-white">
+                    {name.charAt(0).toUpperCase()}
                   </span>
-                  <svg className={`w-4 h-4 text-gray-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <span className="hidden text-sm font-bold sm:inline">{name}</span>
+                  <Icon
+                    name="chevronDown"
+                    size={16}
+                    className={cx(
+                      'text-heritage transition-transform',
+                      accountOpen && 'rotate-180',
+                    )}
+                  />
                 </button>
 
-                {dropdownOpen && (
+                {accountOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50"
+                    role="menu"
+                    className="absolute right-0 z-50 mt-2 w-56 rounded-md border border-heritage bg-white py-1"
                   >
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-xs font-bold text-gray-900">{candidate?.name || 'Tariq Ahmed'}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{candidate?.cnic || '4220139738233'}</p>
+                    <div className="border-b border-surface px-4 py-2">
+                      <p className="text-sm font-bold">{name}</p>
+                      {candidate?.cnic && <p className="truncate text-xs">{candidate.cnic}</p>}
                     </div>
-
                     <Link
+                      role="menuitem"
                       to={paths.applications}
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-700 no-underline transition-colors"
+                      className={cx(menuItem, 'text-black')}
                     >
-                      <span>📊</span> Dashboard
+                      <Icon name="briefcase" size={16} className="text-heritage" />
+                      {t('header.dashboard')}
                     </Link>
-
-                    <Link
-                      to={paths.profile}
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-700 no-underline transition-colors"
-                    >
-                      <span>👤</span> My Profile
+                    <Link role="menuitem" to={paths.profile} className={cx(menuItem, 'text-black')}>
+                      <Icon name="user" size={16} className="text-heritage" />
+                      {t('header.profile')}
                     </Link>
-
+                    <div className="my-1 border-t border-surface" />
                     <button
                       type="button"
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        setResetModalOpen(true);
-                      }}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:text-emerald-700 text-left transition-colors cursor-pointer bg-none border-none"
+                      role="menuitem"
+                      onClick={logOut}
+                      className={cx(menuItem, 'text-ember')}
                     >
-                      <span>🔑</span> Reset Password
-                    </button>
-
-                    <div className="border-t border-gray-100 my-1"></div>
-
-                    <button
-                      type="button"
-                      onClick={handleSignOut}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 text-left transition-colors cursor-pointer bg-none border-none"
-                    >
-                      <span>🚪</span> Log out
+                      <Icon name="arrowLeft" size={16} />
+                      {t('nav.logOut')}
                     </button>
                   </div>
                 )}
               </div>
-            ) : (
-              status !== 'loading' && (
-                <>
-                  <Button to={paths.login} variant="secondary" size="sm">
-                    {t('nav.logIn')}
-                  </Button>
-                  <Button to={paths.signup} size="sm">
-                    {t('nav.createAccount')}
-                  </Button>
-                </>
-              )
+            )}
+            {!signedIn && status !== 'loading' && (
+              <>
+                <Button to={paths.login} variant="secondary" size="sm">
+                  {t('nav.logIn')}
+                </Button>
+                <Button to={paths.signup} size="sm">
+                  {t('nav.createAccount')}
+                </Button>
+              </>
             )}
           </div>
         </nav>
       </div>
-
-      {/* Reset Password Modal */}
-      {resetModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <span>🔑</span> Reset Password
-              </h2>
-              <button
-                type="button"
-                onClick={() => setResetModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg font-bold bg-none border-none cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-
-            {resetSuccess ? (
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-emerald-800 text-xs font-semibold">
-                ✓ Password updated successfully!
-              </div>
-            ) : (
-              <form onSubmit={handleResetSubmit} className="space-y-4 text-xs">
-                {resetError && (
-                  <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-red-600">
-                    {resetError}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block font-semibold text-gray-700 mb-1">
-                    New Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password (min 6 chars)"
-                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-[#1f4d36] focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-gray-700 mb-1">
-                    Confirm New Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-[#1f4d36] focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100">
-                  <button
-                    type="button"
-                    onClick={() => setResetModalOpen(false)}
-                    className="px-4 py-2 rounded-lg text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 border-none cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={resetBusy}
-                    className="px-5 py-2 rounded-lg text-xs font-semibold bg-[#1f4d36] hover:bg-[#183e2b] text-white border-none cursor-pointer shadow-xs"
-                  >
-                    {resetBusy ? 'Updating...' : 'Update Password'}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
     </header>
   );
 }

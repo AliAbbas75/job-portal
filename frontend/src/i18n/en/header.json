@@ -6,5 +6,8 @@
   "navLabel": "Main",
   "account": "My account",
   "serviceName": "Public Recruitment Services",
-  "announcementLabel": "Announcement"
+  "announcementLabel": "Announcement",
+  "accountMenu": "Account menu",
+  "dashboard": "Dashboard",
+  "profile": "My Profile"
 }

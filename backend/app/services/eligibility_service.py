@@ -29,7 +29,16 @@ def _education(req, profile, ranks):
     }
     item = {"key": "education", "required": required}
     if not profile.education:
-        return {**item, "status": "missing", "fix": "education"}
+        # Only the highest level from the one-page profile: the level can be checked, marks
+        # can't, so a job with minimum marks still needs the full education record.
+        level = profile.highest_qualification_code
+        if level is None:
+            return {**item, "status": "missing", "fix": "education"}
+        if ranks.get(level, 0) < ranks.get(req.min_qualification_code, 0):
+            return {**item, "status": "not_met"}
+        if req.min_marks_percent is not None:
+            return {**item, "status": "missing", "fix": "education"}
+        return {**item, "status": "met"}
     needed = ranks.get(req.min_qualification_code, 0)
     qualifying = [
         e for e in profile.education if ranks.get(e.qualification_level_code, 0) >= needed

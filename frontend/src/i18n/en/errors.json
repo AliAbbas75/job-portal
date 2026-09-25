@@ -11,7 +11,7 @@
   "account_not_found": "No account matches this CNIC and mobile number.",
   "invalid_otp": "That code isn't right. Check it and try again.",
   "file_type_not_allowed": "Only PDF, JPG or PNG files can be uploaded.",
-  "file_too_large": "This file is larger than 2 MB. Please upload a smaller file.",
+  "file_too_large": "This file is larger than 5 MB. Please upload a smaller file.",
   "job_closed": "Applications for this job have closed.",
   "already_applied": "You've already applied for this job.",
   "declaration_required": "Please accept the declaration to submit.",
@@ -31,5 +31,7 @@
   "invalid_status": "This action isn't possible in the job's current status. Reload the page.",
   "own_job": "You can't approve a job you created.",
   "already_decided": "You've already approved this job.",
-  "invalid_status_change": "The application can't move to that status. Reload the page."
+  "invalid_status_change": "The application can't move to that status. Reload the page.",
+  "identity_mismatch": "Use the CNIC and mobile number you registered with.",
+  "identity_check_required": "Please verify your mobile number again before submitting."
 }

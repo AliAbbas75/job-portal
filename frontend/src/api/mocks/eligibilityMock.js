@@ -23,10 +23,19 @@ function experienceYears(entries) {
   return Math.floor((ms / YEAR_MS) * 10) / 10;
 }
 
-function educationItem(req, education) {
+function educationItem(req, education, highestLevel) {
   const required = { level: req.minQualification, marks: req.minMarksPercent };
-  if (education.length === 0)
-    return { key: 'education', status: 'missing', required, fix: 'education' };
+  if (education.length === 0) {
+    // Same rule as the backend: the one-page profile's highest level counts, but minimum
+    // marks need the full education record.
+    if (!highestLevel) return { key: 'education', status: 'missing', required, fix: 'education' };
+    if (rankOf(highestLevel) < rankOf(req.minQualification)) {
+      return { key: 'education', status: 'not_met', required };
+    }
+    if (req.minMarksPercent)
+      return { key: 'education', status: 'missing', required, fix: 'education' };
+    return { key: 'education', status: 'met', required };
+  }
   const qualifying = education.filter((e) => rankOf(e.level) >= rankOf(req.minQualification));
   if (qualifying.length === 0) return { key: 'education', status: 'not_met', required };
   if (
@@ -73,7 +82,7 @@ function domicileItem(req, domicile) {
 /** Compares a job's structured requirements with a profile and the document vault. */
 export function checkEligibility(job, profile, documents) {
   const req = job.requirements;
-  const items = [educationItem(req, profile.education)];
+  const items = [educationItem(req, profile.education, profile.claims?.highestQualification)];
   if (req.experienceYears > 0) items.push(experienceItem(req, profile.experience));
   items.push(ageItem(req, profile.personal.dob, job.closingDate));
   if (req.domicileProvinces.length > 0) items.push(domicileItem(req, profile.domicile));

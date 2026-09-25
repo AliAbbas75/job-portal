@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
-import { Icon } from '../../../components/common/Icon';
-import { t, tList } from '../../../i18n';
-import { cx } from '../../../utils/cx';
+import { Icon } from '../common/Icon';
+import { t, tList } from '../../i18n';
+import { cx } from '../../utils/cx';
 
 const TOPICS = ['general', 'applications', 'account'];
 

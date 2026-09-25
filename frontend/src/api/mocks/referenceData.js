@@ -95,3 +95,27 @@ export const genders = [
   { code: 'female', name: 'Female' },
   { code: 'transgender', name: 'Transgender' },
 ];
+
+// One-page profile form lists (backend: models/constants.py).
+export const quotaClaims = [
+  { code: 'open_merit', name: 'Open merit' },
+  { code: 'railway_employee_child', name: 'Railway employee child' },
+  { code: 'minority', name: 'Minority' },
+  { code: 'disability', name: 'Person with disability' },
+  { code: 'ex_serviceman', name: 'Ex-serviceman' },
+  { code: 'orphan', name: 'Orphan' },
+];
+
+export const ageRelaxations = [
+  { code: 'none', name: 'None' },
+  { code: 'railway_employee_child', name: 'Railway employee child' },
+  { code: 'government_servant', name: 'Government servant' },
+];
+
+export const tradeCertificates = [
+  { code: 'none', name: 'None' },
+  { code: 'carpenter', name: 'Carpenter certificate' },
+  { code: 'electrician', name: 'Electrician certificate' },
+  { code: 'fitter', name: 'Fitter certificate' },
+  { code: 'welder', name: 'Welder certificate' },
+];

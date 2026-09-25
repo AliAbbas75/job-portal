@@ -11,7 +11,7 @@ from datetime import date
 from marshmallow import EXCLUDE, ValidationError, fields, pre_load, validate, validates_schema
 
 from app.extensions import ma
-from app.models.enums import Gender
+from app.models.enums import AgeRelaxationClaim, Gender, QuotaClaim, TradeCertificate
 
 TEXT = validate.Length(min=1, max=120)
 
@@ -60,6 +60,39 @@ class AdditionalInput(_Input):
     is_government_employee = fields.Bool(data_key="governmentEmployee", load_default=False)
     has_disability = fields.Bool(data_key="disability", load_default=False)
     is_minority = fields.Bool(data_key="minority", load_default=False)
+
+
+class SummaryInput(_Input):
+    """The one-page profile form (Figma "My profile"): personal, contact, domicile, highest
+    education, trade certificate, quota and age-relaxation claims, saved together."""
+
+    full_name = fields.Str(data_key="fullName", required=True, validate=TEXT)
+    father_name = fields.Str(data_key="fatherName", required=True, validate=TEXT)
+    dob = fields.Date(required=True)
+    gender = fields.Str(required=True, validate=validate.OneOf([g.value for g in Gender]))
+    province = fields.Str(required=True, validate=validate.Length(max=10))
+    district = fields.Str(required=True, validate=validate.Length(max=80))
+    email = fields.Email(load_default=None, allow_none=True)
+    address = fields.Str(required=True, validate=validate.Length(1, 500))
+    highest_qualification = fields.Str(
+        data_key="highestQualification", required=True, validate=validate.Length(max=20)
+    )
+    trade_certificate = fields.Str(
+        data_key="tradeCertificate",
+        required=True,
+        validate=validate.OneOf([c.value for c in TradeCertificate]),
+    )
+    quota = fields.Str(required=True, validate=validate.OneOf([q.value for q in QuotaClaim]))
+    age_relaxation = fields.Str(
+        data_key="ageRelaxation",
+        required=True,
+        validate=validate.OneOf([a.value for a in AgeRelaxationClaim]),
+    )
+
+    @validates_schema
+    def dob_not_in_future(self, data, **kwargs):
+        if data.get("dob") and data["dob"] > date.today():
+            raise ValidationError("Date of birth can't be in the future.", "dob")
 
 
 SkillsInput = fields.List(fields.Str(validate=TEXT), validate=validate.Length(max=30))
@@ -154,5 +187,13 @@ class ProfileSchema(ma.Schema):
             "governmentEmployee": p.is_government_employee,
             "disability": p.has_disability,
             "minority": p.is_minority,
+        }
+    )
+    claims = fields.Function(
+        lambda p: {
+            "highestQualification": p.highest_qualification_code or "",
+            "tradeCertificate": p.trade_certificate.value if p.trade_certificate else "",
+            "quota": p.quota_claim.value if p.quota_claim else "",
+            "ageRelaxation": p.age_relaxation_claim.value if p.age_relaxation_claim else "",
         }
     )

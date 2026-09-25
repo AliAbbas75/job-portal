@@ -9,13 +9,11 @@ import { useAsync } from '../../../hooks/useAsync';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
-import { FaqSection } from './FaqSection';
 import { HowItWorks } from './HowItWorks';
-import { JobCountCards } from './JobCountCards';
 
 const RECENT_COUNT = 5;
 
-/** Landing page (Figma "Homepage", T-142). */
+/** Landing page (Figma "Homepage", T-142). AppLayout adds the category/BPS cards and FAQ. */
 export default function HomePage() {
   useDocumentTitle(null);
   const navigate = useNavigate();
@@ -106,34 +104,6 @@ export default function HomePage() {
           {t('home.showAll')} →
         </Link>
       </section>
-
-      {stats.data && (
-        <>
-          <JobCountCards
-            id="categories"
-            title={t('home.byCategoryTitle')}
-            items={stats.data.byCategory.map((c) => ({
-              key: c.code,
-              label: c.name,
-              count: c.count,
-              to: `${paths.jobs}?category=${c.code}`,
-            }))}
-            tinted
-          />
-          <JobCountCards
-            id="scales"
-            title={t('home.byBpsTitle')}
-            items={stats.data.byBps.map((b) => ({
-              key: b.bps,
-              label: t('jobs.bps', { bps: b.bps }),
-              count: b.count,
-              to: `${paths.jobs}?scale=${b.bps}`,
-            }))}
-          />
-        </>
-      )}
-
-      <FaqSection />
     </>
   );
 }

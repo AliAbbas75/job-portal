@@ -25,6 +25,14 @@ def current_documents(profile):
     ).all()
 
 
+def own_document(profile, document_id):
+    """A document of this candidate (current or archived), or not_found."""
+    document = db.session.get(Document, document_id)
+    if document is None or document.profile_id != profile.id:
+        raise AppError("not_found", "Document not found.", status=404)
+    return document
+
+
 def _current_of_type(profile, type_code):
     return db.session.scalar(
         select(Document).where(

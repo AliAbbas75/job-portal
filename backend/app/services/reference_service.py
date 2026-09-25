@@ -5,7 +5,14 @@ from sqlalchemy.orm import selectinload
 
 from app.extensions import db
 from app.models import Department, DocumentType, JobCategory, Province, QualificationLevel
-from app.models.constants import BPS_RANGES, EMPLOYMENT_TYPE_NAMES, GENDER_NAMES
+from app.models.constants import (
+    AGE_RELAXATION_NAMES,
+    BPS_RANGES,
+    EMPLOYMENT_TYPE_NAMES,
+    GENDER_NAMES,
+    QUOTA_CLAIM_NAMES,
+    TRADE_CERTIFICATE_NAMES,
+)
 
 
 def reference_data():
@@ -24,4 +31,7 @@ def reference_data():
         "employment_types": EMPLOYMENT_TYPE_NAMES,
         "bps_ranges": BPS_RANGES,
         "genders": GENDER_NAMES,
+        "quota_claims": QUOTA_CLAIM_NAMES,
+        "age_relaxations": AGE_RELAXATION_NAMES,
+        "trade_certificates": TRADE_CERTIFICATE_NAMES,
     }

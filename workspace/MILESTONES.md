@@ -58,7 +58,7 @@ Decisions for stakeholders, not milestone tasks. When one is decided, the projec
 | 2 | Who creates the job: the requesting department or a central recruitment cell? | T-023, T-030 (roles) | | |
 | 3 | Is the written test in-house or by an external agency? | Deferred (§5) | | |
 | 4 | Can a candidate edit or withdraw an application before the deadline? | - | **No.** Submitted applications are final. | 2026-09-24 |
-| 5 | Upload size limit: the Figma design says 5 MB, the code enforces 2 MB. Which one? | T-149, T-160 | | |
-| 6 | Dashboard statuses: the design shows Under Review / Approved / Rejected and cards "Drafts to finish" and "Action required". How do these map to the §4.9 statuses? (There are no draft applications today.) | T-069, T-162 | | |
-| 7 | Should a logged-in candidate verify an OTP again for every application (design wizard steps 1-2)? | T-161 | | |
+| 5 | Upload size limit: the Figma design says 5 MB, the code enforces 2 MB. Which one? | T-149, T-160 | **5 MB**, as in the design. | 2026-09-25 |
+| 6 | Dashboard statuses: the design shows Under Review / Approved / Rejected and cards "Drafts to finish" and "Action required". How do these map to the §4.9 statuses? (There are no draft applications today.) | T-069, T-162 | Under review = submitted, under review; action required = document verification, medical; approved = shortlisted onwards; drafts always 0. Adjust if stakeholders differ. | 2026-09-25 |
+| 7 | Should a logged-in candidate verify an OTP again for every application (design wizard steps 1-2)? | T-161 | **Yes**, as in the design (Malaika's flow). | 2026-09-25 |
 | 8 | Quota categories and age relaxation: the design lists son of railway employee, ex-serviceman and orphans quotas as percentages, and one age-relaxation claim. What is the official list and rules? | T-148, T-149 | | |
