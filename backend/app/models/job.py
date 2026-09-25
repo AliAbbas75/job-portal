@@ -24,6 +24,7 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
@@ -60,20 +61,22 @@ class Job(TimestampMixin, db.Model):
     # Optional for jobs created before categories existed; the job form requires it.
     category_code: Mapped[str | None] = mapped_column(ForeignKey("job_categories.code"), index=True)
     bps: Mapped[int] = mapped_column(SmallInteger, nullable=False)
-    location: Mapped[str] = mapped_column(String(80), nullable=False)
+    # Location, summary, description and dates may be empty on a draft requisition; submitting
+    # for approval requires them (admin_job_service.missing_fields).
+    location: Mapped[str | None] = mapped_column(String(80))
     employment_type: Mapped[EmploymentType] = mapped_column(
         enum_type(EmploymentType, "employment_type"), nullable=False
     )
     vacancies: Mapped[int] = mapped_column(Integer, nullable=False)
-    summary: Mapped[str] = mapped_column(String(300), nullable=False)
-    description: Mapped[str] = mapped_column(Text, nullable=False)
+    summary: Mapped[str | None] = mapped_column(String(300))
+    description: Mapped[str | None] = mapped_column(Text)
     status: Mapped[JobStatus] = mapped_column(
         enum_type(JobStatus, "job_status"), default=JobStatus.DRAFT, nullable=False, index=True
     )
     requisition_ref: Mapped[str | None] = mapped_column(String(60))
     advertisement_no: Mapped[str | None] = mapped_column(String(40), unique=True)
-    opening_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    closing_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    opening_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closing_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Age is calculated on this date if set, otherwise on the closing date.
     age_cutoff_date: Mapped[date | None] = mapped_column(Date)
     fee_amount: Mapped[Decimal] = mapped_column(
@@ -81,6 +84,9 @@ class Job(TimestampMixin, db.Model):
     )
     created_by_id: Mapped[int | None] = mapped_column(ForeignKey("staff_users.id"))
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Notes from the quick requisition form (admin panel): the quota categories ticked and the
+    # recruitment KPIs. Shown to approvers; the structured quotas are what count.
+    requisition: Mapped[dict] = mapped_column(JSONB, server_default="{}", nullable=False)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     requirement: Mapped["JobRequirement"] = relationship(

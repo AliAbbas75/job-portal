@@ -106,6 +106,30 @@
     "scheduled": "Published. It appears on the portal on {date}.",
     "lockedNote": "Approved and published jobs can't be edited.",
     "returnedNote": "Returned for changes. Edit the job and submit it again.",
-    "rejectedNote": "This job was rejected and is closed."
+    "rejectedNote": "This job was rejected and is closed.",
+    "incomplete": "Complete these in Edit before submitting: {fields}.",
+    "fields": {
+      "category": "category",
+      "location": "location",
+      "summary": "short summary",
+      "description": "description",
+      "openingDate": "opening date",
+      "closingDate": "closing date",
+      "requirements": "eligibility",
+      "quotas": "quota seats"
+    },
+    "requisitionTitle": "Requisition notes",
+    "quotaSelection": "Quotas requested",
+    "quotaOptions": {
+      "open_merit": "Open merit",
+      "railway_employee_child": "Railway employee child",
+      "women": "Women",
+      "minority": "Minorities",
+      "disability": "Disabled persons",
+      "punjab": "Punjab",
+      "sindh": "Sindh",
+      "khyber_pakhtunkhwa": "Khyber Pakhtunkhwa",
+      "balochistan": "Balochistan"
+    }
   }
 }

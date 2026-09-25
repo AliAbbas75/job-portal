@@ -51,3 +51,12 @@ Master flow §3.1–3.3. Job drafting, approval and publishing.
   - Every step writes an audit entry (`job.created`, `job.updated`, `job.submitted`, `job.approved` / `job.returned` / `job.rejected`, `job.published`, `job.closed`).
   - Frontend: `/admin` (all jobs, status filter), `/admin/approvals` (inbox), `/admin/jobs/new` and `/admin/jobs/:id/edit` (form), `/admin/jobs/:id` (review, history, actions). Works in mock mode with the demo staff logins.
   - Open question 2 is still open: staff have an optional department, but jobs aren't limited to it yet. The advertisement file upload waits for M4 T-148.
+
+### Admin panel connected (2026-09-26)
+
+Malaika's admin panel (`/admin`, `pages/admin/AdminHomePage.jsx`) now runs on the real API; layout and text kept.
+- Job table, pending inbox, stats and "Applicants per job" graphs use real jobs; the job list returns `applicantsCount` per job.
+- "Create Job" saves a **draft requisition** (`POST /api/admin/jobs/requisitions`: title, department, BPS, vacancies, closing date, quota ticks, KPIs) and opens the full job form to add location, dates, eligibility and quota seats. Submitting for approval checks the draft is complete (422 with `fields.incomplete`). Quota ticks and KPIs are kept as requisition notes (`job.requisition`), shown to approvers on the job page; seat quotas stay the structured ones (open question 8). Migration `421b3b03655d` makes a draft's location, summary, description and dates optional.
+- "Employer Profile" saves the organisation profile and logo (`GET|PUT /api/admin/organization`, `GET|POST /api/admin/organization/logo`; admins edit; audited; `settings` table).
+- "Reset Password" changes the staff member's own password (`POST /api/admin/auth/password`, needs the current password; 12+ characters; audited). A "Current Password" field was added to the modal.
+- For Malaika: the panel still uses `gray-*`, `emerald-*`, `blue-*`, `amber-*`, `purple-*` classes and `bg-[#…]` colours. Tailwind's palette is removed in `index.css`, so most of them render no colour at all; they need brand tokens. Text is still hard-coded English (should move to `i18n/en/`).

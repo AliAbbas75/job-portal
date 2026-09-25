@@ -33,19 +33,29 @@ export const emptyForm = () => ({
 });
 
 export function formFromJob(job) {
-  const req = job.requirements;
+  // A draft requisition from the admin panel has no requirements or quotas yet.
+  const empty = emptyForm();
+  const req = job.requirements ?? {
+    minQualification: '',
+    minMarksPercent: null,
+    experienceYears: 0,
+    ageMin: empty.ageMin,
+    ageMax: '',
+    domicileProvinces: [],
+    documents: empty.documents,
+  };
   const text = (value) => (value == null ? '' : String(value));
   return {
     title: job.title,
     department: job.department,
     category: job.category ?? '',
     bps: text(job.bps),
-    location: job.location,
+    location: job.location ?? '',
     employmentType: job.employmentType,
     vacancies: text(job.vacancies),
     requisitionRef: text(job.requisitionRef),
-    summary: job.summary,
-    description: job.description,
+    summary: job.summary ?? '',
+    description: job.description ?? '',
     openingDate: dayOf(job.openingDate),
     closingDate: dayOf(job.closingDate),
     ageCutoffDate: text(job.ageCutoffDate),
@@ -57,7 +67,9 @@ export function formFromJob(job) {
     ageMax: text(req.ageMax),
     domicileProvinces: req.domicileProvinces,
     documents: req.documents,
-    quotas: job.quotas.map((q) => ({ category: q.category, seats: text(q.seats) })),
+    quotas: job.quotas.length
+      ? job.quotas.map((q) => ({ category: q.category, seats: text(q.seats) }))
+      : empty.quotas,
   };
 }
 

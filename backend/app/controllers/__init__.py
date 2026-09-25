@@ -9,6 +9,7 @@ def register_blueprints(app):
     from app.controllers.admin.application_controller import admin_application_bp
     from app.controllers.admin.auth_controller import admin_auth_bp
     from app.controllers.admin.job_controller import admin_job_bp
+    from app.controllers.admin.organization_controller import admin_organization_bp
     from app.controllers.application_controller import application_bp
     from app.controllers.auth_controller import auth_bp
     from app.controllers.document_controller import document_bp
@@ -30,5 +31,10 @@ def register_blueprints(app):
     ):
         app.register_blueprint(blueprint, url_prefix="/api")
 
-    for blueprint in (admin_application_bp, admin_auth_bp, admin_job_bp):
+    for blueprint in (
+        admin_application_bp,
+        admin_auth_bp,
+        admin_job_bp,
+        admin_organization_bp,
+    ):
         app.register_blueprint(blueprint, url_prefix="/api/admin")

@@ -17,6 +17,19 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-26 | Admin panel connected to the backend
+- **Milestone:** M3 (follow-up)
+- **Status:** Done
+- **What changed:**
+  - Backend: draft requisitions (`RequisitionInput`, `admin_job_service.create_requisition`, `missing_fields` check on submit, `Job.requisition` notes; job location/summary/description/dates optional for drafts), `applicantsCount` in the admin job list, organisation profile + logo (`models/setting.py`, `services/organization_service.py`, `schemas/organization_schema.py`, `controllers/admin/organization_controller.py`), staff password change (`staff_service.change_password`, `POST /api/admin/auth/password`); JobSchema tolerates a draft without requirements. Migration `421b3b03655d`. Tests `tests/controllers/admin/test_admin_panel.py`.
+  - Frontend API layer: `api/adminOrganization.js` + mock, `createRequisition` (`api/adminJobs.js`), `changePassword` (`api/adminAuth.js`), mocks.
+  - Malaika's `AdminHomePage.jsx`: real data and saves instead of demo rows and timeouts (layout and text kept; a "Current Password" field added; the logo "Remove" button removed as there's nothing to remove on the server; create button reads "Save Requisition & Continue"). Job form handles drafts without requirements; job page shows requisition notes and names missing fields when submitting. Test `AdminHomePage.test.jsx` (54 frontend tests).
+- **Database:** migration `421b3b03655d`. Run `flask db upgrade`.
+- **Commits:**
+  - `feat(admin): connect the admin panel to the API [T-033]`
+- **How to test:** as admin at `/admin`: Create Job → Save → complete the form → Submit; Employer Profile → save + logo; Reset Password with the current password.
+- **Notes / follow-ups:** Malaika: brand colours and i18n in the admin panel (see M3 notes); pull before editing AdminHomePage.jsx.
+
 ### 2026-09-26 | M5 backend: resume upload + parse, builder sections, PDF export (T-050 to T-053)
 - **Milestone:** M5
 - **Status:** Partial (backend + API layer done; screens T-054 to T-056 are Malaika's)

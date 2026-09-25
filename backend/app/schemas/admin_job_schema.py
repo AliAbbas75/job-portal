@@ -95,6 +95,43 @@ class JobInput(_Input):
             raise ValidationError(errors)
 
 
+QUOTA_SELECTION = (
+    "open_merit",
+    "railway_employee_child",
+    "women",
+    "minority",
+    "disability",
+    "punjab",
+    "sindh",
+    "khyber_pakhtunkhwa",
+    "balochistan",
+)
+
+
+class KpiInput(_Input):
+    title = fields.Str(required=True, validate=validate.Length(1, 120))
+    target = fields.Str(load_default="", validate=validate.Length(max=60))
+
+
+class RequisitionInput(_Input):
+    """The admin panel's quick "Create job" form: a draft to complete in the full job form."""
+
+    title = fields.Str(required=True, validate=validate.Length(1, 160))
+    department = fields.Str(required=True, validate=CODE)
+    bps = fields.Int(required=True, validate=validate.Range(1, 22))
+    vacancies = fields.Int(required=True, validate=validate.Range(min=1))
+    closing_date = fields.Date(data_key="closingDate", load_default=None, allow_none=True)
+    description = fields.Str(
+        load_default=None, allow_none=True, validate=validate.Length(max=20000)
+    )
+    quota_selection = fields.List(
+        fields.Str(validate=validate.OneOf(QUOTA_SELECTION)),
+        data_key="quotaSelection",
+        load_default=list,
+    )
+    kpis = fields.List(fields.Nested(KpiInput), load_default=list, validate=validate.Length(max=20))
+
+
 class DecisionInput(_Input):
     action = fields.Str(required=True, validate=validate.OneOf([a.value for a in ApprovalAction]))
     comments = fields.Str(load_default=None, allow_none=True, validate=validate.Length(max=2000))
@@ -117,12 +154,15 @@ class AdminJobSchema(JobSchema):
     status = fields.Function(lambda job: job.status.value)
     live = fields.Function(lambda job: job.is_open())
     published_at = fields.DateTime(data_key="publishedAt", allow_none=True)
+    opening_date = fields.DateTime(data_key="openingDate", allow_none=True)
+    closing_date = fields.DateTime(data_key="closingDate", allow_none=True)
     approved_at = fields.DateTime(data_key="approvedAt", allow_none=True)
     requisition_ref = fields.Str(data_key="requisitionRef", allow_none=True)
     age_cutoff_date = fields.Date(data_key="ageCutoffDate", allow_none=True)
     created_by = fields.Function(
         lambda job: str(job.created_by_id) if job.created_by_id else None, data_key="createdBy"
     )
+    requisition = fields.Function(lambda job: job.requisition or {})
     approvals = fields.Function(
         lambda job: [
             {

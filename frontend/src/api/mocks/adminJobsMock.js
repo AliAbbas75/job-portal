@@ -70,7 +70,9 @@ function act(id, roles, change) {
 
 export function listAdminJobs({ status }) {
   if (!currentMockStaff()) return fail('unauthorized');
-  const items = jobs.filter((job) => !status || job.status === status).map(withDepartment);
+  const items = jobs
+    .filter((job) => !status || job.status === status)
+    .map((job) => ({ ...withDepartment(job), applicantsCount: job.id === 'j-101' ? 3 : 0 }));
   return respond({ items });
 }
 
@@ -110,6 +112,7 @@ export function updateJob(id, input) {
 export function submitJob(id) {
   return act(id, CREATORS, (job) => {
     if (!EDITABLE.includes(job.status)) return 'invalid_status';
+    if (!job.requirements || !job.location || !job.quotas.length) return 'validation_error';
     job.status = 'pending_approval';
     return null;
   });
@@ -145,4 +148,36 @@ export function publishJob(id, { advertisementNo }) {
     job.live = new Date(job.openingDate) <= new Date() && new Date() < new Date(job.closingDate);
     return null;
   });
+}
+
+export function createRequisition(values) {
+  const staff = currentMockStaff();
+  if (!staff) return fail('unauthorized');
+  if (!CREATORS.includes(staff.role)) return fail('forbidden');
+  const job = {
+    id: `j-${(nextId += 1)}`,
+    title: values.title,
+    department: values.department,
+    bps: values.bps,
+    vacancies: values.vacancies,
+    employmentType: 'permanent',
+    location: null,
+    summary: null,
+    description: values.description ?? null,
+    openingDate: null,
+    closingDate: values.closingDate ? `${values.closingDate}T23:59:59+05:00` : null,
+    fee: 0,
+    status: 'draft',
+    live: false,
+    advertisementNo: null,
+    publishedAt: null,
+    approvedAt: null,
+    createdBy: staff.id,
+    requirements: null,
+    quotas: [],
+    requisition: { quotaSelection: values.quotaSelection ?? [], kpis: values.kpis ?? [] },
+    approvals: [],
+  };
+  jobs = [job, ...jobs];
+  return respond(withDepartment(job));
 }

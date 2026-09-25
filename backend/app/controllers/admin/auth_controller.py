@@ -4,7 +4,7 @@ from flask import Blueprint, g, request
 from flask_jwt_extended import get_jwt
 
 from app.controllers.auth_guard import staff_required
-from app.schemas.staff_schema import StaffLoginInput, StaffSchema
+from app.schemas.staff_schema import PasswordChangeInput, StaffLoginInput, StaffSchema
 from app.services import auth_service, staff_service
 
 admin_auth_bp = Blueprint("admin_auth", __name__)
@@ -27,4 +27,12 @@ def session():
 @staff_required()
 def logout():
     auth_service.revoke_token(get_jwt())
+    return "", 204
+
+
+@admin_auth_bp.post("/auth/password")
+@staff_required()
+def change_password():
+    data = PasswordChangeInput().load(request.get_json(silent=True) or {})
+    staff_service.change_password(g.staff, data["current_password"], data["new_password"])
     return "", 204

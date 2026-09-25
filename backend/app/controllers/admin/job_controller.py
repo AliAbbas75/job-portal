@@ -13,6 +13,7 @@ from app.schemas.admin_job_schema import (
     DecisionInput,
     JobInput,
     PublishInput,
+    RequisitionInput,
 )
 from app.services import admin_job_service
 
@@ -34,7 +35,19 @@ def _job(job):
 @staff_required()
 def list_jobs():
     args = AdminJobListArgs().load(request.args)
-    return {"items": AdminJobSchema(many=True).dump(admin_job_service.list_jobs(args["status"]))}
+    jobs = admin_job_service.list_jobs(args["status"])
+    counts = admin_job_service.applicant_counts([job.id for job in jobs])
+    items = AdminJobSchema(many=True).dump(jobs)
+    for item in items:
+        item["applicantsCount"] = counts.get(item["id"], 0)
+    return {"items": items}
+
+
+@admin_job_bp.post("/jobs/requisitions")
+@staff_required(*CREATORS)
+def create_requisition():
+    job = admin_job_service.create_requisition(g.staff, _body(RequisitionInput))
+    return _job(job), 201
 
 
 @admin_job_bp.post("/jobs")

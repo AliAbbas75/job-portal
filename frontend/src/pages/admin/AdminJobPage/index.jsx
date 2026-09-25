@@ -80,7 +80,7 @@ export default function AdminJobPage() {
             <p className="whitespace-pre-line">{job.description}</p>
           </section>
 
-          <JobRequirements job={job} reference={ref} />
+          {job.requirements && <JobRequirements job={job} reference={ref} />}
 
           <section className="flex flex-col gap-3">
             <h2 className="text-xl">{t('job.quotaHeading')}</h2>
@@ -92,6 +92,30 @@ export default function AdminJobPage() {
               ))}
             </ul>
           </section>
+
+          {(job.requisition?.quotaSelection?.length > 0 || job.requisition?.kpis?.length > 0) && (
+            <section className="flex flex-col gap-3">
+              <h2 className="text-xl">{t('adminJobs.detail.requisitionTitle')}</h2>
+              {job.requisition.quotaSelection?.length > 0 && (
+                <p>
+                  <strong>{t('adminJobs.detail.quotaSelection')}:</strong>{' '}
+                  {job.requisition.quotaSelection
+                    .map((q) => t(`adminJobs.detail.quotaOptions.${q}`))
+                    .join(', ')}
+                </p>
+              )}
+              {job.requisition.kpis?.length > 0 && (
+                <ul className="list-disc pl-5">
+                  {job.requisition.kpis.map((kpi) => (
+                    <li key={kpi.title}>
+                      {kpi.title}
+                      {kpi.target && ` — ${kpi.target}`}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
 
           <section className="flex flex-col gap-3">
             <h2 className="text-xl">{t('adminJobs.detail.history')}</h2>

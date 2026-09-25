@@ -25,6 +25,7 @@ from app.models.reference import (
     QualificationLevel,
 )
 from app.models.revoked_token import RevokedToken
+from app.models.setting import Setting
 from app.models.staff_user import StaffUser
 
 __all__ = [
@@ -51,6 +52,7 @@ __all__ = [
     "Publication",
     "QualificationLevel",
     "RevokedToken",
+    "Setting",
     "StaffUser",
     "StatusEvent",
 ]

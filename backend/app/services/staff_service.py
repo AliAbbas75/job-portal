@@ -68,3 +68,16 @@ def staff_token(user):
     return create_access_token(
         identity=str(user.id), additional_claims={"role": STAFF_ROLE, "staffRole": user.role.value}
     )
+
+
+def change_password(user, current_password, new_password):
+    """Staff change their own password; the current one is checked first."""
+    try:
+        _hasher.verify(user.password_hash, current_password)
+    except (VerificationError, InvalidHashError):
+        raise AppError("invalid_credentials", "Your current password is incorrect.", 401) from None
+    if len(new_password) < MIN_PASSWORD_LENGTH:
+        raise AppError("weak_password", f"Use at least {MIN_PASSWORD_LENGTH} characters.")
+    user.password_hash = _hasher.hash(new_password)
+    audit_service.record("staff.password_changed", "staff_user", user.id, staff=user)
+    db.session.commit()

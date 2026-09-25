@@ -1,11 +1,50 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { listAdminJobs } from '../../api/adminJobs';
+import { changePassword } from '../../api/adminAuth';
+import { createRequisition, listAdminJobs } from '../../api/adminJobs';
+import {
+  getOrganization,
+  getOrganizationLogo,
+  updateOrganization,
+  uploadOrganizationLogo,
+} from '../../api/adminOrganization';
 import { JobStatusBadge } from '../../components/common/JobStatusBadge';
 import { useAsync } from '../../hooks/useAsync';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { useReferenceData } from '../../hooks/useReferenceData';
 import { useStaffAuth } from '../../hooks/useStaffAuth';
 import { paths } from '../../routes/paths';
+import { errorMessage } from '../../utils/errorMessage';
+
+// Create-job quota checkboxes → the backend's quota selection codes.
+const QUOTA_CODES = {
+  openMerit: 'open_merit',
+  employeeChild: 'railway_employee_child',
+  women: 'women',
+  minorities: 'minority',
+  disabled: 'disability',
+  punjab: 'punjab',
+  sindh: 'sindh',
+  kpk: 'khyber_pakhtunkhwa',
+  balochistan: 'balochistan',
+};
+const ORGANIZATION_FIELDS = [
+  'departmentName',
+  'cellId',
+  'address',
+  'website',
+  'officerName',
+  'email',
+  'phone',
+  'policyNotes',
+];
+const BAR_COLORS = [
+  'bg-[#1f4d36]',
+  'bg-emerald-600',
+  'bg-blue-600',
+  'bg-amber-500',
+  'bg-purple-600',
+];
 
 export default function AdminHomePage() {
   useDocumentTitle('Employer Admin Panel');
@@ -32,8 +71,10 @@ export default function AdminHomePage() {
       'All BPS-01 to BPS-15 job requisitions enforce official Pakistan Railways quota distribution rules (Open Merit, Railway Employee Child, Women, Minorities, Disabled).',
   });
   const [profileSaved, setProfileSaved] = useState(false);
+  const [profileError, setProfileError] = useState(null);
 
   // Reset password states
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [resetError, setResetError] = useState(null);
@@ -45,8 +86,8 @@ export default function AdminHomePage() {
   // Create Job Form State with Quotas & KPIs
   const [jobForm, setJobForm] = useState({
     title: '',
-    department: 'Civil Engineering',
-    bps: '05',
+    department: 'CIV',
+    bps: '5',
     vacancies: '10',
     closingDate: '2026-11-30',
     description: '',
@@ -70,8 +111,36 @@ export default function AdminHomePage() {
   const [newKpiTitle, setNewKpiTitle] = useState('');
   const [newKpiTarget, setNewKpiTarget] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [createError, setCreateError] = useState(null);
 
   const jobsQuery = useAsync(() => listAdminJobs({ status: chosenStatus }), [chosenStatus]);
+  const { data: reference } = useReferenceData();
+
+  // Load the saved organisation profile and logo.
+  useEffect(() => {
+    let cancelled = false;
+    let logoUrl = null;
+    getOrganization()
+      .then(async (profile) => {
+        if (cancelled) return;
+        setEmployerProfile((current) => ({
+          ...current,
+          ...Object.fromEntries(ORGANIZATION_FIELDS.map((key) => [key, profile[key] ?? ''])),
+        }));
+        if (profile.hasLogo) {
+          const blob = await getOrganizationLogo();
+          if (blob && !cancelled) {
+            logoUrl = URL.createObjectURL(blob);
+            setAvatarPreview(logoUrl);
+          }
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+      if (logoUrl) URL.revokeObjectURL(logoUrl);
+    };
+  }, []);
 
   const handleLogout = async () => {
     setProfileDropdownOpen(false);
@@ -79,29 +148,42 @@ export default function AdminHomePage() {
     navigate(paths.adminLogin);
   };
 
-  const handleAvatarChange = (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarPreview(url);
+    e.target.value = '';
+    if (!file) return;
+    setProfileError(null);
+    try {
+      await uploadOrganizationLogo(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    } catch (err) {
+      setProfileError(errorMessage(err));
     }
   };
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
-    setProfileSaved(true);
-    setTimeout(() => {
-      setProfileSaved(false);
-    }, 2500);
+    setProfileError(null);
+    try {
+      await updateOrganization(
+        Object.fromEntries(ORGANIZATION_FIELDS.map((key) => [key, employerProfile[key]])),
+      );
+      setProfileSaved(true);
+      setTimeout(() => {
+        setProfileSaved(false);
+      }, 2500);
+    } catch (err) {
+      setProfileError(errorMessage(err));
+    }
   };
 
-  const handleResetSubmit = (e) => {
+  const handleResetSubmit = async (e) => {
     e.preventDefault();
     setResetError(null);
     setResetSuccess(false);
 
-    if (!newPassword || newPassword.length < 6) {
-      setResetError('Password must be at least 6 characters long.');
+    if (!newPassword || newPassword.length < 12) {
+      setResetError('Password must be at least 12 characters long.');
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -110,16 +192,21 @@ export default function AdminHomePage() {
     }
 
     setResetBusy(true);
-    setTimeout(() => {
-      setResetBusy(false);
+    try {
+      await changePassword({ currentPassword, newPassword });
       setResetSuccess(true);
+      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => {
         setResetModalOpen(false);
         setResetSuccess(false);
       }, 1500);
-    }, 600);
+    } catch (err) {
+      setResetError(errorMessage(err));
+    } finally {
+      setResetBusy(false);
+    }
   };
 
   const toggleQuota = (key) => {
@@ -150,67 +237,44 @@ export default function AdminHomePage() {
     }));
   };
 
-  const handleCreateJobSubmit = (e) => {
+  // Saves the requisition as a draft, then opens the full job form to complete it (location,
+  // dates, eligibility, quota seats) before it goes for approval.
+  const handleCreateJobSubmit = async (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setActiveTab('published');
-    }, 1200);
+    setCreateError(null);
+    try {
+      const job = await createRequisition({
+        title: jobForm.title.trim(),
+        department: jobForm.department,
+        bps: Number(jobForm.bps),
+        vacancies: Number(jobForm.vacancies),
+        closingDate: jobForm.closingDate || null,
+        description: jobForm.description.trim() || null,
+        quotaSelection: Object.keys(QUOTA_CODES)
+          .filter((key) => jobForm.quotas[key])
+          .map((key) => QUOTA_CODES[key]),
+        kpis: jobForm.kpis.map(({ title, target }) => ({ title, target })),
+      });
+      setFormSubmitted(true);
+      setTimeout(() => navigate(paths.adminEditJob(job.id)), 1200);
+    } catch (err) {
+      setCreateError(errorMessage(err));
+    }
   };
 
-  const jobsList = jobsQuery.data?.items || [
-    {
-      id: 'j-101',
-      title: 'Employer - Sub Engineer (Civil)',
-      departmentName: 'Civil Engineering',
-      bps: '11',
-      vacancies: 23,
-      applicantsCount: 412,
-      status: 'published',
-      closingDate: '2026-10-15',
-    },
-    {
-      id: 'j-102',
-      title: 'Employer - Senior Technician (Electrical)',
-      departmentName: 'Electrical Engineering',
-      bps: '09',
-      vacancies: 35,
-      applicantsCount: 380,
-      status: 'published',
-      closingDate: '2026-10-20',
-    },
-    {
-      id: 'j-103',
-      title: 'Employer - Assistant Station Master',
-      departmentName: 'Traffic & Operating',
-      bps: '14',
-      vacancies: 25,
-      applicantsCount: 195,
-      status: 'pending_approval',
-      closingDate: '2026-10-25',
-    },
-    {
-      id: 'j-104',
-      title: 'Employer - Loco Pilot (Assistant)',
-      departmentName: 'Mechanical Engineering',
-      bps: '09',
-      vacancies: 65,
-      applicantsCount: 520,
-      status: 'approved',
-      closingDate: '2026-11-01',
-    },
-    {
-      id: 'j-105',
-      title: 'Employer - Executive Engineer (Civil)',
-      departmentName: 'Civil Engineering',
-      bps: '17',
-      vacancies: 15,
-      applicantsCount: 88,
-      status: 'draft',
-      closingDate: '2026-11-10',
-    },
-  ];
+  const jobsList = jobsQuery.data?.items ?? [];
+  const totalApplicants = jobsList.reduce((sum, job) => sum + (job.applicantsCount ?? 0), 0);
+  const totalVacancies = jobsList.reduce((sum, job) => sum + (job.vacancies ?? 0), 0);
+  const maxApplicants = Math.max(1, ...jobsList.map((job) => job.applicantsCount ?? 0));
+  const applicantBars = [...jobsList]
+    .sort((a, b) => (b.applicantsCount ?? 0) - (a.applicantsCount ?? 0))
+    .slice(0, 10)
+    .map((job, index) => ({
+      job: `${job.title} (BPS-${job.bps})`,
+      count: job.applicantsCount ?? 0,
+      percent: `${Math.round(((job.applicantsCount ?? 0) / maxApplicants) * 100)}%`,
+      color: BAR_COLORS[index % BAR_COLORS.length],
+    }));
 
   return (
     <div className="bg-gray-100 text-gray-900 flex min-h-screen flex-col font-['Instrument_Sans',sans-serif]">
@@ -360,6 +424,21 @@ export default function AdminHomePage() {
                     {resetError}
                   </div>
                 )}
+
+                <div>
+                  <label className="text-gray-700 mb-1 block font-semibold">
+                    Current Password *
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    autoComplete="current-password"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="border-gray-300 w-full rounded-lg border px-3.5 py-2.5 focus:ring-2 focus:ring-[#1f4d36] focus:outline-none"
+                  />
+                </div>
 
                 <div>
                   <label className="text-gray-700 mb-1 block font-semibold">New Password *</label>
@@ -576,7 +655,7 @@ export default function AdminHomePage() {
             </div>
             <div className="text-emerald-300 flex justify-between text-[11px]">
               <span>Total Applicants</span>
-              <strong className="text-white">1,595</strong>
+              <strong className="text-white">{totalApplicants}</strong>
             </div>
           </div>
         </aside>
@@ -637,7 +716,7 @@ export default function AdminHomePage() {
                 <div className="border-gray-200 shadow-xs flex items-center justify-between rounded-2xl border bg-white p-5">
                   <div>
                     <p className="text-gray-500 mb-1 text-xs font-semibold">Total Applicants</p>
-                    <p className="text-gray-900 text-3xl font-extrabold">1,595</p>
+                    <p className="text-gray-900 text-3xl font-extrabold">{totalApplicants}</p>
                   </div>
                   <div className="bg-blue-50 text-blue-600 border-blue-100 flex h-12 w-12 items-center justify-center rounded-xl border">
                     <svg
@@ -659,7 +738,7 @@ export default function AdminHomePage() {
                 <div className="border-gray-200 shadow-xs flex items-center justify-between rounded-2xl border bg-white p-5">
                   <div>
                     <p className="text-gray-500 mb-1 text-xs font-semibold">Employer Vacancies</p>
-                    <p className="text-gray-900 text-3xl font-extrabold">163</p>
+                    <p className="text-gray-900 text-3xl font-extrabold">{totalVacancies}</p>
                   </div>
                   <div className="bg-purple-50 text-purple-600 border-purple-100 flex h-12 w-12 items-center justify-center rounded-xl border">
                     <svg
@@ -771,6 +850,11 @@ export default function AdminHomePage() {
                   </p>
                 </div>
 
+                {profileError && (
+                  <div className="bg-red-50 border-red-200 text-red-700 rounded-xl border px-4 py-2 text-xs font-semibold">
+                    {profileError}
+                  </div>
+                )}
                 {profileSaved && (
                   <div className="bg-emerald-50 border-emerald-200 text-emerald-900 rounded-xl border px-4 py-2 text-xs font-semibold">
                     ✓ Employer Profile updated successfully!
@@ -806,19 +890,8 @@ export default function AdminHomePage() {
                         onChange={handleAvatarChange}
                       />
                     </label>
-                    {avatarPreview && (
-                      <button
-                        type="button"
-                        onClick={() => setAvatarPreview(null)}
-                        className="border-gray-300 text-gray-600 hover:bg-gray-100 cursor-pointer rounded-lg border bg-white px-3 py-2 text-xs font-medium"
-                      >
-                        Remove
-                      </button>
-                    )}
                   </div>
-                  <p className="text-gray-400 text-[11px]">
-                    Allowed formats: JPG, PNG, WEBP (Max 2MB)
-                  </p>
+                  <p className="text-gray-400 text-[11px]">Allowed formats: JPG or PNG (Max 5MB)</p>
                 </div>
               </div>
 
@@ -1026,8 +1099,14 @@ export default function AdminHomePage() {
 
               {formSubmitted && (
                 <div className="bg-emerald-50 border-emerald-200 text-emerald-900 rounded-xl border p-4 text-xs font-semibold">
-                  Employer Job Requisition created and published successfully! Redirecting to
-                  published jobs...
+                  Requisition saved as a draft. Opening the full job form to add location, dates,
+                  eligibility and quota seats before it goes for approval...
+                </div>
+              )}
+
+              {createError && (
+                <div className="bg-red-50 border-red-200 text-red-700 rounded-xl border p-4 text-xs font-semibold">
+                  {createError}
                 </div>
               )}
 
@@ -1062,11 +1141,11 @@ export default function AdminHomePage() {
                         onChange={(e) => setJobForm({ ...jobForm, department: e.target.value })}
                         className="border-gray-300 w-full rounded-lg border bg-white px-3.5 py-2.5 focus:ring-2 focus:ring-[#1f4d36] focus:outline-none"
                       >
-                        <option value="Civil Engineering">Civil Engineering</option>
-                        <option value="Electrical Engineering">Electrical Engineering</option>
-                        <option value="Mechanical Engineering">Mechanical Engineering</option>
-                        <option value="Traffic &amp; Operating">Traffic &amp; Operating</option>
-                        <option value="Medical Department">Medical Department</option>
+                        {(reference?.departments ?? []).map((dept) => (
+                          <option key={dept.code} value={dept.code}>
+                            {dept.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -1283,7 +1362,7 @@ export default function AdminHomePage() {
                     type="submit"
                     className="shadow-sm cursor-pointer rounded-xl border-none bg-[#1f4d36] px-6 py-2.5 font-bold text-white hover:bg-[#183e2b]"
                   >
-                    Publish Employer Job Requisition
+                    Save Requisition &amp; Continue
                   </button>
                 </div>
               </form>
@@ -1308,38 +1387,7 @@ export default function AdminHomePage() {
                   Applicants Count per Employer Job Post
                 </h3>
                 <div className="space-y-4 pt-2 text-xs">
-                  {[
-                    {
-                      job: 'Employer - Senior Technician (BPS-09)',
-                      count: 520,
-                      percent: '85%',
-                      color: 'bg-[#1f4d36]',
-                    },
-                    {
-                      job: 'Employer - Sub Engineer (BPS-11)',
-                      count: 412,
-                      percent: '70%',
-                      color: 'bg-emerald-600',
-                    },
-                    {
-                      job: 'Employer - Loco Pilot (BPS-09)',
-                      count: 380,
-                      percent: '62%',
-                      color: 'bg-blue-600',
-                    },
-                    {
-                      job: 'Employer - Assistant Station Master (BPS-14)',
-                      count: 195,
-                      percent: '35%',
-                      color: 'bg-amber-500',
-                    },
-                    {
-                      job: 'Employer - Executive Engineer (BPS-17)',
-                      count: 88,
-                      percent: '18%',
-                      color: 'bg-purple-600',
-                    },
-                  ].map((item) => (
+                  {applicantBars.map((item) => (
                     <div key={item.job} className="space-y-1">
                       <div className="flex items-center justify-between text-xs font-semibold">
                         <span className="text-gray-800">{item.job}</span>

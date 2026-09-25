@@ -7,14 +7,15 @@ published --closing date passes--> closed
 Approved and published jobs are locked: there is no edit path for them (no corrigendum).
 """
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, time, timedelta, timezone
 
 from flask import current_app
 from marshmallow import ValidationError
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.extensions import db
 from app.models import (
+    Application,
     ApprovalRecord,
     Department,
     DocumentType,
@@ -107,6 +108,61 @@ def _apply(job, values):
     ]
 
 
+PKT = timezone(timedelta(hours=5))
+
+
+def applicant_counts(job_ids):
+    """{job id: number of applications} for the admin job list."""
+    if not job_ids:
+        return {}
+    rows = db.session.execute(
+        select(Application.job_id, func.count())
+        .where(Application.job_id.in_(job_ids))
+        .group_by(Application.job_id)
+    ).all()
+    return dict(rows)
+
+
+def create_requisition(staff, values):
+    """A draft from the admin panel's quick form. The rest is filled in the full job form before
+    it can be submitted for approval."""
+    _lookup(Department, [values["department"]], "department")
+    closing = values["closing_date"]
+    job = Job(
+        status=JobStatus.DRAFT,
+        created_by_id=staff.id,
+        title=values["title"],
+        department_code=values["department"],
+        bps=values["bps"],
+        vacancies=values["vacancies"],
+        employment_type=EmploymentType.PERMANENT,
+        description=values["description"],
+        # The deadline is the end of that day, Pakistan time.
+        closing_date=datetime.combine(closing, time(23, 59, 59), PKT) if closing else None,
+        requisition={"quotaSelection": values["quota_selection"], "kpis": values["kpis"]},
+    )
+    db.session.add(job)
+    db.session.flush()
+    audit_service.record("job.created", "job", job.id, staff=staff, details={"via": "requisition"})
+    db.session.commit()
+    return job
+
+
+def missing_fields(job):
+    """What a draft still needs before it can be submitted for approval."""
+    required = {
+        "category": job.category_code,
+        "location": job.location,
+        "summary": job.summary,
+        "description": job.description,
+        "openingDate": job.opening_date,
+        "closingDate": job.closing_date,
+        "requirements": job.requirement,
+        "quotas": job.quotas,
+    }
+    return [name for name, value in required.items() if not value]
+
+
 def create_draft(staff, values):
     job = Job(status=JobStatus.DRAFT, created_by_id=staff.id)
     _apply(job, values)
@@ -129,6 +185,9 @@ def update_draft(staff, job, values):
 def submit(staff, job):
     if job.status not in EDITABLE:
         raise AppError("invalid_status", "Only draft or returned jobs can be submitted.", 409)
+    missing = missing_fields(job)
+    if missing:
+        raise ValidationError({"incomplete": missing})
     if job.closing_date <= _now():
         raise ValidationError({"closingDate": ["Closing date has already passed."]})
     job.status = JobStatus.PENDING_APPROVAL

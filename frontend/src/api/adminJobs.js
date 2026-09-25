@@ -50,3 +50,16 @@ export async function publishJob(id, { advertisementNo }) {
   const { data } = await client.post(`/admin/jobs/${id}/publish`, { advertisementNo });
   return data;
 }
+
+/**
+ * The admin panel's quick "Create job" form: { title, department (code), bps, vacancies,
+ * closingDate ('YYYY-MM-DD'), description, quotaSelection: ['open_merit' | 'railway_employee_child'
+ * | 'women' | 'minority' | 'disability' | 'punjab' | 'sindh' | 'khyber_pakhtunkhwa' |
+ * 'balochistan'], kpis: [{ title, target }] }. Creates a draft (status 'draft', requirements
+ * null); complete it with updateJob before submitJob.
+ */
+export async function createRequisition(values) {
+  if (USE_MOCKS) return mock.createRequisition(values);
+  const { data } = await client.post('/admin/jobs/requisitions', values);
+  return data;
+}

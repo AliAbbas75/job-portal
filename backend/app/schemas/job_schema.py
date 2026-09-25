@@ -65,6 +65,8 @@ class JobSchema(ma.Schema):
 
     def dump_requirements(self, job):
         req = job.requirement
+        if req is None:  # a draft requisition that hasn't been completed yet
+            return None
         return {
             "minQualification": req.min_qualification_code,
             "minMarksPercent": float(req.min_marks_percent) if req.min_marks_percent else None,

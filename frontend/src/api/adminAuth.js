@@ -19,3 +19,10 @@ export async function staffLogout() {
   await client.post('/admin/auth/logout');
   return {};
 }
+
+/** Staff change their own password (12+ characters). */
+export async function changePassword({ currentPassword, newPassword }) {
+  if (USE_MOCKS) return mock.changePassword({ currentPassword, newPassword });
+  await client.post('/admin/auth/password', { currentPassword, newPassword });
+  return {};
+}

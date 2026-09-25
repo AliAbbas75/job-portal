@@ -44,3 +44,10 @@ export function staffLogout() {
 export function currentMockStaff() {
   return STAFF.find((s) => s.id === sessionId) ?? null;
 }
+
+export function changePassword({ currentPassword, newPassword }) {
+  if (!currentMockStaff()) return fail('unauthorized');
+  if (currentPassword !== MOCK_STAFF_PASSWORD) return fail('invalid_credentials');
+  if (newPassword.length < 12) return fail('weak_password');
+  return respond({});
+}

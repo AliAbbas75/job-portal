@@ -24,7 +24,15 @@ export function JobActions({ job, staff, onChange }) {
       onChange(await action());
       setComments('');
     } catch (err) {
-      setError(errorMessage(err));
+      // A draft requisition that isn't complete yet: name what's missing.
+      const missing = err.fields?.incomplete;
+      setError(
+        missing
+          ? t('adminJobs.detail.incomplete', {
+              fields: missing.map((f) => t(`adminJobs.detail.fields.${f}`)).join(', '),
+            })
+          : errorMessage(err),
+      );
     } finally {
       setBusy(null);
     }
