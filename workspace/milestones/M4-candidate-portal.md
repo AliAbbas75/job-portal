@@ -5,7 +5,7 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 ## Claim
 
 - **Owners:** Ali, Malaika
-- **Status:** Done
+- **Status:** In progress
 - **Branch:** `m4-candidate-portal`
 - **Depends on:** M1
 
@@ -23,22 +23,33 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 
 **Backend**
 
-| ID    | Task                                     | Owner | Status |
-|-------|------------------------------------------|-------|--------|
-| T-040 | Job search API with filters + pagination | Ali   | DONE   |
-| T-041 | Job details API                          | Ali   | DONE   |
-| T-042 | Profile section APIs + edit history      | Ali   | DONE   |
-| T-043 | Document vault API (upload once, reuse)  | Ali   | DONE   |
-| T-044 | Age calculation utility + tests          | Ali   | DONE   |
+| ID    | Task                                                                          | Owner | Status |
+|-------|-------------------------------------------------------------------------------|-------|--------|
+| T-040 | Job search API with filters + pagination                                      | Ali   | DONE   |
+| T-041 | Job details API                                                               | Ali   | DONE   |
+| T-042 | Profile section APIs + edit history                                           | Ali   | DONE   |
+| T-043 | Document vault API (upload once, reuse)                                       | Ali   | DONE   |
+| T-044 | Age calculation utility + tests                                               | Ali   | DONE   |
+| T-147 | Job category (trade) + counts by category and BPS                             | -     | TODO   |
+| T-148 | Job detail fields: gender, criteria, ad file, quota %                         | -     | TODO   |
+| T-149 | Profile: trade certificate, quota + age-relaxation claims, new document types | -     | TODO   |
 
 **Frontend**
 
-| ID    | Task                                 | Owner | Status |
-|-------|--------------------------------------|-------|--------|
-| T-045 | Landing page, latest jobs, search UI | Ali   | DONE   |
-| T-046 | Job details page                     | Ali   | DONE   |
-| T-047 | Profile section forms (mobile-first) | Ali   | DONE   |
-| T-048 | Document vault UI                    | Ali   | DONE   |
+| ID    | Task                                                 | Owner   | Status |
+|-------|------------------------------------------------------|---------|--------|
+| T-045 | Landing page, latest jobs, search UI                 | Ali     | DONE   |
+| T-046 | Job details page                                     | Ali     | DONE   |
+| T-047 | Profile section forms (mobile-first)                 | Ali     | DONE   |
+| T-048 | Document vault UI                                    | Ali     | DONE   |
+| T-049 | FAQ section (accordion)                              | Malaika | DONE   |
+| T-140 | News bar + footer (social links, contact)            | Malaika | DONE   |
+| T-141 | Header + main nav to match Figma                     | -       | TODO   |
+| T-142 | Home page sections to match Figma                    | -       | TODO   |
+| T-143 | Available Jobs page (`/jobs`, table)                 | -       | TODO   |
+| T-144 | Job details to match Figma                           | -       | TODO   |
+| T-145 | My Profile page to match Figma                       | -       | TODO   |
+| T-146 | Bring FAQ, footer, news bar in line with conventions | -       | TODO   |
 
 ## Notes
 
@@ -49,3 +60,19 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 - Backend endpoints: `GET /api/jobs`, `GET /api/jobs/stats`, `GET /api/jobs/<id>`, `GET /api/reference`, `GET|PUT /api/profile[/<section>]`, `POST|PUT|DELETE /api/profile/<education|experience>[/<id>]`, `GET|POST /api/documents`, `DELETE /api/documents/<id>`. Shapes match the frontend mocks.
 - Profile and document endpoints need a candidate login token (issued by M2, T-022). Until M2 lands, the UI uses mock mode for those pages; job search and details already work against the real API (`flask seed-demo` for sample jobs).
 - Profile edits are recorded in the audit log (edit history: section + field names, never values). Replacing or removing a document archives it, so submitted applications keep their files.
+
+### Figma candidate journey (T-049, T-140 to T-149)
+
+Design: [docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journey.html) (each `<section data-screen>` is one Figma frame; node links in the file). M4 was reopened for these; the original T-040 to T-048 stay done.
+
+- **Already built:** T-049 and T-140 (Malaika, in `components/layout/FaqSection.jsx` and `SiteFooter.jsx`, merged with T-045). Search, filters and the job list (T-045), job details (T-046), profile (T-047) and documents (T-048) also exist; T-141 to T-145 restyle and extend them, not rebuild.
+- T-141 (`home`, every screen): logo lockup with "Public Recruitment Services"; right side Login / Register when signed out, Dashboard (pumpkin) / Log out when signed in; main nav: Home, Available Jobs (open-job count), Jobs by Category, How it Works, FAQs, Contact Us. The "ENG" switch waits for Urdu (deferred).
+- T-142 (`home`): hero with "Explore Jobs" and an image carousel; How it Works (Register → Complete Profile → Apply → Shortlisted → Status → Employed); Recent Available Jobs (same table as T-143); Jobs by Category and Jobs by BPS cards ("N jobs available →", link to filtered `/jobs`); FAQ with 3 tabs (General, Applications & Dashboard, Account access).
+- T-143 (`jobs`): table with Job ID (`JD-1001`), title, scale, department chip, location, positions, qualification, last date, Apply Now; filter row (Scale, Department, Location, Education) + Clear All; results-per-page `Select` + numbered pagination. Reuse T-045's filters and `searchJobs`.
+- T-144 (`job`): chips (BPS, department), "View/Download Advertisement", facts grid (Job ID, vacancies, age limit, location, domicile, gender), description, eligibility criteria, qualifications, quota list with percentages, sticky sidebar (vacancies, deadline, live countdown, Apply, Share).
+- T-145 (`profile`): "Dashboard | My Profile" tabs (dashboard is M6 T-069); CNIC + mobile read-only; personal details (age calculated, read-only); education and quota (highest education, trade certificate, quota, age relaxation, one claim only); Save Profile. Keep the repeatable education/experience sections from T-047 below it.
+- T-146: `FaqSection.jsx`, `SiteFooter.jsx` and the header news bar hard-code English text and use colours outside the brand palette (`bg-[#…]`, `gray-*`, a gradient). Move text to `i18n/en/`, use brand tokens only, and confirm `react-icons` is an approved dependency (log the reason) or replace it with `Icon`. The footer's "Latest Job Updates" email signup is notifications (deferred): hide it until then.
+- T-147: a post category/trade reference list on `Job`, plus job counts per category and per BPS for the home cards (extend `GET /api/jobs/stats`). M3's job form must set it.
+- T-148: `JobRequirement.gender`, free-text eligibility criteria (display only: the eligibility engine still uses structured fields), advertisement file, quota categories from the design (e.g. son of railway employee, ex-serviceman, orphans) with percentages. Migration. Blocked by open question 8.
+- T-149: profile fields for trade certificate, quota claim and age-relaxation claim (one claim only; staff verify it); document types CNIC front, CNIC back, trade certificate, quota proof, age-relaxation proof. Migration + seed. Blocked by open questions 5 and 8.
+- **Brand:** the design's blue buttons (`#2F7BF5`), Inter font and amber/green/red badge colours are not in the brand guide. Use brand tokens (`heritage` for primary actions, `ember` for rejected/closing, `gold`/`pumpkin` for accents) and Instrument Sans.

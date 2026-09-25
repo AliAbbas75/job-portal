@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<!--
+AGENT NOTES: Pakistan Railways Public Recruitment Services, Candidate Journey
+Source: Figma "Job Portal" > page "job portal designs" > section "Candidate Journey" (Ready for dev)
+File key: i0PZxdUX0WLLu3lorsYsMU. Frame canvas width: 1920px, content container ~1440px centered.
+Each <section data-screen> below = one Figma frame (duplicates/filled-states merged; state variants noted).
+Open a frame: https://www.figma.com/design/i0PZxdUX0WLLu3lorsYsMU/Job-Portal?node-id=<NODE>
+
+This is a structural skeleton, not pixel-perfect. Map sections to routes/components in the existing app.
+Shared layout on every screen: NewsBar > Header > MainNav > <page> > Footer.
+Header right side: logged out = [Login][Register]; logged in = [Dashboard (orange)][Log out].
+
+WORKFLOW
+1. Home (/) -> "Explore Jobs" or nav "Available Jobs" -> Available Jobs (/jobs)
+2. Jobs table row "Apply Now" -> Job Details (/jobs/:id)
+3. Job Details "Apply For this job":
+     logged out -> Login (/login) or Register (/register)
+     logged in  -> Apply wizard (/apply/:jobId)
+4. Register: CNIC + telecom operator + mobile + captcha -> OTP (/verify-otp) -> OTP Success -> "Login Now" -> Login
+5. Login: CNIC + operator + mobile + captcha (+ remember me) -> OTP (new OTP every login) -> Home (logged-in header)
+6. Apply wizard, 6 steps with stepper (Identity, OTP, Profile, Documents, Review, Confirm):
+     1 Identity: CNIC, operator, mobile -> Continue (disabled until valid)
+     2 OTP: 6-digit code -> Verify
+     3 Profile 1/2: upload CNIC front + back
+       Profile 2/2: personal info (prefilled from CNIC where possible; age auto-calculated, read-only)
+     4 Documents: 7 uploads (JPG/PNG/PDF, max 5MB) -> uploaded state shows filename, size, remove (x), Replace
+     5 Review: read-only summary + disclaimer -> Submit
+     6 Confirm: "Application Submitted!" -> "Go To Dashboard"
+7. Dashboard (/dashboard): stats, My applications table, Latest updates. Tabs: Dashboard | My Profile
+8. My Profile (/profile): editable profile used for new applications -> Save Profile
+
+STATUS BADGES: Under Review (amber, hourglass), Approved (green, check), Rejected (red, x)
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAKRAIL Candidate Journey Skeleton</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1F4D36;        /* header, primary buttons */
+  --green-soft:#E6F2EC;   /* footer bg, success rows */
+  --red:#A83A2C;          /* news bar, accent headings ("Works", "Category", "BPS", hero line 1) */
+  --orange:#D9770F;       /* Dashboard header button */
+  --blue:#2F7BF5;         /* Apply Now / Apply For this job */
+  --ink:#141414; --muted:#6B7280; --line:#E5E7EB; --bg-alt:#F6F7F9; --dark:#111;
+  --radius:8px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;font-size:14px}
+.container{max-width:1440px;margin:0 auto;padding:0 40px}
+a{color:inherit;text-decoration:none}
+.btn{display:inline-block;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:#fff;font-weight:600;cursor:pointer}
+.btn-primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn-ghost{background:#F1F1F1;border-color:#F1F1F1}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.accent{color:var(--red)}
+.muted{color:var(--muted)}
+.card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:20px}
+.grid{display:grid;gap:16px}
+.field label{display:block;font-size:12px;margin-bottom:6px}
+.field label .req{color:var(--red)}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;font:inherit}
+.field input[readonly]{background:#F1F1F1}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:13px}
+th{background:var(--bg-alt);font-weight:600}
+.chip{display:inline-block;padding:3px 8px;border-radius:4px;background:#EFEFEF;font-size:12px}
+.badge{padding:3px 8px;border-radius:4px;font-size:12px}
+.badge.review{background:#FFF4E0;color:#B26A00}.badge.approved{background:#E6F4EA;color:#1E7A3C}.badge.rejected{background:#FDECEC;color:#B42318}
+
+/* Shared layout */
+.newsbar{background:var(--red);color:#fff;font-size:12px;padding:6px 0}
+.newsbar .container{display:flex;justify-content:space-between}
+.header{background:var(--green);color:#fff;padding:14px 0}
+.header .container{display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;gap:14px;align-items:center}
+.brand .logo{width:48px;height:48px;border-radius:50%;background:#F5A623}
+.brand .divider{width:1px;height:40px;background:rgba(255,255,255,.4)}
+.mainnav{border-bottom:1px solid var(--line)}
+.mainnav .container{display:flex;gap:24px;padding-top:12px;padding-bottom:12px;font-size:13px}
+.mainnav a.active{background:#F1F1F1;padding:4px 8px;border-radius:4px;border-bottom:2px solid var(--ink)}
+.count{font-size:10px;background:#EEE;border-radius:10px;padding:1px 6px}
+.footer{background:var(--green-soft);padding:32px 0 0}
+.footer .row{display:flex;justify-content:space-between;align-items:center;gap:24px;padding-bottom:20px;border-bottom:1px solid #C9DDD2}
+.footer .contact{display:flex;justify-content:space-between;padding:16px 0}
+.footer .wordmark{font-size:64px;font-weight:800;color:#C8E3D4;text-align:center;letter-spacing:1px}
+.footer-bottom{background:var(--dark);color:#ddd;font-size:12px;padding:12px 0}
+.footer-bottom .container{display:flex;justify-content:space-between}
+
+/* Screen switching (demo only) */
+section[data-screen]{display:none;padding:40px 0}
+section[data-screen].on{display:block}
+.screen-index{position:fixed;right:12px;bottom:12px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;max-height:60vh;overflow:auto;z-index:9}
+.screen-index a{display:block;padding:3px 6px}
+
+/* Wizard */
+.wizard{max-width:520px;margin:0 auto}
+.applying{background:var(--bg-alt);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.stepper{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.stepper span{border:1px solid var(--line);border-radius:20px;padding:4px 10px;font-size:11px}
+.stepper .done::before{content:"✓ ";color:var(--green)}
+.stepper .current{border-color:var(--green);background:#EEF5F1}
+.otp{display:flex;gap:8px;justify-content:center}
+.otp input{width:36px;height:40px;text-align:center;border:1px solid var(--line);border-radius:6px}
+.doc-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px}
+.doc-row.uploaded{background:var(--green-soft);border-color:var(--green)}
+.kv{display:grid;grid-template-columns:160px 1fr}
+.kv div{padding:8px 4px;border-bottom:1px solid var(--line)}
+.kv div:nth-child(odd){color:var(--muted)}
+.auth{max-width:240px;margin:0 auto;text-align:center}
+.auth .field{text-align:left;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<!-- ============ SHARED: NewsBar ============ -->
+<div class="newsbar"><div class="container">
+  <span><b>News important:</b> Application Deadline Extended to 20th Sep 2026 for the posts of BPS-01 To BPS-05</span>
+  <span>ENG ▾</span>
+</div></div>
+
+<!-- ============ SHARED: Header (toggle data-auth) ============ -->
+<header class="header" data-auth="guest"><div class="container">
+  <div class="brand">
+    <div class="logo" aria-label="Pakistan Railways logo"></div>
+    <div><b>PAKISTAN RAILWAYS</b><br><span>پاکستان ریلویز</span></div>
+    <div class="divider"></div>
+    <div style="font-size:16px;font-weight:600">Public Recruitment<br>Services</div>
+  </div>
+  <div class="guest-actions"><a class="btn" style="background:transparent;color:#fff" href="#login">Login</a> <a class="btn" href="#register">Register</a></div>
+  <!-- logged-in variant: <a class="btn btn-orange" href="#dashboard">Dashboard</a> <a class="btn">Log out</a> -->
+</div></header>
+
+<!-- ============ SHARED: MainNav ============ -->
+<nav class="mainnav"><div class="container">
+  <a href="#home" class="active">Home</a>
+  <a href="#jobs">Available Jobs <span class="count">59</span></a>
+  <a href="#home">Jobs By Category</a>
+  <a href="#home">How It's Works</a>
+  <a href="#home">FAQ's</a>
+  <a href="#home">Contact Us</a>
+</div></nav>
+
+<main>
+
+<!-- ===== SCREEN: Homepage | node 52616-6543 | logged-in variant 52866-59366 (header swap + hero image = 3 circular worker portraits instead of carousel) ===== -->
+<section data-screen="home"><div class="container">
+  <div class="grid" style="grid-template-columns:1fr 1fr;align-items:center;min-height:320px">
+    <div>
+      <h1 style="font-size:40px;margin:0"><span class="accent">Find your career at</span><br><span style="color:var(--green)">Pakistan Railways</span></h1>
+      <p>Discover Opportunities across government sectors and advance your career. Trusted by leading organizations for recruiting top talent.</p>
+      <a class="btn btn-primary" href="#jobs">Explore Jobs</a>
+    </div>
+    <div class="card" style="height:260px;display:flex;align-items:center;justify-content:space-between">‹ <span class="muted">Hero image carousel</span> ›</div>
+  </div>
+
+  <div style="background:var(--bg-alt);padding:40px;margin:40px -40px;text-align:center">
+    <h2>How it <span class="accent">Works</span></h2>
+    <p class="muted">Our Job Portal is designed to help job seekers find the best employment opportunities in the region.</p>
+    <div style="display:flex;justify-content:space-between;max-width:900px;margin:24px auto">
+      <span>Register</span>→<span>Complete Profile</span>→<span>Apply Job</span>→<span>Get Shortlisted</span>→<span>Get Status</span>→<span>Get Employed</span>
+    </div>
+  </div>
+
+  <h2 style="text-align:center">Recent Available Jobs</h2>
+  <p class="muted" style="text-align:center">Our job portal makes it easy to find and apply for positions that match your skills and career goals.</p>
+  <!-- COMPONENT: JobsTable (same as Available Jobs screen) -->
+  <div class="card" data-component="JobsTable">[JobsTable: search + filters + table + pagination, see #jobs]</div>
+
+  <div style="background:var(--bg-alt);padding:40px;margin:40px -40px">
+    <div style="display:flex;justify-content:space-between"><h2>Jobs By <span class="accent">Category</span></h2><a href="#jobs">Show all jobs →</a></div>
+    <div class="grid" style="grid-template-columns:repeat(5,1fr)">
+      <!-- card: icon, title, "N jobs available →" -->
+      <div class="card">Carpenter<br><small class="muted">23 jobs available →</small></div>
+      <div class="card">Gateman<br><small class="muted">35 jobs available →</small></div>
+      <div class="card">Pointman<br><small class="muted">25 jobs available →</small></div>
+      <div class="card">Welder<br><small class="muted">15 jobs available →</small></div>
+      <div class="card">Fitter<br><small class="muted">135 jobs available →</small></div>
+      <div class="card">Electrician<br><small class="muted">65 jobs available →</small></div>
+      <div class="card">Mason<br><small class="muted">64 jobs available →</small></div>
+      <div class="card">Painter<br><small class="muted">78 jobs available →</small></div>
+      <div class="card">Driver<br><small class="muted">23 jobs available →</small></div>
+      <div class="card">Roofer<br><small class="muted">63 jobs available →</small></div>
+    </div>
+  </div>
+
+  <h2>Jobs By <span class="accent">BPS</span></h2>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr)">
+    <!-- BPS-14 down to BPS-5, each "N jobs available →" -->
+    <div class="card"><b>BPS - 14</b><br><small class="muted">25 jobs available →</small></div>
+    <div class="card"><b>BPS - 13</b><br><small class="muted">23 jobs available →</small></div>
+    <div class="card"><b>BPS - 12</b><br><small class="muted">35 jobs available →</small></div>
+    <div class="card"><b>BPS - 11</b><br><small class="muted">15 jobs available →</small></div>
+    <div class="card"><b>BPS - 10</b><br><small class="muted">33 jobs available →</small></div>
+    <div class="card"><b>BPS - 9</b></div><div class="card"><b>BPS - 8</b></div><div class="card"><b>BPS - 7</b></div><div class="card"><b>BPS - 6</b></div><div class="card"><b>BPS - 5</b></div>
+  </div>
+
+  <div style="background:var(--bg-alt);padding:40px;margin:40px -40px 0">
+    <h2 style="text-align:center">FAQs</h2>
+    <div style="text-align:center;margin-bottom:16px">
+      <span class="chip">General Question</span> <span>Job Applications &amp; Dashboard</span> <span>Authentication &amp; Account Access</span>
+    </div>
+    <!-- 2-column accordion, each item: question + "+" toggle -->
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div class="card">How Do I Register in Pakistan railways Public Recruitment Service ? <b style="float:right">+</b></div>
+      <div class="card">What is the procedure to sign up for Pakistan Railways Public Recruitment Service? <b style="float:right">+</b></div>
+      <div class="card">How can I create an account on the Pakistan Railways Public Recruitment Service portal? <b style="float:right">+</b></div>
+      <div class="card">How do I enroll in the Pakistan Railways Public Recruitment Service system? <b style="float:right">+</b></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ===== SCREEN: Available Jobs | node 52866-67916 | logged-in variant 52866-68101 ===== -->
+<section data-screen="jobs"><div class="container">
+  <h1 style="font-size:36px;margin:0">Available Jobs</h1>
+  <p>Our job portal makes it easy to find and apply for positions that match your skills and career goals.</p>
+  <div class="card" data-component="JobsTable">
+    <div style="display:flex;gap:10px"><input style="flex:1;padding:10px;border:1px solid var(--line);border-radius:6px" placeholder="Search jobs, departments, locations."><button class="btn btn-primary" style="width:210px">Search</button></div>
+    <div style="display:flex;gap:10px;align-items:center;margin:12px 0">
+      <b>Filters By:</b>
+      <select><option>Scale</option></select><select><option>Department</option></select>
+      <select><option>Location</option></select><select><option>Education</option></select>
+      <a style="color:var(--green);text-decoration:underline">Clear All</a>
+    </div>
+    <table>
+      <thead><tr><th>Job ID</th><th>Job Title/Category</th><th>Scale</th><th>Department</th><th>Location</th><th>No Of Positions</th><th>Academic Qualification</th><th>Last Date To Apply</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>JD-1001</td><td>Carpenter</td><td>BPS-5</td><td><span class="chip">Mechanical C&amp;W</span></td><td>Lahore</td><td>14</td><td>Middle</td><td>Sep 1, 2026</td><td><a class="btn btn-blue" href="#job">Apply Now</a></td></tr>
+        <tr><td>JD-1002</td><td>Gateman</td><td>BPS-6</td><td><span class="chip">Transportation</span></td><td>Sarghoda</td><td>12</td><td>Matric</td><td>Sep 3, 2026</td><td><a class="btn btn-blue" href="#job">Apply Now</a></td></tr>
+        <tr><td>JD-1003</td><td>Pointsman</td><td>BPS-6</td><td><span class="chip">Transportation</span></td><td>Multan</td><td>6</td><td>Intermediate/F.Sc</td><td>Sep 5, 2026</td><td><a class="btn btn-blue" href="#job">Apply Now</a></td></tr>
+        <!-- Departments seen: Mechanical C&W, Mechanical Loco, Transportation -->
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;margin-top:12px">
+      <span>Result per page <select><option>10</option></select> 1-10 of 29</span>
+      <span>‹ [1] 2 3 … 8 ›</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- ===== SCREEN: Job Details | node 52783-3666 | logged-in variant 52866-67040 ===== -->
+<section data-screen="job"><div class="container">
+  <a href="#jobs">‹ Back to jobs</a>
+  <div class="grid" style="grid-template-columns:1fr 360px;gap:120px;margin-top:16px;align-items:start">
+    <div class="card">
+      <span class="chip">BPS - 05</span> <span class="chip">Mechanical C&amp;W</span>
+      <h2>Carpenter</h2>
+      <div class="card" style="display:flex;justify-content:space-between;background:var(--bg-alt)"><b>To View/Download Advertisement :</b><a class="btn btn-primary">Click Here</a></div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;margin:12px 0">
+        <div class="card"><small class="muted">Job ID</small><br>1001</div><div class="card"><small class="muted">Vacancies</small><br>120</div>
+        <div class="card"><small class="muted">Age Limit</small><br>18–25 years</div><div class="card"><small class="muted">Location</small><br>Lahore</div>
+        <div class="card"><small class="muted">Domicile</small><br>Punjab</div><div class="card"><small class="muted">Gender</small><br>Male</div>
+      </div>
+      <h4>Job Description</h4><p class="muted">Duties include handling luggage and goods at railway stations.</p>
+      <h4>Eligibility Criteria</h4><ul class="muted"><li>Age 18-25</li><li>Literate in Urdu</li><li>Punjab domicile</li><li>Physically fit</li></ul>
+      <h4>Qualifications</h4><p class="muted">Matric 2nd Division with one year relevant certificate</p>
+      <h4>Recruitment Quota</h4>
+      <p class="muted">The recruitment to be subjected to the following quota without any relaxtion in minimum academic qualifications as well as age:</p>
+      <ul class="muted">
+        <li>Open Merit (Disable Quota will be applicable on selected categories) 60%</li>
+        <li>Son of Railway employee either in service/retired or deceased (18+02) 20%</li>
+        <li>Ex-Service Man 10%</li><li>Orphans (other than Railways) 05%</li><li>Miniority 05%</li>
+      </ul>
+      <a class="btn btn-blue" style="width:100%;text-align:center" href="#apply-1">Apply For this job</a>
+    </div>
+    <!-- Sticky sidebar -->
+    <aside class="card" style="background:var(--bg-alt)">
+      <div style="font-size:28px;font-weight:700">120</div><div class="muted">Vacancies Available</div>
+      <h3>Application Deadline</h3><div class="accent">📅 Thursday, September 18, 2026</div>
+      <div class="card" style="margin:12px 0">🕒 Remaining Time
+        <div style="display:flex;justify-content:space-around;margin-top:8px"><div>12<br><small>Days</small></div><div>10<br><small>Hours</small></div><div>40<br><small>Min</small></div><div>32<br><small>Sec</small></div></div>
+      </div>
+      <a class="btn btn-blue" style="width:100%;text-align:center" href="#apply-1">Apply For this job</a>
+      <button class="btn" style="width:100%;margin-top:8px">Share</button>
+    </aside>
+  </div>
+</div></section>
+
+<!-- ===== SCREEN: Candidate Login | node 52743-37215 (empty) / 52743-54174 (filled, Login enabled) ===== -->
+<section data-screen="login"><div class="container"><div class="auth">
+  <h2>Login to Your Account</h2>
+  <p class="muted" style="font-size:11px">Enter CNIC and the same verified mobile number. We send a new OTP every time for safe access.</p>
+  <div class="field"><label>Candidate CNIC <span class="req">*</span></label><input placeholder="Enter 13-digit CNIC"></div>
+  <div class="field"><label>Select Telecom Operator <span class="req">*</span></label><select><option>Select Operator</option><option>Telenor</option><option>Jazz</option><option>Zong</option><option>Ufone</option></select></div>
+  <div class="field"><label>Mobile number <span class="req">*</span></label><input placeholder="03xx xxxxxxx"></div>
+  <div class="card" style="margin-bottom:12px">[reCAPTCHA: I'm not a robot]</div>
+  <div style="display:flex;justify-content:space-between;font-size:12px"><label><input type="checkbox"> Remember me</label><a style="color:var(--green)">Forgot Password?</a></div>
+  <a class="btn btn-primary" style="display:block;margin:16px 0" href="#otp">Login</a>
+  <small>Don't have an account ? <a style="color:var(--blue)" href="#register">Create Account</a></small>
+</div></div></section>
+
+<!-- ===== SCREEN: Candidate Register | node 52743-55139 (empty) / 52743-55401 (filled) ===== -->
+<section data-screen="register"><div class="container"><div class="auth">
+  <h2>Create Your Account</h2>
+  <p class="muted" style="font-size:11px">New account requires CNIC and verified mobile number only.</p>
+  <div class="field"><label>Candidate CNIC <span class="req">*</span></label><input placeholder="Enter 13-digit CNIC"></div>
+  <div class="field"><label>Select Telecom Operator <span class="req">*</span></label><select><option>Select Operator</option></select></div>
+  <div class="field"><label>Mobile number <span class="req">*</span></label><input placeholder="03xx xxxxxxx"></div>
+  <div class="card" style="margin-bottom:12px">[reCAPTCHA]</div>
+  <a class="btn btn-primary" style="display:block;margin:16px 0" href="#otp">Register</a>
+  <small>Already have an account? <a style="color:var(--blue)" href="#login">Login</a></small>
+</div></div></section>
+
+<!-- ===== SCREEN: OTP | node 52749-56046 (empty, Verify disabled) / 52749-56361 (filled) ===== -->
+<section data-screen="otp"><div class="container"><div class="auth">
+  <h2>Check Your Mobile</h2>
+  <p class="muted" style="font-size:11px">We have sent verification code on your registered number</p>
+  <b style="color:var(--blue);font-size:12px">03001234567</b>
+  <div class="otp" style="margin:16px 0"><input><input><input><input><input><input></div>
+  <a class="btn btn-primary" style="display:block" href="#otp-success">Verify OTP</a>
+  <p style="font-size:12px">Didn't received the code? <a style="color:var(--blue)">Click to resend</a></p>
+</div></div></section>
+
+<!-- ===== SCREEN: OTP Success | node 52749-56924 ===== -->
+<section data-screen="otp-success"><div class="container"><div class="auth">
+  <div style="font-size:48px">🚆</div>
+  <h3>✔ Success!</h3>
+  <p class="muted" style="font-size:11px">Your mobile number 03001234567 has been registered successfully!</p>
+  <a class="btn" style="display:block" href="#login">Login Now</a>
+</div></div></section>
+
+<!-- ===== APPLY WIZARD (shared shell: ApplyingFor card + Stepper + step body + Back/Continue) ===== -->
+<!-- STEP 1 Identity | node 52749-56675 (empty) / 52796-29704 (filled) -->
+<section data-screen="apply-1"><div class="container"><div class="wizard card">
+  <div class="applying"><div><small class="muted">Applying For</small><br><b>Carpenter - BPS 05</b></div><a style="color:var(--blue)" href="#job">View Details</a></div>
+  <div class="stepper"><span class="current">1. Identity</span><span>2. OTP</span><span>3. Profile</span><span>4. Documents</span><span>5. Review</span><span>6. Confirm</span></div>
+  <h2>Step 1 — Identity Verification</h2>
+  <p class="muted" style="font-size:11px">Enter your CNIC and mobile number. No password required</p>
+  <div class="field"><label>Candidate CNIC <span class="req">*</span></label><input placeholder="Enter 13-digit CNIC"></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:12px">
+    <div class="field"><label>Select Telecom Operator <span class="req">*</span></label><select><option>Select Operator</option></select></div>
+    <div class="field"><label>Mobile number <span class="req">*</span></label><input placeholder="03xx xxxxxxx"></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:16px"><a class="btn btn-ghost" href="#job">Back</a><a class="btn btn-primary" href="#apply-2">Continue</a></div>
+</div></div></section>
+
+<!-- STEP 2 OTP | node 52796-30026 (note: Figma heading still says "Step 1 — Identity Verification", likely a design typo) -->
+<section data-screen="apply-2"><div class="container"><div class="wizard card">
+  <div class="applying"><div><small class="muted">Applying For</small><br><b>Carpenter - BPS 05</b></div><a style="color:var(--blue)">View Details</a></div>
+  <div class="stepper"><span class="done">1. Identity</span><span class="current">2. OTP</span><span>3. Profile</span><span>4. Documents</span><span>5. Review</span><span>6. Confirm</span></div>
+  <h2>Step 2 — OTP Verification</h2>
+  <p class="muted" style="font-size:11px">A 6-digit OTP was sent to 0300 1234567</p>
+  <div class="otp"><input><input><input><input><input><input></div>
+  <a class="btn btn-primary" style="display:block;margin-top:16px" href="#apply-3a">Verify</a>
+</div></div></section>
+
+<!-- STEP 3 (1/2) Upload CNIC | node 52799-40465 (uploaded state; empty state = dropzones) -->
+<section data-screen="apply-3a"><div class="container"><div class="wizard card">
+  <div class="applying"><div><small class="muted">Applying For</small><br><b>Carpenter - BPS 05</b></div><a style="color:var(--blue)">View Details</a></div>
+  <div class="stepper"><span class="done">1. Identity</span><span class="done">2. OTP</span><span class="current">3. Profile</span><span>4. Documents</span><span>5. Review</span><span>6. Confirm</span></div>
+  <div style="display:flex;justify-content:space-between"><h2>Step 3 — Upload CNIC</h2><b>1/2</b></div>
+  <p class="muted" style="font-size:11px">Verify and complete your details.</p>
+  <div class="field"><label>CNIC Front<span class="req">*</span></label><div class="doc-row">📄 cnic front.png <small class="muted">486 KB · Uploaded</small><span>🗑 ⬇</span></div></div>
+  <div class="field"><label>CNIC Back<span class="req">*</span></label><div class="doc-row">📄 cnic back.png <small class="muted">486 KB · Uploaded</small><span>🗑 ⬇</span></div></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr"><a class="btn btn-ghost" href="#apply-2">Back</a><a class="btn btn-primary" href="#apply-3b">Continue</a></div>
+</div></div></section>
+
+<!-- STEP 3 (2/2) Personal Information | node 52799-39215 (prefilled from CNIC) / 52833-46661 (completed) -->
+<section data-screen="apply-3b"><div class="container"><div class="wizard card">
+  <div class="stepper"><span class="done">1. Identity</span><span class="done">2. OTP</span><span class="current">3. Profile</span><span>4. Documents</span><span>5. Review</span><span>6. Confirm</span></div>
+  <div style="display:flex;justify-content:space-between"><h2>Step 3 — Personal Information</h2><b>2/2</b></div>
+  <p class="muted" style="font-size:11px">Verify and complete your details.</p>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="field"><label>Full Name (as on CNIC) <span class="req">*</span></label><input value="Ahmed Ali"></div>
+    <div class="field"><label>Father Name <span class="req">*</span></label><input value="Ali Khan"></div>
+    <div class="field"><label>Date of Birth (from CNIC) <span class="req">*</span></label><input value="21/07/1998"></div>
+    <div class="field"><label>Age (calculated) <span class="req">*</span></label><input value="28 Years" readonly></div>
+    <div class="field"><label>Gender <span class="req">*</span></label><select><option>Male</option></select></div>
+    <div class="field"><label>Province/Domicile <span class="req">*</span></label><select><option>Select</option></select></div>
+    <div class="field"><label>District <span class="req">*</span></label><select><option>Select</option></select></div>
+    <div class="field"><label>Email <small class="muted" style="float:right">Optional</small></label><input placeholder="Enter email"></div>
+  </div>
+  <div class="field" style="margin:12px 0"><label>Residential Address <span class="req">*</span></label><textarea placeholder="House No., Street, City"></textarea></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="field"><label>Highest Education <span class="req">*</span></label><select><option>Select</option></select></div>
+    <div class="field"><label>Trade Certificate <span class="req">*</span></label><select><option>Select</option></select></div>
+    <div class="field"><label>Quota <span class="req">*</span></label><select><option>Select</option></select></div>
+    <div class="field"><label>Age relaxation (one claim only) <span class="req">*</span></label><select><option>Select</option></select>
+      <small class="muted">Maximum age for this claim ( 30 years, subject to staff verification )</small></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:16px"><a class="btn btn-ghost" href="#apply-3a">Back</a><a class="btn btn-primary" href="#apply-4">Continue</a></div>
+</div></div></section>
+
+<!-- STEP 4 Documents | node 52834-47393 (empty) / 52834-47927 (all uploaded) -->
+<section data-screen="apply-4"><div class="container"><div class="wizard card">
+  <div class="stepper"><span class="done">1. Identity</span><span class="done">2. OTP</span><span class="done">3. Profile</span><span class="current">4. Documents</span><span>5. Review</span><span>6. Confirm</span></div>
+  <h2>Step 4 — Supporting documents</h2>
+  <p class="muted" style="font-size:11px">Upload clear copies. Staff will verify the original details.</p>
+  <!-- Each row: icon, title, "JPG, PNG or PDF · Maximum 5 MB", [Upload].
+       Uploaded state: green border/bg, ✓ icon, "123 Document.pdf - 60 KB ×", [Replace] -->
+  <div class="doc-row"><div><b>One passport size photo</b><br><small class="muted">JPG, PNG or PDF · Maximum 5 MB</small></div><button class="btn">⇪ Upload</button></div>
+  <div class="doc-row uploaded"><div>✓ <b>Domicile certificate</b><br><small>123 Document.pdf - 60 KB ×</small></div><button class="btn">⇪ Replace</button></div>
+  <div class="doc-row"><div><b>Education certificate</b></div><button class="btn">⇪ Upload</button></div>
+  <div class="doc-row"><div><b>Character certificate</b></div><button class="btn">⇪ Upload</button></div>
+  <div class="doc-row"><div><b>Trade Certificate</b></div><button class="btn">⇪ Upload</button></div>
+  <div class="doc-row"><div><b>Quota Proof</b></div><button class="btn">⇪ Upload</button></div>
+  <div class="doc-row"><div><b>Age relaxation proof</b></div><button class="btn">⇪ Upload</button></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:16px"><a class="btn btn-ghost" href="#apply-3b">Back</a><a class="btn btn-primary" href="#apply-5">Continue</a></div>
+</div></div></section>
+
+<!-- STEP 5 Review | node 52834-48595 -->
+<section data-screen="apply-5"><div class="container"><div class="wizard card">
+  <div class="stepper"><span class="done">1. Identity</span><span class="done">2. OTP</span><span class="done">3. Profile</span><span class="done">4. Documents</span><span class="current">5. Review</span><span>6. Confirm</span></div>
+  <h2>Step 5 — Review your application</h2>
+  <p class="muted" style="font-size:11px">Verify all details. Changes cannot be made after submission.</p>
+  <h3>Identity</h3><div class="kv"><div>CNIC</div><div>3520200000001</div><div>Mobile</div><div>03001234567</div></div>
+  <h3>Profile</h3><div class="kv">
+    <div>Full Name</div><div>Ahmed Ali</div><div>Father's name</div><div>Ali Khan</div>
+    <div>Date of Birth</div><div>21/07/1998</div><div>Age</div><div>28 years</div><div>Gender</div><div>Male</div>
+    <div>Province</div><div>Punjab</div><div>District</div><div>Lahore</div>
+    <div>Resident Address</div><div>House 1, Street 1, Lahore</div>
+    <div>Highest Qualification</div><div>Matric</div><div>Trade Certificate</div><div>Carpenter Certificate</div>
+    <div>Quota</div><div>Railway employee child</div><div>Age Relaxtion</div><div>Railway employee child</div>
+  </div>
+  <h3>Documents</h3><div class="kv"><div>Documents</div><div>9 uploaded</div></div>
+  <div style="background:#FFF8E6;border:1px solid #F5DDA0;border-radius:6px;padding:10px;margin:16px 0;font-size:12px;color:#8A4B00"><b>Disclaimer:</b> By submitting, you confirm all information is true. False information results in disqualification.</div>
+  <div class="grid" style="grid-template-columns:1fr 1fr"><a class="btn btn-ghost" href="#apply-4">Back</a><a class="btn btn-primary" href="#apply-6">Submit</a></div>
+</div></div></section>
+
+<!-- STEP 6 Confirm | node 52836-49157 -->
+<section data-screen="apply-6"><div class="container"><div class="wizard card" style="text-align:center">
+  <div class="stepper"><span class="done">1. Identity</span><span class="done">2. OTP</span><span class="done">3. Profile</span><span class="done">4. Documents</span><span class="done">5. Review</span><span class="done">6. Confirm</span></div>
+  <div style="font-size:48px;color:var(--green)">✔</div>
+  <h2>Application Submitted!</h2>
+  <p class="muted" style="font-size:12px">Your application for Carpenter is now awaiting under review.<br>You will be notify on your registered mobile number.</p>
+  <a class="btn btn-primary" style="display:block" href="#dashboard">Go To Dashboard</a>
+</div></div></section>
+
+<!-- ===== SCREEN: Dashboard | node 52843-49867 (logged-in header) ===== -->
+<section data-screen="dashboard"><div class="container">
+  <div style="display:flex;justify-content:space-between;align-items:end">
+    <div><small class="muted">Candidate Portal</small><h2 style="margin:4px 0">Welcome, Ahmed Ali</h2><p style="margin:0">Your applications and next steps, in one place.</p></div>
+    <div><a class="chip" href="#dashboard">Dashboard</a> <a href="#profile">My Profile</a></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);margin:24px 0">
+    <div class="card">My applications<br><b style="font-size:28px">1</b> <span style="float:right">📄 blue</span></div>
+    <div class="card">Drafts to finish<br><b style="font-size:28px">0</b> <span style="float:right">✎ grey</span></div>
+    <div class="card">Under review<br><b style="font-size:28px">1</b> <span style="float:right">🕒 amber</span></div>
+    <div class="card">Action required<br><b style="font-size:28px">1</b> <span style="float:right">⚠ red</span></div>
+    <div class="card">Approved<br><b style="font-size:28px">1</b> <span style="float:right">✔ green</span></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1.4fr 1fr;align-items:start">
+    <div class="card" style="padding:0">
+      <div style="padding:14px"><b>📄 My applications</b></div>
+      <table>
+        <thead><tr><th>Job ID</th><th>Job Post</th><th>Scale</th><th>Application Reference ID</th><th>Date Applied</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>JD-1001</td><td>Carpenter</td><td>BPS - 06</td><td>PR-2026-61504DF9D…</td><td>20-11-24, 08:10…</td><td><span class="badge review">⧗ Under Review</span></td><td><a class="badge approved">👁 View</a></td></tr>
+          <tr><td>JD-1003</td><td>Welder</td><td>BPS - 06</td><td>PR-2026-61504DF9D…</td><td>19-11-24, 09:15…</td><td><span class="badge approved">✓ Approved</span></td><td><a class="badge approved">👁 View</a></td></tr>
+          <tr><td>JD-1004</td><td>Points man</td><td>BPS - 05</td><td>PR-2026-61504DF9D</td><td>18-11-24, 10:20…</td><td><span class="badge rejected">✕ Rejected</span></td><td><a class="badge approved">👁 View</a></td></tr>
+        </tbody>
+      </table>
+      <div style="display:flex;justify-content:space-between;padding:12px"><span>Result per page <select><option>5</option></select> 1-5 of 29</span><span>‹ [1] 2 3 … 8 ›</span></div>
+    </div>
+    <div class="card" style="padding:0">
+      <div style="padding:14px"><b>🔔 Latest updates</b></div>
+      <!-- Update card: status badge + timestamp (right), title, description, "View Application →" -->
+      <div class="card" style="margin:10px"><span class="badge review">Under Review</span> <small class="muted" style="float:right">20-11-24, 08:10 PM</small>
+        <p><b>Application Under Review</b><br><small class="muted">Your application for Carpenter is now awaiting for review.</small></p><a>View Application →</a></div>
+      <div class="card" style="margin:10px"><span class="badge approved">✓ Approved</span> <small class="muted" style="float:right">20-11-24, 08:10 PM</small>
+        <p><b>Application submitted</b><br><small class="muted">Your application for Carpenter is now awaiting for review.</small></p><a>View Application →</a></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ===== SCREEN: My Profile | node 52864-57745 (logged-in header) ===== -->
+<section data-screen="profile"><div class="container">
+  <div style="display:flex;justify-content:space-between;align-items:end">
+    <div><small class="muted">Candidate Portal</small><h2 style="margin:4px 0">My profile</h2><p style="margin:0">These details are used for new applications. Submitted applications keep the information you submitted.</p></div>
+    <div><a href="#dashboard">Dashboard</a> <a class="chip" href="#profile">My Profile</a></div>
+  </div>
+  <h3>Contact Details</h3>
+  <div style="display:flex;gap:40%"><span><span class="muted">CNIC</span> 3520200000001</span><span><span class="muted">Mobile</span> 03001234567</span></div>
+  <h3>Personal details</h3>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="field"><label>Full Name (as on CNIC) <span class="req">*</span></label><input value="Ahmed Ali"></div>
+    <div class="field"><label>Father Name <span class="req">*</span></label><input value="Ali Khan"></div>
+    <div class="field"><label>Date of Birth (from CNIC) <span class="req">*</span></label><input value="21/07/1998"></div>
+    <div class="field"><label>Age (calculated) <span class="req">*</span></label><input value="28 Years" readonly></div>
+    <div class="field"><label>Gender <span class="req">*</span></label><select><option>Male</option></select></div>
+    <div class="field"><label>Province/Domicile <span class="req">*</span></label><select><option>Punjab</option></select></div>
+    <div class="field"><label>District <span class="req">*</span></label><select><option>Lahore</option></select></div>
+    <div class="field"><label>Email <small class="muted" style="float:right">Optional</small></label><input value="candidate@example.com"></div>
+  </div>
+  <div class="field" style="margin:12px 0"><label>Residential Address <span class="req">*</span></label><textarea>House 1, Street 1, Lahore</textarea></div>
+  <h3>Education and quota</h3>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="field"><label>Highest Education <span class="req">*</span></label><select><option>Matric</option></select></div>
+    <div class="field"><label>Trade Certificate <span class="req">*</span></label><select><option>Carpenter Certificate</option></select></div>
+    <div class="field"><label>Quota <span class="req">*</span></label><select><option>Railway employee child</option></select></div>
+    <div class="field"><label>Age relaxation (one claim only) <span class="req">*</span></label><select><option>Railway employee child</option></select></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:20px"><button class="btn btn-primary">Save Profile</button><a class="btn btn-ghost" style="text-align:center" href="#dashboard">Back</a></div>
+</div></section>
+
+</main>
+
+<!-- ============ SHARED: Footer ============ -->
+<footer class="footer"><div class="container">
+  <div class="row">
+    <div class="brand" style="color:var(--green)"><div class="logo"></div><div><b>PAKISTAN RAILWAYS</b><br>پاکستان ریلویز</div></div>
+    <div><b style="font-size:12px">Follow Us</b><br>[Facebook] [Instagram] [X] [YouTube]</div>
+    <div><b style="font-size:12px">Latest Job Updates</b><br><input placeholder="Sign Up With Email" style="padding:8px;width:240px"> <button class="btn btn-primary">Sign up</button></div>
+  </div>
+  <div class="contact"><span><b>Email:</b> info@pakrail.gov.pk</span><span><b>Tel:</b> 042-99201938 (Lahore)</span><span><b>Address:</b> Muhammad Raza Hussain (DPO), For Divisional Superintendent, Pakistan Railways.</span></div>
+  <div class="wordmark">PUBLIC RECRUITMENT SERVICES</div>
+</div>
+<div class="footer-bottom"><div class="container">
+  <span>Copyright 2026 - All Right Reserved - Developed By Directorate of IT Pakistan Railways</span>
+  <span>Media Policy · legal Notice · Privacy Policy · Terms &amp; Conditions</span>
+</div></div></footer>
+
+<!-- Demo-only screen switcher -->
+<div class="screen-index" id="idx"></div>
+<script>
+const screens=[...document.querySelectorAll('section[data-screen]')];
+document.getElementById('idx').innerHTML='<b>Screens</b>'+screens.map(s=>`<a href="#${s.dataset.screen}">${s.dataset.screen}</a>`).join('');
+const authed=new Set(['dashboard','profile']);
+function show(){
+  const id=location.hash.slice(1)||'home';
+  screens.forEach(s=>s.classList.toggle('on',s.dataset.screen===id));
+  document.querySelector('.guest-actions').innerHTML=authed.has(id)
+    ?'<a class="btn btn-orange" href="#dashboard">Dashboard</a> <a class="btn" href="#home">Log out</a>'
+    :'<a class="btn" style="background:transparent;color:#fff" href="#login">Login</a> <a class="btn" href="#register">Register</a>';
+  scrollTo(0,0);
+}
+addEventListener('hashchange',show);show();
+</script>
+</body>
+</html>

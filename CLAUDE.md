@@ -197,6 +197,7 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 
 - [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md): where code goes, naming, repo hygiene
 - [docs/pakistan-railways-brand-guidelines.md](docs/pakistan-railways-brand-guidelines.md): colours, type, logo rules for all UI
+- [docs/pakrail-candidate-journey.html](docs/pakrail-candidate-journey.html): Figma candidate journey screens (open in a browser); brand guide wins on colours and fonts
 - [workspace/WORKFLOW.md](workspace/WORKFLOW.md): the step-by-step team process
 - [workspace/MILESTONES.md](workspace/MILESTONES.md): milestone overview, dependencies, deferred work, open questions
 - [workspace/milestones/](workspace/milestones/): one file per milestone: claim, status, scope, done-when, tasks

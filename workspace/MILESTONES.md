@@ -23,6 +23,10 @@ This page rarely changes. Owners and status live in each milestone file, so clai
 grep -H -e "Owners:" -e "Status:" workspace/milestones/*.md
 ```
 
+**Task IDs:** each milestone uses its own range (M4: T-040 to T-049). When a range is full, continue at 100 + its start (M4: T-140 to T-149).
+
+**UI design:** the Figma candidate journey is summarised in [docs/pakrail-candidate-journey.html](../docs/pakrail-candidate-journey.html) (open it in a browser; a screen list is bottom-right). Its tasks are in M2 (T-027, T-028), M4 (T-049, T-140 to T-149) and M6 (T-069, T-160 to T-163).
+
 **Status values:** `Not started` → `In progress` → `Done` (set in the PR; true once merged into `develop`).
 
 ```
@@ -54,3 +58,7 @@ Decisions for stakeholders, not milestone tasks. When one is decided, the projec
 | 2 | Who creates the job: the requesting department or a central recruitment cell? | T-023, T-030 (roles) | | |
 | 3 | Is the written test in-house or by an external agency? | Deferred (§5) | | |
 | 4 | Can a candidate edit or withdraw an application before the deadline? | - | **No.** Submitted applications are final. | 2026-09-24 |
+| 5 | Upload size limit: the Figma design says 5 MB, the code enforces 2 MB. Which one? | T-149, T-160 | | |
+| 6 | Dashboard statuses: the design shows Under Review / Approved / Rejected and cards "Drafts to finish" and "Action required". How do these map to the §4.9 statuses? (There are no draft applications today.) | T-069, T-162 | | |
+| 7 | Should a logged-in candidate verify an OTP again for every application (design wizard steps 1-2)? | T-161 | | |
+| 8 | Quota categories and age relaxation: the design lists son of railway employee, ex-serviceman and orphans quotas as percentages, and one age-relaxation claim. What is the official list and rules? | T-148, T-149 | | |
