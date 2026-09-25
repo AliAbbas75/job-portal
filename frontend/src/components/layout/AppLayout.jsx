@@ -10,6 +10,7 @@ import { SiteHeader } from './SiteHeader';
 export function AppLayout() {
   const { pathname } = useLocation();
   const isHome = pathname === '/' || pathname === paths.home;
+  const isAdmin = pathname.startsWith('/admin');
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -19,7 +20,7 @@ export function AppLayout() {
       >
         {t('common.skipToContent')}
       </a>
-      <SiteHeader />
+      {!isAdmin && <SiteHeader />}
       <main id="main" className="flex-1 focus:outline-none" tabIndex={-1}>
         <ErrorBoundary key={pathname}>
           <Outlet />
