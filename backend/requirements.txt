@@ -8,5 +8,8 @@ marshmallow==4.3.1
 marshmallow-sqlalchemy==1.5.0
 Flask-JWT-Extended==4.7.4
 argon2-cffi==25.1.0
+fpdf2==2.8.8
 psycopg[binary]==3.3.6
+pypdf==6.19.0
+python-docx==1.2.0
 python-dotenv==1.2.3

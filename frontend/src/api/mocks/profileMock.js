@@ -1,7 +1,8 @@
 import { fail, getDb, nextSeq, respond, save, sessionCandidateId } from './store';
 
 const FIELD_SECTIONS = ['personal', 'contact', 'domicile', 'additional'];
-const LIST_SECTIONS = ['education', 'experience'];
+// BPS-15+ tier (M5): registrations, publications, references.
+const LIST_SECTIONS = ['education', 'experience', 'registrations', 'publications', 'references'];
 
 export function emptyProfile(account) {
   return {
@@ -20,6 +21,10 @@ export function emptyProfile(account) {
     skills: [],
     additional: { governmentEmployee: false, disability: false, minority: false },
     claims: { highestQualification: '', tradeCertificate: '', quota: '', ageRelaxation: '' },
+    registrations: [],
+    publications: [],
+    references: [],
+    statementOfPurpose: '',
   };
 }
 
@@ -39,6 +44,8 @@ export function updateSection(section, data) {
   if (!profile) return fail('unauthorized');
   if (section === 'skills') {
     profile.skills = data;
+  } else if (section === 'statement') {
+    profile.statementOfPurpose = data.statementOfPurpose;
   } else if (section === 'summary') {
     profile.personal = {
       ...profile.personal,
@@ -75,6 +82,7 @@ export function saveListItem(section, item) {
   const profile = currentProfile();
   if (!profile) return fail('unauthorized');
   if (!LIST_SECTIONS.includes(section)) return fail('not_found');
+  profile[section] ??= []; // profiles saved before M5
   const list = profile[section];
   if (item.id) {
     const index = list.findIndex((entry) => entry.id === item.id);

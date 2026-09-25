@@ -35,6 +35,10 @@ SNAPSHOT_SECTIONS = (
     "experience",
     "additional",
     "claims",
+    "registrations",
+    "publications",
+    "references",
+    "statementOfPurpose",
 )
 # The apply wizard's identity check (SMS code) is valid for this long before submitting.
 APPLY_PASS_SECONDS = 30 * 60

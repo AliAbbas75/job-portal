@@ -8,7 +8,7 @@ def test_seed_is_idempotent():
     second = seed_reference_data()
     assert first == second
     assert first["departments"] == 9
-    assert first["document_types"] == 15
+    assert first["document_types"] == 16
 
 
 def test_seed_links_districts_to_provinces():

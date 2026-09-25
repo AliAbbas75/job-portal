@@ -127,13 +127,55 @@ class ExperienceInput(_Input):
             raise ValidationError("End date must be after the start date.", "endDate")
 
 
+class StatementInput(_Input):
+    """BPS-15+ tier (§4.5): statement of purpose."""
+
+    statement_of_purpose = fields.Str(
+        data_key="statementOfPurpose", required=True, validate=validate.Length(1, 4000)
+    )
+
+
+class RegistrationInput(_Input):
+    """Professional registration, e.g. PEC for engineering posts."""
+
+    body = fields.Str(required=True, validate=TEXT)
+    registration_no = fields.Str(
+        data_key="registrationNo", required=True, validate=validate.Length(1, 60)
+    )
+    valid_until = fields.Date(data_key="validUntil", load_default=None, allow_none=True)
+
+
+class PublicationInput(_Input):
+    title = fields.Str(required=True, validate=validate.Length(1, 300))
+    venue = fields.Str(load_default=None, allow_none=True, validate=validate.Length(max=200))
+    year = fields.Int(
+        load_default=None, allow_none=True, validate=validate.Range(1950, date.today().year)
+    )
+    url = fields.Url(load_default=None, allow_none=True, validate=validate.Length(max=500))
+
+
+class ReferenceInput(_Input):
+    name = fields.Str(required=True, validate=TEXT)
+    designation = fields.Str(load_default=None, allow_none=True, validate=TEXT)
+    organization = fields.Str(load_default=None, allow_none=True, validate=validate.Length(max=160))
+    phone = fields.Str(load_default=None, allow_none=True, validate=validate.Length(max=20))
+    email = fields.Email(load_default=None, allow_none=True)
+
+
 SECTION_INPUTS = {
     "personal": PersonalInput,
     "contact": ContactInput,
     "domicile": DomicileInput,
     "additional": AdditionalInput,
+    "statement": StatementInput,
 }
-ITEM_INPUTS = {"education": EducationInput, "experience": ExperienceInput}
+ITEM_INPUTS = {
+    "education": EducationInput,
+    "experience": ExperienceInput,
+    "registrations": RegistrationInput,
+    "publications": PublicationInput,
+    "references": ReferenceInput,
+}
 
 
 class EducationSchema(ma.Schema):
@@ -152,6 +194,30 @@ class ExperienceSchema(ma.Schema):
     start_date = fields.Date(data_key="startDate")
     end_date = fields.Date(data_key="endDate", allow_none=True)
     current = fields.Bool(attribute="is_current")
+
+
+class RegistrationSchema(ma.Schema):
+    id = fields.Int()
+    body = fields.Str()
+    registration_no = fields.Str(data_key="registrationNo")
+    valid_until = fields.Date(data_key="validUntil", allow_none=True)
+
+
+class PublicationSchema(ma.Schema):
+    id = fields.Int()
+    title = fields.Str()
+    venue = fields.Str(allow_none=True)
+    year = fields.Int(allow_none=True)
+    url = fields.Str(allow_none=True)
+
+
+class ReferenceSchema(ma.Schema):
+    id = fields.Int()
+    name = fields.Str()
+    designation = fields.Str(allow_none=True)
+    organization = fields.Str(allow_none=True)
+    phone = fields.Str(allow_none=True)
+    email = fields.Str(allow_none=True)
 
 
 class ProfileSchema(ma.Schema):
@@ -188,6 +254,12 @@ class ProfileSchema(ma.Schema):
             "disability": p.has_disability,
             "minority": p.is_minority,
         }
+    )
+    registrations = fields.List(fields.Nested(RegistrationSchema))
+    publications = fields.List(fields.Nested(PublicationSchema))
+    references = fields.List(fields.Nested(ReferenceSchema))
+    statement_of_purpose = fields.Function(
+        lambda p: p.statement_of_purpose or "", data_key="statementOfPurpose"
     )
     claims = fields.Function(
         lambda p: {

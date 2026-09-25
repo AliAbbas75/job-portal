@@ -7,11 +7,27 @@ from marshmallow import ValidationError
 from sqlalchemy import select
 
 from app.extensions import db
-from app.models import District, EducationRecord, ExperienceRecord, Province, QualificationLevel
+from app.models import (
+    CandidateReference,
+    District,
+    EducationRecord,
+    ExperienceRecord,
+    ProfessionalRegistration,
+    Province,
+    Publication,
+    QualificationLevel,
+)
 from app.services import audit_service
 from app.utils.errors import AppError
 
-ITEM_MODELS = {"education": EducationRecord, "experience": ExperienceRecord}
+ITEM_MODELS = {
+    "education": EducationRecord,
+    "experience": ExperienceRecord,
+    # BPS-15+ tier (§4.5)
+    "registrations": ProfessionalRegistration,
+    "publications": Publication,
+    "references": CandidateReference,
+}
 
 
 def _record_edit(account, profile, section, fields):
@@ -30,7 +46,7 @@ def _invalid(field, message):
 
 
 def update_section(account, profile, section, values):
-    """Applies validated values for personal, contact, domicile or additional."""
+    """Applies validated values for personal, contact, domicile, additional or statement."""
     if section == "domicile":
         values = _resolve_domicile(values)
     changed = [name for name, value in values.items() if getattr(profile, name) != value]

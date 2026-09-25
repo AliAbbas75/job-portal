@@ -12,6 +12,7 @@ export const withDepartment = (job) => ({
   ...job,
   departmentName: departmentName(job.department),
   categoryName: categoryName(job.category),
+  resumeTier: job.bps >= 15, // backend: RESUME_TIER_MIN_BPS
 });
 
 export function findJob(id) {

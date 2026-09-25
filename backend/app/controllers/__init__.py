@@ -16,6 +16,7 @@ def register_blueprints(app):
     from app.controllers.job_controller import job_bp
     from app.controllers.profile_controller import profile_bp
     from app.controllers.reference_controller import reference_bp
+    from app.controllers.resume_controller import resume_bp
 
     for blueprint in (
         application_bp,
@@ -25,6 +26,7 @@ def register_blueprints(app):
         job_bp,
         profile_bp,
         reference_bp,
+        resume_bp,
     ):
         app.register_blueprint(blueprint, url_prefix="/api")
 

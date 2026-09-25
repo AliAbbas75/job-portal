@@ -18,14 +18,22 @@ export async function updateProfile(values) {
   return data;
 }
 
-/** section: 'personal' | 'contact' | 'domicile' | 'additional' | 'skills'. Returns the full profile. */
+/**
+ * section: 'personal' | 'contact' | 'domicile' | 'additional' | 'skills' | 'statement'
+ * ({ statementOfPurpose }, BPS-15+). Returns the full profile.
+ */
 export async function updateProfileSection(section, values) {
   if (USE_MOCKS) return mock.updateSection(section, values);
   const { data } = await client.put(`/profile/${section}`, values);
   return data;
 }
 
-/** section: 'education' | 'experience'. Creates when item.id is empty. Returns the full profile. */
+/**
+ * section: 'education' | 'experience', or for BPS-15+ 'registrations' ({ body, registrationNo,
+ * validUntil }), 'publications' ({ title, venue, year, url }), 'references' ({ name,
+ * designation, organization, phone, email }). Creates when item.id is empty. Returns the full
+ * profile.
+ */
 export async function saveProfileItem(section, item) {
   if (USE_MOCKS) return mock.saveListItem(section, item);
   const { data } = item.id

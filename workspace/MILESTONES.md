@@ -57,7 +57,7 @@ Decisions for stakeholders, not milestone tasks. When one is decided, the projec
 
 | # | Question | Blocks | Decision | Decided on |
 |---|----------|--------|----------|------------|
-| 1 | Is BPS-15 the right tier boundary, or BPS-16? | M5 (tier split) | | |
+| 1 | Is BPS-15 the right tier boundary, or BPS-16? | M5 (tier split) | BPS-15 for now; one setting (`RESUME_TIER_MIN_BPS`) if it changes. | |
 | 2 | Who creates the job: the requesting department or a central recruitment cell? | T-023, T-030 (roles) | | |
 | 3 | Is the written test in-house or by an external agency? | Deferred (§5) | | |
 | 4 | Can a candidate edit or withdraw an application before the deadline? | - | **No.** Submitted applications are final. | 2026-09-24 |

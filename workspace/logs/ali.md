@@ -17,6 +17,20 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-26 | M5 backend: resume upload + parse, builder sections, PDF export (T-050 to T-053)
+- **Milestone:** M5
+- **Status:** Partial (backend + API layer done; screens T-054 to T-056 are Malaika's)
+- **What changed:**
+  - Backend: `services/resume_parser_service.py` (rule-based: personal, contact, education level/year/marks/institution, experience ranges, skills, registrations, publications, references, statement; confidence per value), `services/resume_service.py` (text from PDF/DOCX, upload + parse, resume PDF), `controllers/resume_controller.py` (`POST /api/resume`, `GET /api/resume/pdf`), profile schemas/services for registrations, publications, references, statement of purpose; snapshots include them; `storage_service` accepts Word files only where asked (resumes); document type `resume`; `resumeTier` on jobs (`RESUME_TIER_MIN_BPS`, default 15). Tests: parser, upload DOCX/PDF, scanned PDF, type checks, sections, PDF, tier (154 backend tests).
+  - Dependencies: `pypdf==6.19.0` (read PDF resumes), `python-docx==1.2.0` (read Word resumes), `fpdf2==2.8.8` (resume PDF export). All pure-Python; they pull in `lxml`, `Pillow`, `fonttools`, `defusedxml` (prebuilt wheels).
+  - Frontend API layer: `src/api/resume.js` + `mocks/resumeMock.js`, new sections in `mocks/profileMock.js`, `resumeTier` in `mocks/jobsMock.js`, docs in `api/profile.js`; `src/api/resume.test.js` (51 frontend tests).
+  - Docs: M5 file (spec for Malaika's screens), MILESTONES open question 1
+- **Database:** none (tables from M1). Run `flask seed` for the `resume` document type, and `pip install -r requirements-dev.txt`.
+- **Commits:**
+  - `feat(resume): resume upload and parse, BPS-15+ sections, resume PDF [T-050]`
+- **How to test:** four checks; `POST /api/resume` with a PDF or Word CV returns suggested sections; `GET /api/resume/pdf` downloads the profile as a PDF.
+- **Notes / follow-ups:** screens T-054 to T-056 (Malaika). Parser is rule-based; unusual layouts give lower confidence, which the confirm screen highlights.
+
 ### 2026-09-26 | Lint fix in Malaika's admin page
 - **Milestone:** none (fix)
 - **Status:** Done

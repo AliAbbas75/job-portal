@@ -40,6 +40,9 @@ class Config:
     FEE_ACCOUNT_NO = os.environ.get("FEE_ACCOUNT_NO", "(set FEE_ACCOUNT_NO)")
     FEE_DUE_DAYS = int(os.environ.get("FEE_DUE_DAYS", "7"))
 
+    # Jobs at or above this BPS use the resume-based profile (master flow §4.5; open question 1).
+    RESUME_TIER_MIN_BPS = int(os.environ.get("RESUME_TIER_MIN_BPS", "15"))
+
     # Job approval (T-031): how many different approvers must approve a job before it's locked.
     JOB_APPROVALS_REQUIRED = int(os.environ.get("JOB_APPROVALS_REQUIRED", "1"))
 

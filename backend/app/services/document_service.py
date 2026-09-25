@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 from app.extensions import db
 from app.models import Document, DocumentType
 from app.services import audit_service
-from app.services.storage_service import save_upload
+from app.services.storage_service import DOCUMENT_TYPES, save_upload
 from app.utils.errors import AppError
 
 
@@ -43,14 +43,14 @@ def _current_of_type(profile, type_code):
     )
 
 
-def upload(account, profile, type_code, file):
+def upload(account, profile, type_code, file, allowed_types=DOCUMENT_TYPES):
     """Stores `file` (a werkzeug FileStorage) as the candidate's current document of `type_code`."""
     if not type_code or db.session.get(DocumentType, type_code) is None:
         raise ValidationError({"type": ["Unknown document type."]})
     if file is None or not file.filename:
         raise ValidationError({"file": ["Choose a file to upload."]})
 
-    stored = save_upload(file.stream)
+    stored = save_upload(file.stream, allowed_types)
     previous = _current_of_type(profile, type_code)
     if previous is not None:
         previous.archived_at = datetime.now(UTC)

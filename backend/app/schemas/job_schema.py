@@ -1,5 +1,6 @@
 """Job search arguments and job JSON. Shapes match frontend/src/api/mocks/jobsMock.js."""
 
+from flask import current_app
 from marshmallow import EXCLUDE, fields, validate
 
 from app.extensions import ma
@@ -38,6 +39,10 @@ class JobSchema(ma.Schema):
         lambda job: job.category.name if job.category else None, data_key="categoryName"
     )
     bps = fields.Int()
+    # BPS-15+ (configurable): candidates can build their profile from a resume.
+    resume_tier = fields.Function(
+        lambda job: job.bps >= current_app.config["RESUME_TIER_MIN_BPS"], data_key="resumeTier"
+    )
     location = fields.Str()
     employment_type = fields.Function(
         lambda job: job.employment_type.value, data_key="employmentType"

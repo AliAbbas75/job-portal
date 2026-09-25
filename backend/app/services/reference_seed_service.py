@@ -87,6 +87,7 @@ DOCUMENT_TYPES = [
     ("trade_certificate", "Trade certificate"),
     ("quota_proof", "Quota proof"),
     ("age_relaxation_proof", "Age relaxation proof"),
+    ("resume", "Resume / CV"),
 ]
 
 
