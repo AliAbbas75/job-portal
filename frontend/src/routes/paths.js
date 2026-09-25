@@ -5,6 +5,7 @@ export const paths = {
   adminApprovals: '/admin/approvals',
   adminEditJob: (id = ':jobId') => `/admin/jobs/${id}/edit`,
   adminJob: (id = ':jobId') => `/admin/jobs/${id}`,
+  adminJobApplications: (id = ':jobId') => `/admin/jobs/${id}/applications`,
   adminLogin: '/admin/login',
   adminNewJob: '/admin/jobs/new',
   job: (id = ':jobId') => `/jobs/${id}`,

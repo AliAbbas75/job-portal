@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { getAdminJob } from '../../../api/adminJobs';
 import { Alert } from '../../../components/common/Alert';
+import { Button } from '../../../components/common/Button';
 import { Icon } from '../../../components/common/Icon';
 import { JobRequirements } from '../../../components/common/JobRequirements';
 import { JobStatusBadge } from '../../../components/common/JobStatusBadge';
@@ -115,8 +116,13 @@ export default function AdminJobPage() {
           </section>
         </div>
 
-        <aside className="lg:sticky lg:top-4">
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-4">
           <JobActions job={job} staff={staff} onChange={setData} />
+          {['published', 'closed'].includes(job.status) && (
+            <Button to={paths.adminJobApplications(job.id)} variant="secondary" fullWidth>
+              {t('adminApplications.viewAll')}
+            </Button>
+          )}
         </aside>
       </div>
     </div>

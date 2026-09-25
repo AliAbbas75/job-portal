@@ -16,6 +16,7 @@ import { APPROVER_ROLES, CREATOR_ROLES } from '../utils/staffRoles';
 // Candidate and staff pages load on demand to keep the first download small.
 const AdminJobPage = lazy(() => import('../pages/admin/AdminJobPage'));
 const AdminJobsPage = lazy(() => import('../pages/admin/AdminJobsPage'));
+const JobApplicationsPage = lazy(() => import('../pages/admin/JobApplicationsPage'));
 const JobFormPage = lazy(() => import('../pages/admin/JobFormPage'));
 const StaffLoginPage = lazy(() => import('../pages/admin/StaffLoginPage'));
 const ProfilePage = lazy(() => import('../pages/candidate/ProfilePage'));
@@ -47,6 +48,7 @@ export function AppRoutes() {
             <Route element={<AdminLayout />}>
               <Route path={paths.admin} element={<AdminJobsPage />} />
               <Route path={paths.adminJob()} element={<AdminJobPage />} />
+              <Route path={paths.adminJobApplications()} element={<JobApplicationsPage />} />
             </Route>
           </Route>
           <Route element={<RequireStaff roles={APPROVER_ROLES} />}>

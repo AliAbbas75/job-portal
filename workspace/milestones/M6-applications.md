@@ -25,12 +25,12 @@ Master flow §4.6–4.9. Application check, review and submit, snapshot, trackin
 
 | ID    | Task                                              | Owner | Status |
 |-------|---------------------------------------------------|-------|--------|
-| T-060 | Eligibility engine service                        | -     | TODO   |
-| T-061 | Application check API (missing items only)        | -     | TODO   |
-| T-062 | Submit API: snapshot, application ID              | -     | TODO   |
+| T-060 | Eligibility engine service                        | Ali   | DONE   |
+| T-061 | Application check API (missing items only)        | Ali   | DONE   |
+| T-062 | Submit API: snapshot, application ID              | Ali   | DONE   |
 | T-063 | [P] Fee payment (online / challan)                | -     | TODO   |
-| T-064 | Application tracking API (status timeline)        | -     | TODO   |
-| T-065 | Admin: applications per job + status update API   | -     | TODO   |
+| T-064 | Application tracking API (status timeline)        | Ali   | DONE   |
+| T-065 | Admin: applications per job + status update API   | Ali   | DONE   |
 | T-161 | OTP re-check before applying (wizard steps 1-2)   | -     | TODO   |
 | T-162 | Candidate dashboard API (counts + latest updates) | -     | TODO   |
 | T-163 | [P] Prefill name/DOB from uploaded CNIC (OCR)     | -     | TODO   |
@@ -41,7 +41,7 @@ Master flow §4.6–4.9. Application check, review and submit, snapshot, trackin
 |-------|-----------------------------------------|-------|-------------|
 | T-066 | Application check UI                    | Ali   | DONE        |
 | T-067 | Review and submit UI (declaration, fee) | Ali   | DONE        |
-| T-068 | Tracking UI + admin status update UI    | Ali   | IN PROGRESS |
+| T-068 | Tracking UI + admin status update UI    | Ali   | DONE        |
 | T-069 | Candidate dashboard page                | -     | TODO        |
 | T-160 | Apply wizard to match Figma (6 steps)   | -     | TODO        |
 
@@ -52,7 +52,6 @@ Master flow §4.6–4.9. Application check, review and submit, snapshot, trackin
 - T-062: one application per CNIC per job; profile data frozen into the snapshot; no edit or withdraw after submit.
 - T-065: manual status changes until automated screening (deferred); every change writes a StatusEvent.
 - T-066, T-067: UI built early on mock data; the mock eligibility check (`eligibilityMock.js`) shows T-060 the expected output.
-- T-068: candidate tracking UI done; admin status update UI still to do (needs the admin area).
 - T-066 to T-068: submitted applications are final; no edit or withdraw UI.
 
 ### Figma candidate journey (T-069, T-160 to T-163)
@@ -65,3 +64,12 @@ Design: [docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journ
 - T-161: steps 1-2 re-check CNIC + mobile with an OTP although the candidate is logged in. Uses M2's OTP service (T-021) with a new purpose `apply`. Blocked by open question 7.
 - T-069 + T-162 (`dashboard`): "Welcome, <name>"; stat cards (My applications, Drafts to finish, Under review, Action required, Approved); My applications table (Job ID, post, scale, application reference, date, status, View) with pagination; Latest updates feed from `StatusEvent`s. Replaces `MyApplicationsPage` as the signed-in landing page. Card and badge meanings blocked by open question 6.
 - T-163: the design prefills personal info "from CNIC where possible". Needs an OCR service; proposed only, don't build until approved. The candidate must still be able to type the values.
+
+### Core flow done (T-060 to T-062, T-064, T-065, T-068)
+
+- `eligibility_service.check()`: education (qualification rank + minimum marks), experience (summed, current jobs up to today), age on the cutoff or closing date, domicile, required documents. Items are `met` / `missing` (with the profile section to fix) / `not_met`, the same shape the mock used.
+- Candidate API: `GET /api/jobs/<id>/application-check`, `POST /api/jobs/<id>/applications` (`declarationAccepted`), `GET /api/applications`, `GET /api/applications/<PR-number>`. The application's public id is its number.
+- Submit: job must be open, one application per candidate per job (also a database constraint), declaration accepted, every item met. The snapshot freezes personal, contact, domicile, education, experience and additional details, the age on the reference date, the eligibility result and the required documents; later profile edits don't change it. First `StatusEvent` is `submitted`. No edit or withdraw.
+- Staff API: `GET /api/admin/jobs/<id>/applications` (`?status=`), `GET /api/admin/applications/<PR-number>`, `POST /api/admin/applications/<PR-number>/status` (admins only; forward along §4.9 or to rejected; rejected and offer are final). Each change writes a `StatusEvent` (with an optional note the candidate sees) and an audit entry.
+- Staff UI: "View applications" on a published or closed job opens `/admin/jobs/:id/applications`, with a status filter and a status-change form for admins.
+- Still open: T-063 fee payment ([P]); T-069, T-160 to T-163 (design, blocked by open questions 6 and 7; T-163 proposed).

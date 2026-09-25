@@ -1,0 +1,13 @@
+{
+  "title": "Applications",
+  "backToJob": "Back to job",
+  "viewAll": "View applications",
+  "empty": "No applications here.",
+  "meta": "{id} · CNIC {cnic} · age {age} · domicile {domicile} · submitted {date}",
+  "change": "Change status",
+  "newStatus": "New status",
+  "note": "Note for the candidate",
+  "noteHint": "Optional. Shown on the candidate's timeline.",
+  "save": "Save",
+  "chooseStatus": "Choose the new status."
+}

@@ -30,5 +30,6 @@
   "job_locked": "This job is approved or published and can't be changed.",
   "invalid_status": "This action isn't possible in the job's current status. Reload the page.",
   "own_job": "You can't approve a job you created.",
-  "already_decided": "You've already approved this job."
+  "already_decided": "You've already approved this job.",
+  "invalid_status_change": "The application can't move to that status. Reload the page."
 }

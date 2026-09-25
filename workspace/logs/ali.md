@@ -17,6 +17,20 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-25 | M6 core: eligibility, apply, snapshot, tracking, staff status updates (T-060 to T-062, T-064, T-065, T-068)
+- **Milestone:** M6
+- **Status:** Partial (core flow done; T-063 [P], T-069, T-160 to T-163 open)
+- **What changed:**
+  - Backend: `services/eligibility_service.py` (T-060), `services/application_service.py` (check, submit with snapshot and first status event, candidate list/get, staff list, status changes), `schemas/application_schema.py`, `controllers/application_controller.py`, `controllers/admin/application_controller.py`, registered in `controllers/__init__.py`; `models/constants.py` `next_application_statuses()` (the §4.9 order rule, shared by service and schema)
+  - Tests: `tests/services/test_eligibility_service.py`, `tests/controllers/test_application_controller.py`; conftest `eligible_candidate` fixture (130 backend tests)
+  - Frontend: `api/adminApplications.js`, `api/mocks/adminApplicationsMock.js`, `pages/admin/JobApplicationsPage/` (`index.jsx`, `ApplicationRow.jsx`, test), route `/admin/jobs/:id/applications`, "View applications" on `AdminJobPage`; i18n `adminApplications.json`, `invalid_status_change` error. Candidate pages needed no changes: the API matches the mocks.
+  - Docs: M6 file, M4 note (M2 login done), README
+- **Database:** none (tables from M1)
+- **Commits:**
+  - `feat(applications): eligibility engine, apply with snapshot, tracking and staff status updates [T-060]`
+- **How to test:** four checks. Real API: sign up, fill personal/domicile/education, upload the job's documents, apply; as admin at `/admin`, open the job → View applications → Change status; the candidate's timeline shows it.
+- **Notes / follow-ups:** status changes are admin-only until a screening role exists; fee payment ([P]) not built.
+
 ### 2026-09-25 | M3: job drafting, approval and publishing (T-030 to T-035)
 - **Milestone:** M3
 - **Status:** Done (M3 complete)

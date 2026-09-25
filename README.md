@@ -39,7 +39,7 @@ npm run dev               # http://localhost:5173
 
 In mock mode, sign up with any valid CNIC and mobile number and use the code **123456**. Data is kept in your browser's localStorage. Staff log in at `/admin/login` as `admin@example.com`, `approver@example.com` or `creator@example.com` with the password `demo-password`.
 
-**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Everything built so far then runs against the database. When you sign up or log in, the SMS code is printed in the `flask run` output (`SMS to 0300*****67: Your ... code is 123456`); there's no SMS gateway yet. For staff login, create an account with `flask create-staff`.
+**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Everything built so far then runs against the database: sign up, fill in the profile, apply to a job; staff create, approve and publish jobs at `/admin` and move applications through their statuses. When you sign up or log in, the SMS code is printed in the `flask run` output (`SMS to 0300*****67: Your ... code is 123456`); there's no SMS gateway yet. For staff login, create an account with `flask create-staff`.
 
 | Command | Does |
 |---|---|
