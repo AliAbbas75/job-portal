@@ -38,6 +38,8 @@ The full procedure, with commands and what to do when a push or pull goes wrong,
 
 Use the names exactly as spelled above in milestone files (Owners, task Owner).
 
+**Active now: Ali (all backend work, the frontend API layer and mocks, releases) and Malaika (frontend screens).** The others aren't working on the project; don't suggest them as owners or reviewers. Who owns which folders: [workspace/WORKFLOW.md](workspace/WORKFLOW.md#who-does-what).
+
 **Project lead: Ali.** The lead's only special job is releasing `develop` → `main` (plus repo settings and recording stakeholder decisions). Everyone claims, builds, reviews and merges milestones themselves.
 
 ## 3. What we're building

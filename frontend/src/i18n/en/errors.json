@@ -33,5 +33,7 @@
   "already_decided": "You've already approved this job.",
   "invalid_status_change": "The application can't move to that status. Reload the page.",
   "identity_mismatch": "Use the CNIC and mobile number you registered with.",
-  "identity_check_required": "Please verify your mobile number again before submitting."
+  "identity_check_required": "Please verify your mobile number again before submitting.",
+  "no_fee": "This application has no fee.",
+  "fee_not_due": "There is no unpaid fee on this application. Reload the page."
 }

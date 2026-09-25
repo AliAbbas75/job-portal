@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { listMyApplications } from '../../api/applications';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/common/Button';
+import { FeeBadge } from '../../components/common/FeeBadge';
 import { Icon } from '../../components/common/Icon';
 import { EmptyState, ErrorState, LoadingState } from '../../components/common/PageState';
 import { Pagination } from '../../components/common/Pagination';
@@ -57,11 +58,13 @@ export default function MyApplicationsPage() {
   if (!applications) return <LoadingState />;
 
   const count = (group) => applications.filter((a) => groupOf(a.status) === group).length;
+  // An unpaid fee also needs the candidate to act (T-063).
+  const needsAction = (a) => groupOf(a.status) === 'action' || a.fee?.status === 'unpaid';
   const stats = [
     { key: 'applications', value: applications.length, icon: 'file' },
     { key: 'drafts', value: 0, icon: 'edit' },
     { key: 'underReview', value: count('under_review'), icon: 'clock' },
-    { key: 'actionRequired', value: count('action'), icon: 'alert' },
+    { key: 'actionRequired', value: applications.filter(needsAction).length, icon: 'alert' },
     { key: 'approved', value: count('approved'), icon: 'check' },
   ];
   const rows = applications.slice((page - 1) * pageSize, page * pageSize);
@@ -146,7 +149,10 @@ export default function MyApplicationsPage() {
                           <td className="font-mono text-xs">{a.id}</td>
                           <td className="whitespace-nowrap">{formatDate(a.submittedAt)}</td>
                           <td className="whitespace-nowrap">
-                            <GroupBadge status={a.status} />
+                            <span className="flex flex-col items-start gap-1">
+                              <GroupBadge status={a.status} />
+                              <FeeBadge fee={a.fee} />
+                            </span>
                           </td>
                           <td className="text-right">
                             <Link

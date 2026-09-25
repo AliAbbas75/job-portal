@@ -22,6 +22,7 @@ import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
 import { errorMessage } from '../../../utils/errorMessage';
+import { formatCurrency } from '../../../utils/format';
 import {
   errorsFromApi,
   formFromProfile,
@@ -237,6 +238,11 @@ export default function ApplicationCheckPage() {
                     <h1 className="text-xl text-black">{t('wizard.reviewTitle')}</h1>
                     <p className="text-sm">{t('wizard.reviewLead')}</p>
                   </div>
+                  {job.data.fee > 0 && (
+                    <Alert variant="warning" title={t('fee.title')}>
+                      {t('fee.reviewNote', { amount: formatCurrency(job.data.fee) })}
+                    </Alert>
+                  )}
                   <ReviewStep
                     identity={identity}
                     profile={profile.data}
@@ -273,9 +279,16 @@ export default function ApplicationCheckPage() {
                       {t('wizard.reference', { id: submitted.id })}
                     </p>
                   </div>
-                  <Button size="lg" onClick={() => navigate(paths.applications)}>
-                    {t('wizard.toDashboard')}
-                  </Button>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    {submitted.fee?.status === 'unpaid' && (
+                      <Button size="lg" variant="accent" to={paths.challan(submitted.id)}>
+                        {t('fee.printChallan')}
+                      </Button>
+                    )}
+                    <Button size="lg" onClick={() => navigate(paths.applications)}>
+                      {t('wizard.toDashboard')}
+                    </Button>
+                  </div>
                 </div>
               )}
             </>

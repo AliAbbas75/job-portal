@@ -34,6 +34,12 @@ class Config:
     # Cloudflare Turnstile secret. Without it the CAPTCHA check is skipped, except in production.
     CAPTCHA_SECRET_KEY = os.environ.get("CAPTCHA_SECRET_KEY")
 
+    # Application fee challan (T-063). Set the real account for any shared environment.
+    FEE_BANK_NAME = os.environ.get("FEE_BANK_NAME", "National Bank of Pakistan")
+    FEE_ACCOUNT_TITLE = os.environ.get("FEE_ACCOUNT_TITLE", "Pakistan Railways Recruitment")
+    FEE_ACCOUNT_NO = os.environ.get("FEE_ACCOUNT_NO", "(set FEE_ACCOUNT_NO)")
+    FEE_DUE_DAYS = int(os.environ.get("FEE_DUE_DAYS", "7"))
+
     # Job approval (T-031): how many different approvers must approve a job before it's locked.
     JOB_APPROVALS_REQUIRED = int(os.environ.get("JOB_APPROVALS_REQUIRED", "1"))
 

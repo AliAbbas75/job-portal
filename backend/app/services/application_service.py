@@ -8,6 +8,8 @@
 - Every status change writes a StatusEvent and an audit entry.
 """
 
+from datetime import UTC, datetime, timedelta
+
 from flask import current_app
 from itsdangerous import BadSignature, URLSafeTimedSerializer
 from sqlalchemy import select
@@ -17,7 +19,7 @@ from sqlalchemy.orm import selectinload
 from app.extensions import db
 from app.models import Application, ApplicationSnapshot, Job, StatusEvent
 from app.models.constants import next_application_statuses
-from app.models.enums import ApplicationStatus, OtpPurpose
+from app.models.enums import ApplicationStatus, FeeStatus, OtpPurpose
 from app.schemas.profile_schema import ProfileSchema
 from app.services import audit_service, eligibility_service, otp_service
 from app.services.candidate_service import profile_of
@@ -128,7 +130,13 @@ def submit(account, job_id, declaration_accepted, apply_pass):
         raise AppError("requirements_incomplete", "Some requirements are still missing.", 422)
 
     required = {d.code for d in job.required_documents}
-    application = Application(profile=profile, job=job, status=ApplicationStatus.SUBMITTED)
+    application = Application(
+        profile=profile,
+        job=job,
+        status=ApplicationStatus.SUBMITTED,
+        fee_amount=job.fee_amount,
+        fee_status=FeeStatus.UNPAID if job.fee_amount > 0 else FeeStatus.NOT_REQUIRED,
+    )
     application.snapshot = ApplicationSnapshot(
         profile_data=_snapshot_data(profile, job, check),
         documents=[d for d in documents if d.document_type_code in required],
@@ -223,5 +231,48 @@ def change_status(staff, application, status, note=None):
         staff=staff,
         details={"from": previous.value, "to": status.value},
     )
+    db.session.commit()
+    return application
+
+
+# ---- Fee (T-063) ----
+
+
+def challan(application):
+    """What the printable fee challan shows. Only for applications with a fee."""
+    if application.fee_status == FeeStatus.NOT_REQUIRED:
+        raise AppError("no_fee", "This application has no fee.", 404)
+    config = current_app.config
+    profile = application.profile
+    return {
+        "challanNo": f"CH-{application.application_no}",
+        "applicationId": application.application_no,
+        "amount": float(application.fee_amount),
+        "dueDate": (application.submitted_at + timedelta(days=config["FEE_DUE_DAYS"]))
+        .date()
+        .isoformat(),
+        "status": application.fee_status.value,
+        "candidate": {"name": profile.full_name or "", "cnic": profile.account.cnic},
+        "job": {
+            "title": application.job.title,
+            "advertisementNo": application.job.advertisement_no,
+        },
+        "bank": {
+            "name": config["FEE_BANK_NAME"],
+            "accountTitle": config["FEE_ACCOUNT_TITLE"],
+            "accountNo": config["FEE_ACCOUNT_NO"],
+        },
+    }
+
+
+def confirm_fee(staff, application, reference):
+    """Staff confirm the bank received the fee (reference: bank transaction/challan number)."""
+    if application.fee_status != FeeStatus.UNPAID:
+        raise AppError("fee_not_due", "There is no unpaid fee on this application.", 409)
+    application.fee_status = FeeStatus.PAID
+    application.fee_paid_at = datetime.now(UTC)
+    application.fee_reference = reference.strip()
+    application.fee_confirmed_by_id = staff.id
+    audit_service.record("application.fee_paid", "application", application.id, staff=staff)
     db.session.commit()
     return application

@@ -14,6 +14,7 @@ export function seedDemoApplication() {
     jobId: 'j-090',
     submittedAt: daysAgo(40),
     status: 'shortlisted',
+    fee: { amount: 0, status: 'not_required', challanNo: 'CH-PR-2026-000090', paidAt: null },
     events: [
       { status: 'submitted', at: daysAgo(40) },
       { status: 'under_review', at: daysAgo(25) },
@@ -83,12 +84,19 @@ export function submitApplication(jobId, { declarationAccepted, applyPass }) {
   if (!check.complete) return fail('requirements_incomplete');
 
   const submittedAt = new Date().toISOString();
+  const id = `PR-${new Date().getFullYear()}-${String(nextSeq()).padStart(6, '0')}`;
   const application = {
-    id: `PR-${new Date().getFullYear()}-${String(nextSeq()).padStart(6, '0')}`,
+    id,
     jobId,
     submittedAt,
     status: 'submitted',
     events: [{ status: 'submitted', at: submittedAt }],
+    fee: {
+      amount: job.fee,
+      status: job.fee > 0 ? 'unpaid' : 'not_required',
+      challanNo: `CH-${id}`,
+      paidAt: null,
+    },
     // Frozen copy: later profile edits don't change a submitted application.
     snapshot: {
       profile: structuredClone(profile),
@@ -114,4 +122,32 @@ export function getApplication(id) {
   if (!applications) return fail('unauthorized');
   const application = applications.find((a) => a.id === id);
   return application ? respond(withJob(application)) : fail('not_found');
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export function getChallan(id) {
+  const applications = currentApplications();
+  if (!applications) return fail('unauthorized');
+  const application = applications.find((a) => a.id === id);
+  if (!application) return fail('not_found');
+  if (!application.fee || application.fee.status === 'not_required') return fail('no_fee');
+  const job = findJob(application.jobId);
+  const profile = currentProfile();
+  return respond({
+    challanNo: application.fee.challanNo,
+    applicationId: application.id,
+    amount: application.fee.amount,
+    dueDate: new Date(new Date(application.submittedAt).getTime() + 7 * DAY_MS)
+      .toISOString()
+      .slice(0, 10),
+    status: application.fee.status,
+    candidate: { name: profile.personal.fullName, cnic: profile.personal.cnic },
+    job: { title: job.title, advertisementNo: job.advertisementNo },
+    bank: {
+      name: 'National Bank of Pakistan',
+      accountTitle: 'Pakistan Railways Recruitment',
+      accountNo: '(demo account)',
+    },
+  });
 }

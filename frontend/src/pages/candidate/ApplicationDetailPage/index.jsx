@@ -3,6 +3,7 @@ import { getApplication } from '../../../api/applications';
 import { Alert } from '../../../components/common/Alert';
 import { ApplySteps } from '../../../components/common/ApplySteps';
 import { Button } from '../../../components/common/Button';
+import { FeeBadge } from '../../../components/common/FeeBadge';
 import { Icon } from '../../../components/common/Icon';
 import { JobSummary } from '../../../components/common/JobSummary';
 import { ErrorState, LoadingState } from '../../../components/common/PageState';
@@ -11,7 +12,7 @@ import { useAsync } from '../../../hooks/useAsync';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
-import { formatDate } from '../../../utils/format';
+import { formatCurrency, formatDate } from '../../../utils/format';
 import { StatusTimeline } from './StatusTimeline';
 
 export default function ApplicationDetailPage() {
@@ -67,6 +68,34 @@ export default function ApplicationDetailPage() {
           {t('tracking.viewJob')}
         </Button>
       </div>
+
+      {application.fee && application.fee.status !== 'not_required' && (
+        <section
+          aria-labelledby="fee-title"
+          className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-heritage p-4"
+        >
+          <div className="flex flex-col gap-1">
+            <h2 id="fee-title" className="text-lg">
+              {t('fee.title')}
+            </h2>
+            <p className="flex flex-wrap items-center gap-3">
+              <strong>{formatCurrency(application.fee.amount)}</strong>
+              <FeeBadge fee={application.fee} />
+              {application.fee.paidAt && (
+                <span className="text-sm">
+                  {t('fee.paidOn', { date: formatDate(application.fee.paidAt) })}
+                </span>
+              )}
+            </p>
+            {application.fee.status === 'unpaid' && (
+              <p className="text-sm">{t('fee.unpaidNote')}</p>
+            )}
+          </div>
+          <Button to={paths.challan(application.id)} variant="secondary">
+            {t('fee.viewChallan')}
+          </Button>
+        </section>
+      )}
 
       <section aria-labelledby="progress-title" className="flex flex-col gap-4">
         <h2 id="progress-title" className="text-xl">

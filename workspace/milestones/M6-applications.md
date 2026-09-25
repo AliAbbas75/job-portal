@@ -5,7 +5,7 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 ## Claim
 
 - **Owners:** Ali
-- **Status:** In progress
+- **Status:** Done
 - **Depends on:** M3, M4
 
 ## Scope
@@ -28,12 +28,12 @@ Master flow §4.6–4.9. Application check, review and submit, snapshot, trackin
 | T-060 | Eligibility engine service                        | Ali   | DONE   |
 | T-061 | Application check API (missing items only)        | Ali   | DONE   |
 | T-062 | Submit API: snapshot, application ID              | Ali   | DONE   |
-| T-063 | [P] Fee payment (online / challan)                | -     | TODO   |
+| T-063 | Fee payment by bank challan                       | Ali   | DONE   |
 | T-064 | Application tracking API (status timeline)        | Ali   | DONE   |
 | T-065 | Admin: applications per job + status update API   | Ali   | DONE   |
 | T-161 | OTP re-check before applying (wizard steps 1-2)   | Ali   | DONE   |
 | T-162 | Candidate dashboard API (counts + latest updates) | Ali   | DONE   |
-| T-163 | [P] Prefill name/DOB from uploaded CNIC (OCR)     | -     | TODO   |
+| T-163 | [P] Prefill name/DOB from uploaded CNIC (OCR)     | -     | DEFERRED |
 
 **Frontend**
 
@@ -81,3 +81,9 @@ Design: [docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journ
 - T-069 + T-162, dashboard (`/applications`): stats, applications table with pages, latest updates. Built from `GET /api/applications` (no extra API needed). Status groups: Under review = submitted, under review; Action required = document verification, medical; Approved = shortlisted onwards; Rejected. "Drafts to finish" is always 0 (applications only exist once submitted).
 - OTP limits now count per purpose, so signing up and then applying straight away works.
 - Still open: T-063 fee payment and T-163 CNIC reading (both proposed).
+
+### Fee payment done (T-063); M6 complete
+
+- An application to a job with a fee records the fee (`fee_amount`, `fee_status` unpaid / paid / not_required; migration `e3f45ae9f155`). The candidate prints a 3-copy bank challan (`/applications/:id/challan`, from `GET /api/applications/<PR-number>/challan`) and pays at the bank within `FEE_DUE_DAYS` (7). An admin confirms payment with the bank reference (`POST /api/admin/applications/<PR-number>/fee`, audited). Unpaid fees show on the application page, the wizard's review and confirmation, the dashboard ("Action required") and the staff applicant list.
+- Bank details come from `FEE_BANK_NAME`, `FEE_ACCOUNT_TITLE`, `FEE_ACCOUNT_NO` (backend `.env`); the real account must be set before launch.
+- Online payment (JazzCash / Easypaisa / 1Link) is deferred: it needs a merchant account and credentials. T-163 (CNIC OCR) is deferred: it needs an OCR engine (a large browser download or a server install). Both are in MILESTONES.md → Deferred.

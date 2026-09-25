@@ -25,6 +25,7 @@ const ProfilePage = lazy(() => import('../pages/candidate/ProfilePage'));
 const ApplicationCheckPage = lazy(() => import('../pages/candidate/ApplicationCheckPage'));
 const MyApplicationsPage = lazy(() => import('../pages/candidate/MyApplicationsPage'));
 const ApplicationDetailPage = lazy(() => import('../pages/candidate/ApplicationDetailPage'));
+const ChallanPage = lazy(() => import('../pages/candidate/ChallanPage'));
 
 export function AppRoutes() {
   return (
@@ -42,6 +43,7 @@ export function AppRoutes() {
             <Route path={paths.applyCheck()} element={<ApplicationCheckPage />} />
             <Route path={paths.applications} element={<MyApplicationsPage />} />
             <Route path={paths.application()} element={<ApplicationDetailPage />} />
+            <Route path={paths.challan()} element={<ChallanPage />} />
           </Route>
 
           <Route path={paths.adminLogin} element={<StaffLoginPage />} />

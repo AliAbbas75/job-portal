@@ -197,3 +197,43 @@ def test_pass_is_for_one_job(client, publish_job, eligible_candidate, auth_heade
     apply_pass = _apply_pass(client, first, headers)
     response = _submit(client, second, headers, apply_pass=apply_pass)
     assert response.get_json()["code"] == "identity_check_required"
+
+
+def test_fee_challan_and_staff_confirmation(
+    client, publish_job, eligible_candidate, auth_headers, make_staff, staff_headers
+):
+    job = publish_job(fee_amount=500)
+    candidate = auth_headers(eligible_candidate())
+    body = _submit(client, job, candidate).get_json()
+    assert body["fee"] == {
+        "amount": 500.0,
+        "status": "unpaid",
+        "challanNo": f"CH-{body['id']}",
+        "paidAt": None,
+    }
+
+    challan = client.get(f"/api/applications/{body['id']}/challan", headers=candidate).get_json()
+    assert challan["amount"] == 500.0 and challan["status"] == "unpaid"
+    assert challan["candidate"] == {"name": "Test Candidate", "cnic": "00000-0000000-1"}
+    assert challan["bank"]["name"] and challan["dueDate"]
+
+    url = f"/api/admin/applications/{body['id']}/fee"
+    creator = staff_headers(make_staff(role=StaffRole.JOB_CREATOR, email="c@example.com"))
+    assert client.post(url, json={"reference": "TXN-1"}, headers=creator).status_code == 403
+    admin = staff_headers(make_staff())
+    paid = client.post(url, json={"reference": "TXN-1"}, headers=admin).get_json()
+    assert paid["fee"]["status"] == "paid" and paid["feeReference"] == "TXN-1"
+    assert client.post(url, json={"reference": "TXN-2"}, headers=admin).status_code == 409
+    assert db.session.query(AuditLog).filter_by(action="application.fee_paid").count() == 1
+
+    after = client.get(f"/api/applications/{body['id']}", headers=candidate).get_json()
+    assert after["fee"]["status"] == "paid" and after["fee"]["paidAt"]
+
+
+def test_no_fee_means_no_challan(client, publish_job, eligible_candidate, auth_headers):
+    job = publish_job()  # fee 0
+    candidate = auth_headers(eligible_candidate())
+    body = _submit(client, job, candidate).get_json()
+    assert body["fee"]["status"] == "not_required"
+    response = client.get(f"/api/applications/{body['id']}/challan", headers=candidate)
+    assert response.status_code == 404 and response.get_json()["code"] == "no_fee"

@@ -57,3 +57,10 @@ def my_applications():
 def get_application(application_no):
     application = application_service.get_for_candidate(g.candidate, application_no)
     return ApplicationSchema().dump(application)
+
+
+@application_bp.get("/applications/<application_no>/challan")
+@candidate_required
+def fee_challan(application_no):
+    application = application_service.get_for_candidate(g.candidate, application_no)
+    return application_service.challan(application)

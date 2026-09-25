@@ -33,6 +33,16 @@ describe('JobApplicationsPage', () => {
     expect(await within(row).findByText('Shortlisted')).toBeInTheDocument();
   });
 
+  it('lets an admin confirm an unpaid fee', async () => {
+    await renderAs('admin@example.com');
+    const row = (await screen.findByText('Demo Candidate One')).closest('li');
+    expect(within(row).getByText('Not paid yet')).toBeInTheDocument();
+    await userEvent.click(within(row).getByRole('button', { name: 'Confirm fee' }));
+    await userEvent.type(within(row).getByLabelText(/Bank transaction/), 'TXN-123');
+    await userEvent.click(within(row).getByRole('button', { name: 'Confirm payment' }));
+    expect(await within(row).findByText('Paid')).toBeInTheDocument();
+  });
+
   it('shows other staff the list without status changes', async () => {
     await renderAs('approver@example.com');
     await screen.findByText('Demo Candidate Two');

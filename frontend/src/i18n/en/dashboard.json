@@ -30,7 +30,8 @@
     "under_review": "Under Review",
     "approved": "Approved",
     "rejected": "Rejected",
-    "action": "Action required"
+    "action": "Action required",
+    "feeUnpaid": "Fee not paid"
   },
   "empty": "You haven't applied for any jobs yet.",
   "findJobs": "Find jobs",

@@ -78,6 +78,22 @@ def _job_summary(application):
     }
 
 
+class FeeConfirmInput(ma.Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    reference = fields.Str(required=True, validate=validate.Length(1, 60))
+
+
+def _fee(application):
+    return {
+        "amount": float(application.fee_amount),
+        "status": application.fee_status.value,
+        "challanNo": f"CH-{application.application_no}",
+        "paidAt": application.fee_paid_at.isoformat() if application.fee_paid_at else None,
+    }
+
+
 class ApplicationSchema(ma.Schema):
     id = fields.Str(attribute="application_no")
     job_id = fields.Int(attribute="job_id", data_key="jobId")
@@ -85,6 +101,7 @@ class ApplicationSchema(ma.Schema):
     status = fields.Function(lambda a: a.status.value)
     events = fields.Function(_events)
     job = fields.Function(_job_summary)
+    fee = fields.Function(_fee)
 
 
 class StaffApplicationSchema(ApplicationSchema):
@@ -99,6 +116,7 @@ class StaffApplicationSchema(ApplicationSchema):
         }
     )
     snapshot = fields.Function(lambda a: a.snapshot.profile_data)
+    fee_reference = fields.Str(data_key="feeReference", allow_none=True)
     next_statuses = fields.Method("dump_next", data_key="nextStatuses")
 
     def dump_next(self, application):

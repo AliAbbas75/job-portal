@@ -8,6 +8,7 @@ from flask import Blueprint, g, request
 from app.controllers.auth_guard import staff_required
 from app.models.enums import StaffRole
 from app.schemas.application_schema import (
+    FeeConfirmInput,
     StaffApplicationSchema,
     StatusChangeInput,
     StatusListArgs,
@@ -39,4 +40,13 @@ def change_status(application_no):
     application = application_service.change_status(
         g.staff, application, data["status"], data["note"]
     )
+    return StaffApplicationSchema().dump(application)
+
+
+@admin_application_bp.post("/applications/<application_no>/fee")
+@staff_required(StaffRole.ADMIN)
+def confirm_fee(application_no):
+    data = FeeConfirmInput().load(request.get_json(silent=True) or {})
+    application = application_service.get_by_number(application_no)
+    application = application_service.confirm_fee(g.staff, application, data["reference"])
     return StaffApplicationSchema().dump(application)

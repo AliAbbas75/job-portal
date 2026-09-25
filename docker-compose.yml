@@ -1,7 +1,9 @@
-# Local development database. Start with: docker compose up -d db
+# Local development database. Start once with: docker compose up -d db
+# After that it starts by itself whenever Docker Desktop is running.
 services:
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: portal
       POSTGRES_PASSWORD: portal

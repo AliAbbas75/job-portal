@@ -68,6 +68,14 @@ class MobileOperator(StrEnum):
     ZONG = "zong"
 
 
+class FeeStatus(StrEnum):
+    """Application fee (T-063): paid by bank challan; staff confirm payment."""
+
+    NOT_REQUIRED = "not_required"
+    UNPAID = "unpaid"
+    PAID = "paid"
+
+
 class QuotaClaim(StrEnum):
     """The quota a candidate applies under; staff verify the proof. Open question 8."""
 

@@ -1,0 +1,33 @@
+{
+  "title": "Application fee",
+  "amount": "Fee",
+  "status": {
+    "unpaid": "Not paid yet",
+    "paid": "Paid",
+    "not_required": "No fee"
+  },
+  "challanNo": "Challan no.",
+  "paidOn": "Paid on {date}",
+  "unpaidNote": "Pay this fee at the bank with your challan. Staff confirm payment; your application is only processed once it's paid.",
+  "viewChallan": "View / print challan",
+  "reviewNote": "This job has an application fee of {amount}. After you submit, print the fee challan and pay it at the bank.",
+  "printChallan": "Print fee challan",
+  "challanTitle": "Fee challan",
+  "print": "Print",
+  "back": "Back to application",
+  "dueDate": "Pay by",
+  "bank": "Bank",
+  "accountTitle": "Account title",
+  "accountNo": "Account no.",
+  "candidate": "Candidate",
+  "cnic": "CNIC",
+  "applicationId": "Application ID",
+  "job": "Job",
+  "advertisementNo": "Advertisement no.",
+  "copies": ["Candidate copy", "Bank copy", "Pakistan Railways copy"],
+  "paidStamp": "PAID",
+  "confirm": "Confirm fee",
+  "reference": "Bank transaction / challan no.",
+  "confirmSave": "Confirm payment",
+  "referenceRequired": "Enter the bank's transaction or challan number."
+}

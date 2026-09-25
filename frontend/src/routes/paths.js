@@ -17,4 +17,5 @@ export const paths = {
   profileSection: (section) => `/profile?section=${section}`,
   applications: '/applications',
   application: (id = ':applicationId') => `/applications/${id}`,
+  challan: (id = ':applicationId') => `/applications/${id}/challan`,
 };

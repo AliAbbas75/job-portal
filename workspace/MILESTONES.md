@@ -47,6 +47,9 @@ These wait until M6 is done. A new milestone file will be added for them when th
 - **Urdu / English** support with RTL layout
 - **Reports** per job, and an admin audit-trail viewer
 - **Security review, low-bandwidth performance, production deployment**
+- **Online fee payment** (JazzCash / Easypaisa / 1Link): needs a merchant account. Bank challan payment is built (M6 T-063).
+- **CNIC OCR prefill** (M6 T-163): needs an OCR engine.
+- **NADRA CNIC verification** (M2 T-024): needs NADRA integration.
 
 ## Open questions (from §9)
 

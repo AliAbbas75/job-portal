@@ -59,7 +59,7 @@ export function SiteHeader() {
   const name = candidate?.name || t('header.account');
 
   return (
-    <header className="relative z-40 border-b border-heritage bg-white">
+    <header className="relative z-40 border-b border-heritage bg-white print:hidden">
       <div className="bg-ember text-sm text-white">
         <p className="page py-2 text-center font-medium">{t('header.announcement')}</p>
       </div>

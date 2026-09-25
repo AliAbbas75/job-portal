@@ -23,6 +23,13 @@ function applicant(n, name, status, domicile = 'PB', age = 24) {
     status,
     events,
     candidate: { name, cnic: `00000-000000${n}-0`, domicile, age },
+    fee: {
+      amount: 500,
+      status: n === 1 ? 'unpaid' : 'paid',
+      challanNo: `CH-PR-2026-00010${n}`,
+      paidAt: n === 1 ? null : daysAgo(3),
+    },
+    feeReference: n === 1 ? null : `TXN-00${n}`,
   };
 }
 
@@ -56,6 +63,22 @@ export function changeApplicationStatus(id, { status, note }) {
       ...application.events,
       { status, at: new Date().toISOString(), note: note?.trim() || null },
     ],
+  };
+  applications = applications.map((a) => (a.id === id ? updated : a));
+  return respond(withNext(updated));
+}
+
+export function confirmFee(id, { reference }) {
+  const staff = currentMockStaff();
+  if (!staff) return fail('unauthorized');
+  if (staff.role !== 'admin') return fail('forbidden');
+  const application = applications.find((a) => a.id === id);
+  if (!application) return fail('not_found');
+  if (application.fee.status !== 'unpaid') return fail('fee_not_due');
+  const updated = {
+    ...application,
+    fee: { ...application.fee, status: 'paid', paidAt: new Date().toISOString() },
+    feeReference: reference.trim(),
   };
   applications = applications.map((a) => (a.id === id ? updated : a));
   return respond(withNext(updated));

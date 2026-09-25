@@ -22,3 +22,10 @@ export async function changeApplicationStatus(applicationId, { status, note }) {
   });
   return data;
 }
+
+/** Admins only: the bank confirmed the fee. reference: bank transaction or challan number. */
+export async function confirmFee(applicationId, { reference }) {
+  if (USE_MOCKS) return mock.confirmFee(applicationId, { reference });
+  const { data } = await client.post(`/admin/applications/${applicationId}/fee`, { reference });
+  return data;
+}

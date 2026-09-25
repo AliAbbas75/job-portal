@@ -43,3 +43,14 @@ export async function getApplication(id) {
   const { data } = await client.get(`/applications/${id}`);
   return data;
 }
+
+/**
+ * The printable bank challan for an application with a fee: { challanNo, applicationId, amount,
+ * dueDate, status, candidate { name, cnic }, job { title, advertisementNo }, bank { name,
+ * accountTitle, accountNo } }.
+ */
+export async function getChallan(id) {
+  if (USE_MOCKS) return mock.getChallan(id);
+  const { data } = await client.get(`/applications/${id}/challan`);
+  return data;
+}

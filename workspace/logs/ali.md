@@ -17,6 +17,19 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-26 | M6 complete: application fee by bank challan (T-063); T-163 deferred
+- **Milestone:** M6
+- **Status:** Done (M6 complete)
+- **What changed:**
+  - Backend: `FeeStatus` enum; `Application.fee_amount`, `fee_status`, `fee_paid_at`, `fee_reference`, `fee_confirmed_by_id` (migration `e3f45ae9f155`); submit records the job's fee; `application_service.challan()` and `confirm_fee()`; `GET /api/applications/<no>/challan`, `POST /api/admin/applications/<no>/fee` (admins, audited); `fee` in application JSON, `feeReference` for staff; config + `.env.example` `FEE_BANK_NAME`, `FEE_ACCOUNT_TITLE`, `FEE_ACCOUNT_NO`, `FEE_DUE_DAYS`. Tests: fee challan + confirmation, no-fee case (146 backend tests).
+  - Frontend: `pages/candidate/ChallanPage.jsx` (printable, 3 copies), `components/common/FeeBadge.jsx`, fee section on the application page, fee notice in the wizard review and "Print fee challan" on its confirmation, unpaid fees counted as "Action required" on the dashboard, "Confirm fee" on the staff applicant row; `api/applications.js` `getChallan`, `api/adminApplications.js` `confirmFee` + mocks; route `/applications/:id/challan`; header hidden when printing; i18n `fee.json`, new error codes. `vite.config.js`: tests always use the mock API (a local `.env.local` with `VITE_USE_MOCKS=false` was breaking them); dev server fixed to port 5180. `docker-compose.yml`: database restarts with Docker Desktop. Test for the fee confirmation (48 frontend tests).
+  - Docs: M6 (Done), MILESTONES deferred list (online payment, CNIC OCR, NADRA)
+- **Database:** migration `e3f45ae9f155`. Run `flask db upgrade`.
+- **Commits:**
+  - `feat(applications): application fee by bank challan; M6 complete [T-063]`
+- **How to test:** four checks. Apply to a job with a fee (e.g. Assistant Director IT, Rs 800) → print the challan from the confirmation or the application page → as admin, Applications → Confirm fee.
+- **Notes / follow-ups:** set the real fee account in the backend `.env` before launch. Malaika's `AdminHomePage.jsx` still fails lint/Prettier (unused `setChosenStatus`); left untouched.
+
 ### 2026-09-25 | Malaika's candidate screens merged and connected to the backend (M4 T-145, T-149; M6 T-069, T-160 to T-162)
 - **Milestone:** M4, M6
 - **Status:** Done for those tasks

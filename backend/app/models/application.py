@@ -6,12 +6,14 @@
 """
 
 from datetime import datetime
+from decimal import Decimal
 
 from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
     Index,
+    Numeric,
     Sequence,
     String,
     Table,
@@ -25,7 +27,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
 from app.models.base import enum_type
-from app.models.enums import ApplicationStatus
+from app.models.enums import ApplicationStatus, FeeStatus
 
 application_no_seq = Sequence("application_no_seq", metadata=db.metadata)
 
@@ -64,6 +66,21 @@ class Application(db.Model):
     submitted_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+    # Fee (T-063): the job's fee at submission, paid by bank challan and confirmed by staff.
+    fee_amount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), server_default=text("0"), nullable=False
+    )
+    fee_status: Mapped[FeeStatus] = mapped_column(
+        enum_type(FeeStatus, "fee_status"),
+        default=FeeStatus.NOT_REQUIRED,
+        server_default=FeeStatus.NOT_REQUIRED.value,
+        nullable=False,
+    )
+    fee_paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Bank transaction / stamped challan number recorded by the staff member who confirmed it.
+    fee_reference: Mapped[str | None] = mapped_column(String(60))
+    fee_confirmed_by_id: Mapped[int | None] = mapped_column(ForeignKey("staff_users.id"))
 
     profile = relationship("CandidateProfile")
     job = relationship("Job")
