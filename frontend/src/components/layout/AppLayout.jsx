@@ -1,12 +1,16 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { t } from '../../i18n';
+import { paths } from '../../routes/paths';
 import { ErrorBoundary } from '../common/ErrorBoundary';
 import { FaqSection } from './FaqSection';
+import { JobsByCategoryAndBps } from './JobsByCategoryAndBps';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 
 export function AppLayout() {
   const { pathname } = useLocation();
+  const isHome = pathname === '/' || pathname === paths.home;
+
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -21,8 +25,13 @@ export function AppLayout() {
           <Outlet />
         </ErrorBoundary>
       </main>
-      <FaqSection />
-      <SiteFooter />
+      {isHome && (
+        <>
+          <JobsByCategoryAndBps />
+          <FaqSection />
+          <SiteFooter />
+        </>
+      )}
     </div>
   );
 }

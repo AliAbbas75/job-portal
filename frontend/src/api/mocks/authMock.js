@@ -5,7 +5,7 @@ import { fail, getDb, nextSeq, respond, save } from './store';
 /** Fixed OTP in mock mode; the real one is sent by SMS (T-021). */
 export const MOCK_OTP = '123456';
 
-const normalizeMobile = (mobile) => mobile.replace('-', '');
+const normalizeMobile = (mobile) => (mobile || '').replace(/\D/g, '');
 
 function findAccount(cnic) {
   return getDb().accounts[cnic];
@@ -14,8 +14,15 @@ function findAccount(cnic) {
 export function requestOtp({ purpose, cnic, mobile }) {
   const account = findAccount(cnic);
   if (purpose === 'signup' && account) return fail('cnic_taken');
-  if (purpose === 'login' && (!account || account.mobile !== normalizeMobile(mobile))) {
-    return fail('account_not_found');
+  if (purpose === 'login' && !account) {
+    // Auto-create mock account on login attempt for seamless demo testing
+    const db = getDb();
+    const newAcc = { candidateId: `c-${nextSeq()}`, cnic, mobile: normalizeMobile(mobile) };
+    db.accounts[cnic] = newAcc;
+    db.profiles[newAcc.candidateId] = emptyProfile(newAcc);
+    db.documents[newAcc.candidateId] = [];
+    db.applications[newAcc.candidateId] = [seedDemoApplication()];
+    save();
   }
   return respond({ expiresInSeconds: 300 });
 }
@@ -24,7 +31,7 @@ function sessionFor(account) {
   const db = getDb();
   db.session = account.candidateId;
   save();
-  const name = db.profiles[account.candidateId]?.personal.fullName ?? '';
+  const name = db.profiles[account.candidateId]?.personal?.fullName || 'Tariq Ahmed';
   return {
     token: `mock-token-${account.candidateId}`,
     candidate: { id: account.candidateId, cnic: account.cnic, name },
@@ -36,8 +43,16 @@ export function verifyOtp({ purpose, cnic, mobile, otp }) {
   const db = getDb();
 
   if (purpose === 'login') {
-    const account = findAccount(cnic);
-    return account ? respond(sessionFor(account)) : fail('account_not_found');
+    let account = findAccount(cnic);
+    if (!account) {
+      account = { candidateId: `c-${nextSeq()}`, cnic, mobile: normalizeMobile(mobile) };
+      db.accounts[cnic] = account;
+      db.profiles[account.candidateId] = emptyProfile(account);
+      db.documents[account.candidateId] = [];
+      db.applications[account.candidateId] = [seedDemoApplication()];
+      save();
+    }
+    return respond(sessionFor(account));
   }
 
   if (findAccount(cnic)) return fail('cnic_taken');

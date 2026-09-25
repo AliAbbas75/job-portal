@@ -1,44 +1,40 @@
-import { t } from '../../i18n';
-import { cx } from '../../utils/cx';
-import { Icon } from './Icon';
+/** Candidate application 6-step pill progress bar matching user design specs. */
+const CANDIDATE_STEPS = [
+  { id: 1, key: 'identity', label: '1. Identity' },
+  { id: 2, key: 'otp', label: '2. OTP' },
+  { id: 3, key: 'profile', label: '3. Profile' },
+  { id: 4, key: 'documents', label: '4. Documents' },
+  { id: 5, key: 'review', label: '5. Review' },
+  { id: 6, key: 'confirm', label: '6. Confirm' },
+];
 
-const STEPS = ['check', 'review', 'submitted'];
+export function ApplySteps({ current = 'identity' }) {
+  const currentIndex = CANDIDATE_STEPS.findIndex((s) => s.key === current);
 
-const MARKER = {
-  done: 'border-heritage bg-heritage text-white',
-  current: 'border-gold bg-gold text-black',
-  upcoming: 'border-heritage',
-};
-
-/** Progress through the apply flow. `current` is one of STEPS. */
-export function ApplySteps({ current }) {
-  const currentIndex = STEPS.indexOf(current);
   return (
-    <ol className="flex flex-wrap gap-x-5 gap-y-2" aria-label={t('apply.stepsLabel')}>
-      {STEPS.map((step, index) => {
-        const state =
-          index < currentIndex ? 'done' : index === currentIndex ? 'current' : 'upcoming';
-        return (
-          <li
-            key={step}
-            className={cx(
-              'inline-flex items-center gap-2',
-              state === 'current' ? 'font-bold text-heritage' : 'font-medium',
-            )}
-            aria-current={state === 'current' ? 'step' : undefined}
-          >
-            <span
-              className={cx(
-                'grid size-6.5 place-items-center rounded-full border-2 text-sm font-bold',
-                MARKER[state],
-              )}
+    <nav aria-label="Application Progress" className="w-full my-4 font-['Instrument_Sans',sans-serif]">
+      <ol className="flex flex-wrap items-center justify-center gap-2 text-xs">
+        {CANDIDATE_STEPS.map((step, idx) => {
+          const isDone = idx < currentIndex;
+          const isCurrent = idx === currentIndex || (currentIndex === -1 && idx === 0);
+
+          return (
+            <li
+              key={step.key}
+              className={`px-3 py-1.5 rounded-full border transition-all flex items-center gap-1 font-medium ${
+                isCurrent
+                  ? 'border-[#1f4d36] bg-[#f0fdf4] text-[#1f4d36] font-semibold shadow-2xs'
+                  : isDone
+                  ? 'border-emerald-600 bg-emerald-50 text-emerald-700 font-semibold'
+                  : 'border-gray-200 text-gray-400 bg-white'
+              }`}
             >
-              {state === 'done' ? <Icon name="check" size={14} /> : index + 1}
-            </span>
-            {t(`apply.steps.${step}`)}
-          </li>
-        );
-      })}
-    </ol>
+              {isDone && <span className="text-emerald-700 font-bold">✓</span>}
+              <span>{step.label}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
