@@ -17,6 +17,20 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-25 | M3: job drafting, approval and publishing (T-030 to T-035)
+- **Milestone:** M3
+- **Status:** Done (M3 complete)
+- **What changed:**
+  - Backend: `schemas/admin_job_schema.py` (JobInput with nested requirements and quotas, quota seats must equal vacancies; DecisionInput; PublishInput; AdminJobSchema with real status and approval history), `services/admin_job_service.py` (draft, edit, submit, N-of-M approve/return/reject with rounds, publish, `close_expired_jobs`), `controllers/admin/job_controller.py` (role-guarded endpoints), registered in `controllers/__init__.py`; `commands.py` `flask close-jobs`; `config.py` + `.env.example` `JOB_APPROVALS_REQUIRED`
+  - Tests: `tests/controllers/admin/test_admin_job_controller.py`, `tests/services/test_admin_job_service.py` (115 backend tests)
+  - Frontend: `api/adminJobs.js`, `api/mocks/adminJobsMock.js`, `adminAuthMock.js` (`currentMockStaff`), `api/client.js` (ApiError carries `fields`), `components/layout/AdminLayout.jsx`, `components/common/JobStatusBadge.jsx`, `components/common/JobRequirements.jsx` (moved from `pages/public/JobDetailsPage/Requirements.jsx` so the staff page can reuse it), `utils/staffRoles.js`, `pages/admin/AdminJobsPage.jsx`, `pages/admin/JobFormPage/` (`index.jsx`, `QuotaFields.jsx`, `jobForm.js` + test), `pages/admin/AdminJobPage/` (`index.jsx`, `JobActions.jsx` + test), routes and paths; deleted `pages/admin/AdminHomePage.jsx` (replaced by the jobs list); i18n `adminJobs.json`, new error codes; `admin.json` unused keys removed
+  - Docs: M3 file, README (`flask close-jobs`)
+- **Database:** none (existing tables)
+- **Commits:**
+  - `feat(admin): job drafting, approval and publishing [T-030]`
+- **How to test:** four checks. Mock mode: log in at `/admin/login` as creator, approver or admin (`demo-password`). Real API: `flask create-staff` for each role, then create, submit, approve and publish a job; it shows on the public search.
+- **Notes / follow-ups:** open question 2 (department scoping); advertisement file with T-148; `flask close-jobs` needs a cron entry at deployment.
+
 ### 2026-09-25 | Workflow: two branches only (develop + main), no pull requests
 - **Milestone:** none (repo process)
 - **Status:** Done

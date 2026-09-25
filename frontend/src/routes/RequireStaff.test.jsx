@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { StaffAuthProvider } from '../context/StaffAuthProvider';
-import AdminHomePage from '../pages/admin/AdminHomePage';
 import StaffLoginPage from '../pages/admin/StaffLoginPage';
 import { paths } from './paths';
 import { RequireStaff } from './RequireStaff';
@@ -14,7 +13,7 @@ function renderAt(path, roles) {
         <Routes>
           <Route path={paths.adminLogin} element={<StaffLoginPage />} />
           <Route element={<RequireStaff roles={roles} />}>
-            <Route path={paths.admin} element={<AdminHomePage />} />
+            <Route path={paths.admin} element={<p>Staff home</p>} />
           </Route>
         </Routes>
       </StaffAuthProvider>
@@ -35,7 +34,7 @@ describe('staff login and RequireStaff', () => {
     renderAt(paths.admin);
     expect(await screen.findByRole('heading', { name: 'Staff login' })).toBeInTheDocument();
     await logIn('approver@example.com');
-    expect(await screen.findByText('Signed in as Demo Approver (Approver).')).toBeInTheDocument();
+    expect(await screen.findByText('Staff home')).toBeInTheDocument();
   });
 
   it('shows the error for a wrong password', async () => {

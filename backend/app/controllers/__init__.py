@@ -7,6 +7,7 @@ response. Staff blueprints live in admin/ and are served under /api/admin.
 def register_blueprints(app):
     # Keep imports and registrations in alphabetical order (fewer merge conflicts).
     from app.controllers.admin.auth_controller import admin_auth_bp
+    from app.controllers.admin.job_controller import admin_job_bp
     from app.controllers.auth_controller import auth_bp
     from app.controllers.document_controller import document_bp
     from app.controllers.health_controller import health_bp
@@ -17,5 +18,5 @@ def register_blueprints(app):
     for blueprint in (auth_bp, document_bp, health_bp, job_bp, profile_bp, reference_bp):
         app.register_blueprint(blueprint, url_prefix="/api")
 
-    for blueprint in (admin_auth_bp,):
+    for blueprint in (admin_auth_bp, admin_job_bp):
         app.register_blueprint(blueprint, url_prefix="/api/admin")

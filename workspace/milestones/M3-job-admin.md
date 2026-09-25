@@ -5,7 +5,7 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 ## Claim
 
 - **Owners:** Ali
-- **Status:** In progress
+- **Status:** Done
 - **Depends on:** M1, and T-023 from M2
 
 ## Scope
@@ -25,17 +25,17 @@ Master flow §3.1–3.3. Job drafting, approval and publishing.
 
 | ID    | Task                                             | Owner | Status |
 |-------|--------------------------------------------------|-------|--------|
-| T-030 | Job draft API (requirements, quotas, fee, dates) | -     | TODO   |
-| T-031 | Approval workflow API (N-of-M, audit)            | -     | TODO   |
-| T-032 | Publish: lock, ad number, schedule, auto-close   | -     | TODO   |
+| T-030 | Job draft API (requirements, quotas, fee, dates) | Ali   | DONE   |
+| T-031 | Approval workflow API (N-of-M, audit)            | Ali   | DONE   |
+| T-032 | Publish: lock, ad number, schedule, auto-close   | Ali   | DONE   |
 
 **Frontend**
 
 | ID    | Task                                       | Owner | Status |
 |-------|--------------------------------------------|-------|--------|
-| T-033 | Admin: create / edit job form              | -     | TODO   |
-| T-034 | Admin: approval inbox + review             | -     | TODO   |
-| T-035 | Admin: job list with status + publish view | -     | TODO   |
+| T-033 | Admin: create / edit job form              | Ali   | DONE   |
+| T-034 | Admin: approval inbox + review             | Ali   | DONE   |
+| T-035 | Admin: job list with status + publish view | Ali   | DONE   |
 
 ## Notes
 
@@ -43,3 +43,11 @@ Master flow §3.1–3.3. Job drafting, approval and publishing.
 - T-031: approve / return with comments / reject.
 - T-032: attach newspaper advertisement. Published jobs are final (no corrigendum).
 - T-030, T-033: the Figma candidate journey ([docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journey.html)) shows extra job fields that the job form must capture: post category/trade (e.g. Carpenter, Gateman), gender, eligibility criteria bullets, quota percentages per category, and the advertisement file. The data model for them is M4 T-147/T-148.
+- Done (T-030 to T-035):
+  - API under `/api/admin/jobs`: list (`?status=`), create, get, update (draft/returned only), `/submit`, `/decision` (`approved` / `returned` / `rejected`, comments required to return or reject), `/publish` (optional advertisement number, else `PR/REC/<year>/<id>`).
+  - Roles: job creators and admins draft and submit; approvers and admins decide; only admins publish. Nobody can approve a job they created.
+  - N-of-M approval: `JOB_APPROVALS_REQUIRED` (default 1) different approvers. A return starts a fresh round.
+  - Approved and published jobs can't be edited (`job_locked`). A published job shows on the portal from its opening date; `flask close-jobs` (run from cron every few minutes) sets past-deadline jobs to `closed`. The public search already hides them the moment the deadline passes.
+  - Every step writes an audit entry (`job.created`, `job.updated`, `job.submitted`, `job.approved` / `job.returned` / `job.rejected`, `job.published`, `job.closed`).
+  - Frontend: `/admin` (all jobs, status filter), `/admin/approvals` (inbox), `/admin/jobs/new` and `/admin/jobs/:id/edit` (form), `/admin/jobs/:id` (review, history, actions). Works in mock mode with the demo staff logins.
+  - Open question 2 is still open: staff have an optional department, but jobs aren't limited to it yet. The advertisement file upload waits for M4 T-148.

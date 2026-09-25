@@ -25,9 +25,11 @@ client.interceptors.request.use((config) => {
 
 /** Error shape used across the app, from either Axios or the mock layer. */
 export class ApiError extends Error {
-  constructor(code, message) {
+  /** fields: { fieldName: [messages] } for validation errors, else undefined. */
+  constructor(code, message, fields) {
     super(message);
     this.code = code;
+    this.fields = fields;
   }
 }
 
@@ -36,7 +38,7 @@ client.interceptors.response.use(
   (error) => {
     const body = error.response?.data ?? {};
     return Promise.reject(
-      new ApiError(body.code ?? 'network_error', body.message ?? error.message),
+      new ApiError(body.code ?? 'network_error', body.message ?? error.message, body.fields),
     );
   },
 );

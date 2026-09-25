@@ -1,6 +1,4 @@
 {
-  "title": "Staff area",
-  "signedInAs": "Signed in as {name} ({role}).",
   "noAccessTitle": "No access",
   "roles": {
     "job_creator": "Job creator",

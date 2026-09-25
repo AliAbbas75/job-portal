@@ -72,6 +72,7 @@ flask db upgrade                # create the tables
 flask seed                      # load departments, provinces, qualifications, document types
 flask seed-demo                 # optional, dev only: 6 sample published jobs
 flask create-staff              # optional: a staff login (asks for name, email, role, password)
+flask close-jobs                # closes jobs past their deadline; in production run it from cron
 flask run                       # http://localhost:5000/api/health
 ```
 

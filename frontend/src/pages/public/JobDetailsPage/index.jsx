@@ -3,6 +3,7 @@ import { getJob } from '../../../api/jobs';
 import { Alert } from '../../../components/common/Alert';
 import { Button } from '../../../components/common/Button';
 import { Icon } from '../../../components/common/Icon';
+import { JobRequirements } from '../../../components/common/JobRequirements';
 import { JobSummary } from '../../../components/common/JobSummary';
 import { ErrorState, LoadingState } from '../../../components/common/PageState';
 import { useAsync } from '../../../hooks/useAsync';
@@ -12,7 +13,6 @@ import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
 import { daysUntil, formatCurrency, formatDate } from '../../../utils/format';
-import { Requirements } from './Requirements';
 
 export default function JobDetailsPage() {
   const { jobId } = useParams();
@@ -66,7 +66,7 @@ export default function JobDetailsPage() {
             <p>{job.description}</p>
           </section>
 
-          <Requirements job={job} reference={ref} />
+          <JobRequirements job={job} reference={ref} />
 
           <section className="flex flex-col gap-3 [&>h2]:text-xl">
             <h2>{t('job.quotaHeading')}</h2>

@@ -33,6 +33,9 @@ class Config:
     # Cloudflare Turnstile secret. Without it the CAPTCHA check is skipped, except in production.
     CAPTCHA_SECRET_KEY = os.environ.get("CAPTCHA_SECRET_KEY")
 
+    # Job approval (T-031): how many different approvers must approve a job before it's locked.
+    JOB_APPROVALS_REQUIRED = int(os.environ.get("JOB_APPROVALS_REQUIRED", "1"))
+
 
 class DevelopmentConfig(Config):
     ENV_NAME = "development"
