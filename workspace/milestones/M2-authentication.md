@@ -4,8 +4,8 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 ## Claim
 
-- **Owners:** -
-- **Status:** Not started
+- **Owners:** Ali
+- **Status:** In progress
 - **Branch:** `m2-authentication`
 - **Depends on:** M1
 
