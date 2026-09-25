@@ -17,6 +17,23 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-25 | Figma candidate journey: tasks added to M2, M3, M4, M6
+- **Milestone:** none (planning, branch `fix/candidate-journey-tasks`, PR into `develop`)
+- **Status:** Done
+- **What changed:**
+  - `docs/pakrail-candidate-journey.html` (new): the Figma candidate journey as a structural HTML skeleton. Sample CNIC, mobile, email, name and address replaced with dummy values before committing.
+  - `workspace/milestones/M2-authentication.md`: T-027 (auth screens to match the design), T-028 (telecom operator, remember me); note that "Forgot Password?" isn't built (no passwords)
+  - `workspace/milestones/M3-job-admin.md`: note on the extra job fields the job form must capture
+  - `workspace/milestones/M4-candidate-portal.md`: status back to In progress; T-049 and T-140 marked DONE (Malaika's FAQ, news bar, footer, already merged); new T-141 to T-149 (header/nav, home sections, `/jobs` table page, job details, profile page, conventions cleanup, job category, job detail fields, profile quota/age-relaxation fields)
+  - `workspace/milestones/M6-applications.md`: T-069 (dashboard page), T-160 (6-step apply wizard), T-161 (OTP re-check), T-162 (dashboard API), T-163 [P] (CNIC OCR prefill); rule 8 (only missing items) overrides the design's full-profile steps
+  - `workspace/MILESTONES.md`: task ID overflow rule (100 + range start), link to the design, open questions 5 to 8
+  - `CLAUDE.md`: design file in key files
+- **Database:** none
+- **Commits:**
+  - `docs(workspace): add Figma candidate journey and its tasks [fix]`
+- **How to test:** open `docs/pakrail-candidate-journey.html` in a browser; screen list bottom-right
+- **Notes / follow-ups:** open questions 5 to 8 need stakeholder answers before T-148, T-149, T-161, T-162. Design colours (blue buttons, Inter) are mapped to brand tokens, per the M4 notes.
+
 ### 2026-09-24 | M4 backend: jobs, reference, profile, documents APIs (T-040–T-044)
 - **Milestone:** M4 (branch m4-candidate-portal)
 - **Status:** Done (M4 complete)
