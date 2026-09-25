@@ -17,6 +17,17 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-26 | Lint fix in Malaika's admin page
+- **Milestone:** none (fix)
+- **Status:** Done
+- **What changed:**
+  - `frontend/src/pages/admin/AdminHomePage.jsx`: removed the unused `setChosenStatus` (the status filter has no control yet) and ran Prettier on this file only. No behaviour change. It was failing the lint and Prettier hooks.
+- **Database:** none
+- **Commits:**
+  - `fix(admin): lint and format AdminHomePage [fix]`
+- **How to test:** `cd frontend && npm run lint && npx prettier --check src`
+- **Notes / follow-ups:** Malaika: pull before editing this file again.
+
 ### 2026-09-26 | M6 complete: application fee by bank challan (T-063); T-163 deferred
 - **Milestone:** M6
 - **Status:** Done (M6 complete)
