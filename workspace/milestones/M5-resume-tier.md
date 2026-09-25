@@ -6,7 +6,6 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 - **Owners:** -
 - **Status:** Not started
-- **Branch:** `m5-resume-tier`
 - **Depends on:** M4
 
 ## Scope

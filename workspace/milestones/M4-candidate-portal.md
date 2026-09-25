@@ -6,7 +6,6 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 - **Owners:** Ali, Malaika
 - **Status:** In progress
-- **Branch:** `m4-candidate-portal`
 - **Depends on:** M1
 
 ## Scope

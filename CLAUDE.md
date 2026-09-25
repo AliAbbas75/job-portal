@@ -4,27 +4,27 @@ This file is the entry point for everyone working on this repo: the five team me
 
 ## 1. Before you touch any code (mandatory)
 
-Work is claimed by **milestone** (development phase), not by single task. Every change follows this order, including small fixes.
+There are only two branches: **`develop`**, where everyone works and pushes directly, and **`main`**, which only receives releases. No other branches and no pull requests. Work is claimed by **milestone** (development phase). Every change follows this order, including small fixes.
 
-1. **Claim a milestone** yourself (no one's permission needed): edit the **Claim** block of its file in [workspace/milestones/](workspace/milestones/) (alone or as a co-owner) and push that one file to `develop` before starting. Overview and dependencies: [workspace/MILESTONES.md](workspace/MILESTONES.md).
-2. **Work on the milestone branch** (`m<N>-<name>`, e.g. `m2-authentication`), created from `develop`.
-3. **Mark your tasks** in the **Tasks** tables of that milestone file, on the branch: your name + `IN PROGRESS`, then `DONE`.
+1. **Claim a milestone** yourself (no one's permission needed): fill in the **Claim** block of its file in [workspace/milestones/](workspace/milestones/) (alone or as a co-owner), commit and push it. Overview and dependencies: [workspace/MILESTONES.md](workspace/MILESTONES.md).
+2. **Pull first:** `git checkout develop && git pull --rebase`.
+3. **Mark your tasks** in the **Tasks** table of that milestone file: your name + `IN PROGRESS`, then `DONE`.
 4. **Log your work** in your own file under [workspace/logs/](workspace/logs/): what changed, which files, migrations, follow-ups.
-5. **Commit with the task ID** and push to the milestone branch.
-6. **When the milestone is done:** merge `develop` into your branch locally, run the checks, and open one PR into `develop`. A non-owner reviews and merges it with **"Create a merge commit"** (never squash), and the branch is deleted. Only the **project lead (Ali)** releases `develop` into `main` (merge commit + tag).
+5. **Commit with the task ID**, run the checks, `git pull --rebase`, then `git push` to `develop`.
+6. **When the milestone is done,** set its Status to `Done`. Only the **project lead (Ali)** releases `develop` into `main` (merge + tag).
 
-The full procedure, with commands, branch rules and repo settings, is in [workspace/WORKFLOW.md](workspace/WORKFLOW.md).
+The full procedure, with commands and what to do when a push or pull goes wrong, is in [workspace/WORKFLOW.md](workspace/WORKFLOW.md).
 
 ### Rules for Claude Code sessions
 
 - At the start of a session, find out which team member you're working for and which milestone/task (ask if it isn't clear; don't guess from `git config user.name`).
-- Before editing code, confirm that person is an owner in the milestone's file in `workspace/milestones/`, that you're on that milestone's branch, and that the task in that file has their name and `IN PROGRESS` (set it on the branch if not, and tell the user).
-- If the milestone isn't claimed, stop and tell the user. Claiming means pushing to `develop`, so only do it when they ask.
+- Work on `develop`. Never create other branches or pull requests.
+- Before editing code, confirm that person is an owner in the milestone's file in `workspace/milestones/` and that the task has their name and `IN PROGRESS` (set it if not, and tell the user).
+- If the milestone isn't claimed, stop and tell the user. Claim it only when they ask.
 - Never work on a task another owner has taken unless the user says it's been handed over; add a line under **Notes** in the milestone file.
-- Only a claim (the **Claim** block of one milestone file) goes directly onto `develop`. Everything else goes through a PR; nothing is ever pushed to `main`.
 - To avoid merge conflicts: in `workspace/`, edit only the current milestone's file and the member's own log; add lines to shared registry files (`models/__init__.py`, `controllers/__init__.py`, `routes/AppRoutes.jsx`, `routes/paths.js`) in alphabetical position, never at the end; put UI text in `frontend/src/i18n/en/<area>.json`; don't reformat, rename or move files the task doesn't need. See WORKFLOW.md → How we avoid merge conflicts.
 - Before committing, add the entry to the member's log in `workspace/logs/` and include it in the same commit.
-- Commit and push only when the user asks. Never force-push any shared branch, and never push to `main`.
+- Commit and push only when the user asks. Before pushing, run the checks and `git pull --rebase`. Never force-push, and never push to `main` unless the project lead asks for a release.
 
 ## 2. Team
 
@@ -157,7 +157,7 @@ workspace/             # tasks, milestones, workflow, per-member logs
 - **Mock mode:** with `VITE_USE_MOCKS=true` (the default), `src/api/*` serves data from `src/api/mocks/`. When a backend endpoint lands, match the request/response shape the mock uses (the endpoint paths are in each `src/api/<resource>.js`) and pages need no changes. Error responses are `{ code, message }` (validation errors add `fields: { field: [messages] }`); the UI maps `code` to `errors.<code>` in `i18n/en/errors.json`.
 - **Candidate API auth:** candidate endpoints use `@candidate_required` (`backend/app/controllers/auth_guard.py`). The token is a Flask-JWT-Extended access token whose identity is the candidate account id (as a string) with the claim `{"role": "candidate"}`. Issued by `auth_service.candidate_token()`; tests mint it with the `auth_headers` fixture.
 - **Staff API auth:** admin endpoints live in `controllers/admin/` under `/api/admin` and use `@staff_required(StaffRole.APPROVER, ...)` (no roles = any staff). Staff tokens carry `{"role": "staff", "staffRole": ...}`; the guard reads the role from the database, so a role change applies at once. Tests use the `make_staff` and `staff_headers` fixtures. In the frontend, requests to `/admin/...` carry the staff token automatically; guard admin routes with `<RequireStaff roles={[...]}>`.
-- There is **no CI** (no GitHub Actions); don't add any. Checks run locally: pre-commit hooks on every commit, and the four pre-PR checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci) before a PR is opened or approved. Before saying work is done, run them and report the results.
+- There is **no CI** (no GitHub Actions); don't add any. Checks run locally: pre-commit hooks on every commit, and the four checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci) before every push. Before saying work is done, run them and report the results.
 
 **Data and security**
 - CNIC, phone and uploaded documents are personal data. Don't log them, don't put them in URLs, don't commit real samples.
@@ -165,7 +165,7 @@ workspace/             # tasks, milestones, workflow, per-member logs
 - Rate-limit OTP and signup endpoints.
 
 **Tests**
-- New service logic (especially eligibility, age calculation, approval rules, snapshots) needs pytest coverage in the same PR.
+- New service logic (especially eligibility, age calculation, approval rules, snapshots) needs pytest coverage in the same push.
 
 ## 7. Keeping the repo clean (agents must follow)
 
@@ -184,11 +184,9 @@ Full rules: [docs/PROJECT_STRUCTURE.md §5](docs/PROJECT_STRUCTURE.md#5-repo-hyg
 
 ## 8. Git
 
-- **`main`**: released milestones only. Changes arrive only by a PR from `develop`, merged with a merge commit and tagged (`m2`). Never push to it directly.
-- **`develop`**: integration branch and GitHub default. Milestone branches merge in by PR with **"Create a merge commit"** (never squash or rebase), reviewed and merged by a non-owner. One PR per branch, then the branch is deleted; follow-up work gets a new branch. The only direct push allowed is a claim (one milestone file's Claim block).
-- **`m<N>-<name>`**: one branch per milestone, shared by its owners. `git pull --rebase` before pushing; merge `develop` in at least weekly.
-- **`fix/<desc>`**: fixes outside an open milestone, PR into `develop`.
-- Only two PR directions: branch → `develop`, and `develop` → `main`. Never use GitHub's "Update branch" button; merge `develop` in locally (WORKFLOW.md Step 5). Never force-push.
+- **`develop`**: where all work happens, and the GitHub default branch. Everyone commits and pushes here directly. `git pull --rebase` before starting and before every push.
+- **`main`**: released versions only. The project lead merges `develop` into it (`git merge --no-ff develop`) and tags it (`m2`). Nobody else pushes to it.
+- No other branches, no pull requests, no force pushes, no rewriting pushed history. To undo a pushed commit, `git revert` it.
 - Commit message format: `<type>(<scope>): <summary> [T-###]`
   - types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
   - example: `feat(auth): add CNIC signup endpoint [T-020]`

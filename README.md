@@ -9,7 +9,7 @@ Recruitment portal where admins create, approve and publish jobs, candidates kee
 | Read | For |
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | Project rules, architecture, conventions (humans and AI agents) |
-| [workspace/WORKFLOW.md](workspace/WORKFLOW.md) | How to claim a milestone, work, sync, open and merge PRs |
+| [workspace/WORKFLOW.md](workspace/WORKFLOW.md) | How to claim a milestone, work on `develop`, push, and release to `main` |
 | [workspace/milestones/](workspace/milestones/) | One file per milestone: owners, status, tasks |
 | [workspace/MILESTONES.md](workspace/MILESTONES.md) | Milestones and open questions |
 | [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | Where code goes, naming, repo hygiene |
@@ -86,7 +86,9 @@ flask run                       # http://localhost:5000/api/health
 
 Once per clone, from the repo root: `pre-commit install` (it's in `requirements-dev.txt`). Commits then run Ruff, Black, ESLint and Prettier on the files you changed.
 
-There is no CI. Before opening a pull request, run the four checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci); reviewers run them too before approving.
+There is no CI. Before every push, run the four checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci).
+
+**Branches:** everyone works on `develop` and pushes to it directly (`git pull --rebase` first). `main` only receives releases from the project lead. No other branches, no pull requests.
 
 ## Team
 

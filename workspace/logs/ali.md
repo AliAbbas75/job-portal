@@ -4,6 +4,35 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 <!-- Copy this block for each entry:
 
+### YYYY-MM-DD | T-### Task title
+- **Status:** Done / Partial / In progress
+- **Milestone:** M#
+- **What changed:**
+  - `path/to/file`: what and why
+- **Database:** migrations, or "none"
+- **Commits:**
+  - `type(scope): summary [T-###]`
+- **How to test:**
+- **Notes / follow-ups:**
+
+-->
+
+### 2026-09-25 | Workflow: two branches only (develop + main), no pull requests
+- **Milestone:** none (repo process)
+- **Status:** Done
+- **What changed:**
+  - `workspace/WORKFLOW.md`: rewritten. Everyone works and pushes on `develop` (`git pull --rebase` first); `main` only gets releases from the project lead; no other branches, no PRs, no reviews; conflict and recovery steps for `pull --rebase`
+  - `CLAUDE.md` §1, Claude session rules, §6, §8: same rules
+  - `workspace/MILESTONES.md`, `workspace/milestones/*.md`: branch column and `Branch:` lines removed; status is set by the owners
+  - `README.md`, `docs/PROJECT_STRUCTURE.md`: PR wording replaced
+  - `workspace/milestones/M2-authentication.md`: T-026 back to DONE and the M2 completion notes restored (both were lost when PR #16 was merged on GitHub)
+  - Merged `fix/prettier-format` into `develop`; deleted the old branches on GitHub (`fix/prettier-format`, `m2-authentication`, `m4-candidate-portal`, `fix/branch-cleanup`, `fix/candidate-journey-tasks`) after checking they were all merged
+- **Database:** none
+- **Commits:**
+  - `docs(workspace): two-branch workflow, develop and main only [fix]`
+- **How to test:** n/a
+- **Notes / follow-ups:** repo settings on GitHub must allow direct pushes to `develop` (WORKFLOW.md → Repo settings).
+
 ### 2026-09-25 | Prettier fix for files that failed the format check
 - **Milestone:** none (branch `fix/prettier-format`, PR into `develop`)
 - **Status:** Done
@@ -14,19 +43,6 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
   - `chore(frontend): run Prettier on files that failed format check [fix]`
 - **How to test:** `cd frontend && npm run format:check`
 - **Notes / follow-ups:** the real cleanup of these files (i18n text, brand colours) is M4 T-146.
-
-### YYYY-MM-DD | T-### Task title
-- **Status:** Done / Partial / In progress
-- **Milestone:** M# (branch m#-milestone-name)
-- **What changed:**
-  - `path/to/file`: what and why
-- **Database:** migrations, or "none"
-- **Commits:**
-  - `type(scope): summary [T-###]`
-- **How to test:**
-- **Notes / follow-ups:**
-
--->
 
 ### 2026-09-25 | M2: candidate signup/login with OTP, staff login and roles (T-020 to T-023, T-026)
 - **Milestone:** M2 (branch m2-authentication)

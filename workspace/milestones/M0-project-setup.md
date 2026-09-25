@@ -6,7 +6,6 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 - **Owners:** Ali
 - **Status:** Done
-- **Branch:** `m0-project-setup`
 - **Depends on:** -
 
 ## Scope

@@ -150,7 +150,7 @@ Use the same domain words everywhere: `job`, `candidate_profile`, `application`,
 
 ### Creating files and folders
 1. **Every new file belongs to a task.** Don't create files "for later", and don't create empty stub modules.
-2. **Use the existing structure.** New top-level folders, or new folders directly under `backend/app/` or `frontend/src/`, need a task and agreement from the team. Add them to this file in the same PR.
+2. **Use the existing structure.** New top-level folders, or new folders directly under `backend/app/` or `frontend/src/`, need a task and agreement from the team. Add them to this file in the same commit.
 3. **Search before you create.** Look for an existing helper, component or service before writing a new one. No `utils2.py`, `helpers_new.js` or near-duplicates.
 4. **One responsibility per file.** Split a file when it passes ~300 lines or starts doing two unrelated things.
 5. **Remove `.gitkeep`** from a folder once it has a real file in it.
@@ -161,7 +161,7 @@ Use the same domain words everywhere: `job`, `candidate_profile`, `application`,
 8. **No debug leftovers:** `print()`, `console.log`, `breakpoint()`, `debugger`, temporary test routes.
 9. **No hard-coded secrets, URLs, or credentials.** Use config / env vars and document new ones in `.env.example`.
 10. **No real personal data** (CNICs, phone numbers, documents) in code, tests, fixtures, logs or commits. Use obviously fake values like `00000-0000000-0`.
-11. **Formatters, linters and tests must pass locally** before a PR (see the checks in workspace/WORKFLOW.md). There is no CI, and no `.github/workflows/`: don't add one.
+11. **Formatters, linters and tests must pass locally** before every push (see the checks in workspace/WORKFLOW.md). There is no CI, and no `.github/workflows/`: don't add one.
 12. **Tests live with the layer they test** (backend) or next to the component (frontend).
 
 ### What never gets committed

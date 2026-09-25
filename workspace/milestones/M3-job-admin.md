@@ -6,7 +6,6 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 - **Owners:** -
 - **Status:** Not started
-- **Branch:** `m3-job-admin`
 - **Depends on:** M1, and T-023 from M2
 
 ## Scope

@@ -1,6 +1,6 @@
 # Milestones
 
-Development is split into **milestones** (phases). Each milestone has its own file in [milestones/](milestones/) holding its claim (owners, status, branch), scope, "done when" criteria and task list. How to claim, work and finish: [WORKFLOW.md](WORKFLOW.md).
+Development is split into **milestones** (phases). Each milestone has its own file in [milestones/](milestones/) holding its claim (owners, status), scope, "done when" criteria and task list. How to claim, work and finish: [WORKFLOW.md](WORKFLOW.md).
 
 **Current scope:** the master flow up to **§4.9 Application Tracking** ([docs/railway-job-portal-master-flow.md](../docs/railway-job-portal-master-flow.md)). Screening (§5) and cross-cutting work (§6) are listed under [Deferred](#deferred-out-of-current-scope).
 
@@ -8,15 +8,15 @@ This page rarely changes. Owners and status live in each milestone file, so clai
 
 ## All milestones
 
-| ID | Milestone | Branch | Depends on |
-|----|-----------|--------|------------|
-| M0 | [Project setup](milestones/M0-project-setup.md) | `m0-project-setup` | - |
-| M1 | [App setup and data model](milestones/M1-foundation.md) | `m1-foundation` | M0 |
-| M2 | [Authentication](milestones/M2-authentication.md) | `m2-authentication` | M1 |
-| M3 | [Job creation, approval, publishing](milestones/M3-job-admin.md) | `m3-job-admin` | M1, and T-023 from M2 |
-| M4 | [Candidate portal: jobs and profile](milestones/M4-candidate-portal.md) | `m4-candidate-portal` | M1 |
-| M5 | [BPS-15+ resume tier](milestones/M5-resume-tier.md) | `m5-resume-tier` | M4 |
-| M6 | [Application flow and tracking](milestones/M6-applications.md) | `m6-applications` | M3, M4 |
+| ID | Milestone | Depends on |
+|----|-----------|------------|
+| M0 | [Project setup](milestones/M0-project-setup.md) | - |
+| M1 | [App setup and data model](milestones/M1-foundation.md) | M0 |
+| M2 | [Authentication](milestones/M2-authentication.md) | M1 |
+| M3 | [Job creation, approval, publishing](milestones/M3-job-admin.md) | M1, and T-023 from M2 |
+| M4 | [Candidate portal: jobs and profile](milestones/M4-candidate-portal.md) | M1 |
+| M5 | [BPS-15+ resume tier](milestones/M5-resume-tier.md) | M4 |
+| M6 | [Application flow and tracking](milestones/M6-applications.md) | M3, M4 |
 
 **See who's on what** without opening every file:
 ```bash
@@ -27,7 +27,7 @@ grep -H -e "Owners:" -e "Status:" workspace/milestones/*.md
 
 **UI design:** the Figma candidate journey is summarised in [docs/pakrail-candidate-journey.html](../docs/pakrail-candidate-journey.html) (open it in a browser; a screen list is bottom-right). Its tasks are in M2 (T-027, T-028), M4 (T-049, T-140 to T-149) and M6 (T-069, T-160 to T-163).
 
-**Status values:** `Not started` → `In progress` → `Done` (set in the PR; true once merged into `develop`).
+**Status values:** `Not started` → `In progress` → `Done` (set by the owners in the milestone file when every task is `DONE`).
 
 ```
 M0 → M1 ─┬→ M2 ──(T-023)──┐
