@@ -4,6 +4,17 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 <!-- Copy this block for each entry:
 
+### 2026-09-25 | Prettier fix for files that failed the format check
+- **Milestone:** none (branch `fix/prettier-format`, PR into `develop`)
+- **Status:** Done
+- **What changed:**
+  - `frontend/src/components/common/Logo.jsx`, `components/layout/FaqSection.jsx`, `components/layout/SiteFooter.jsx`, `pages/public/JobSearchPage/JobListItem.jsx`: `npm run format` (Tailwind class order and line wrapping only, no behaviour change). They made the `frontend prettier` pre-commit hook fail for everyone.
+- **Database:** none
+- **Commits:**
+  - `chore(frontend): run Prettier on files that failed format check [fix]`
+- **How to test:** `cd frontend && npm run format:check`
+- **Notes / follow-ups:** the real cleanup of these files (i18n text, brand colours) is M4 T-146.
+
 ### YYYY-MM-DD | T-### Task title
 - **Status:** Done / Partial / In progress
 - **Milestone:** M# (branch m#-milestone-name)
