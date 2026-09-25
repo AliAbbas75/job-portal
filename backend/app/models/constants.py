@@ -2,6 +2,8 @@
 
 from datetime import timedelta
 
+from app.models.enums import ApplicationStatus
+
 # (code, name, min BPS, max BPS): job search filter ranges.
 BPS_RANGES = [
     ("1-4", "BPS 1–4", 1, 4),
@@ -16,3 +18,12 @@ CLOSING_WINDOWS = {"week": timedelta(days=7), "month": timedelta(days=30)}
 
 EMPLOYMENT_TYPE_NAMES = [("permanent", "Permanent"), ("contract", "Contract")]
 GENDER_NAMES = [("male", "Male"), ("female", "Female"), ("transgender", "Transgender")]
+
+
+def next_application_statuses(status):
+    """Statuses staff can move an application to (§4.9): any later step, or rejected.
+    Rejected and the last step (offer) are final."""
+    flow = [s for s in ApplicationStatus if s != ApplicationStatus.REJECTED]
+    if status == ApplicationStatus.REJECTED or status == flow[-1]:
+        return []
+    return flow[flow.index(status) + 1 :] + [ApplicationStatus.REJECTED]

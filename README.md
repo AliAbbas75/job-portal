@@ -9,7 +9,7 @@ Recruitment portal where admins create, approve and publish jobs, candidates kee
 | Read | For |
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | Project rules, architecture, conventions (humans and AI agents) |
-| [workspace/WORKFLOW.md](workspace/WORKFLOW.md) | How to claim a milestone, work, sync, open and merge PRs |
+| [workspace/WORKFLOW.md](workspace/WORKFLOW.md) | How to claim a milestone, work on `develop`, push, and release to `main` |
 | [workspace/milestones/](workspace/milestones/) | One file per milestone: owners, status, tasks |
 | [workspace/MILESTONES.md](workspace/MILESTONES.md) | Milestones and open questions |
 | [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | Where code goes, naming, repo hygiene |
@@ -39,7 +39,7 @@ npm run dev               # http://localhost:5173
 
 In mock mode, sign up with any valid CNIC and mobile number and use the code **123456**. Data is kept in your browser's localStorage. Staff log in at `/admin/login` as `admin@example.com`, `approver@example.com` or `creator@example.com` with the password `demo-password`.
 
-**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Everything built so far then runs against the database. When you sign up or log in, the SMS code is printed in the `flask run` output (`SMS to 0300*****67: Your ... code is 123456`); there's no SMS gateway yet. For staff login, create an account with `flask create-staff`.
+**Using the real API instead:** start the backend (below), run `flask seed-demo`, then create `frontend/.env.local` containing `VITE_USE_MOCKS=false` and restart `npm run dev`. Everything built so far then runs against the database: sign up, fill in the profile, apply to a job; staff create, approve and publish jobs at `/admin` and move applications through their statuses. When you sign up or log in, the SMS code is printed in the `flask run` output (`SMS to 0300*****67: Your ... code is 123456`); there's no SMS gateway yet. For staff login, create an account with `flask create-staff`.
 
 | Command | Does |
 |---|---|
@@ -72,6 +72,7 @@ flask db upgrade                # create the tables
 flask seed                      # load departments, provinces, qualifications, document types
 flask seed-demo                 # optional, dev only: 6 sample published jobs
 flask create-staff              # optional: a staff login (asks for name, email, role, password)
+flask close-jobs                # closes jobs past their deadline; in production run it from cron
 flask run                       # http://localhost:5000/api/health
 ```
 
@@ -86,7 +87,9 @@ flask run                       # http://localhost:5000/api/health
 
 Once per clone, from the repo root: `pre-commit install` (it's in `requirements-dev.txt`). Commits then run Ruff, Black, ESLint and Prettier on the files you changed.
 
-There is no CI. Before opening a pull request, run the four checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci); reviewers run them too before approving.
+There is no CI. Before every push, run the four checks in [workspace/WORKFLOW.md](workspace/WORKFLOW.md#checks-there-is-no-ci).
+
+**Branches:** everyone works on `develop` and pushes to it directly (`git pull --rebase` first). `main` only receives releases from the project lead. No other branches, no pull requests.
 
 ## Team
 

@@ -39,3 +39,8 @@ export function staffLogout() {
   sessionId = null;
   return respond({});
 }
+
+/** The logged-in mock staff user, for the other admin mocks. */
+export function currentMockStaff() {
+  return STAFF.find((s) => s.id === sessionId) ?? null;
+}

@@ -1,10 +1,12 @@
 """Flask CLI commands: `flask seed` (reference data), `flask seed-demo` (dev sample jobs) and
-`flask create-staff` (staff accounts; there is no admin screen for this yet)."""
+`flask create-staff` (staff accounts; there is no admin screen for this yet) and
+`flask close-jobs` (run on a schedule)."""
 
 import click
 from flask import current_app
 
 from app.models.enums import StaffRole
+from app.services.admin_job_service import close_expired_jobs
 from app.services.demo_seed_service import seed_demo_jobs
 from app.services.reference_seed_service import seed_reference_data
 from app.services.staff_service import create_staff
@@ -27,6 +29,11 @@ def register_commands(app):
                 "seed-demo only runs in development (FLASK_ENV=development)."
             )
         click.echo(f"demo jobs added: {seed_demo_jobs()}")
+
+    @app.cli.command("close-jobs")
+    def close_jobs():
+        """Close published jobs whose closing date has passed. Run it every few minutes (cron)."""
+        click.echo(f"jobs closed: {close_expired_jobs()}")
 
     @app.cli.command("create-staff")
     @click.option("--name", prompt=True)

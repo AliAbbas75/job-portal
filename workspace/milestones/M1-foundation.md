@@ -6,7 +6,6 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 - **Owners:** Ali
 - **Status:** Done
-- **Branch:** `m1-foundation`
 - **Depends on:** M0
 
 ## Scope
@@ -17,7 +16,7 @@ Flask and React skeletons, PostgreSQL, tooling, then all in-scope entities from 
 
 - `flask run` serves `/api/health`; `npm run dev` shows the app shell calling it.
 - A new team member can go from clone to running both apps using only the README.
-- Pre-commit hooks and the local pre-PR checks (WORKFLOW.md) pass.
+- Pre-commit hooks and the local checks (WORKFLOW.md) pass.
 - `flask db upgrade` builds the full schema on an empty database.
 - Unique constraints exist for CNIC and for (candidate, job) applications.
 - The application status list includes the expanded §4.9 statuses, so later phases need no schema change.

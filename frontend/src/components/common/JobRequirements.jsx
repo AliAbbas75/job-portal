@@ -1,8 +1,9 @@
-import { Icon } from '../../../components/common/Icon';
-import { t } from '../../../i18n';
-import { documentName, provinceName, qualificationName } from '../../../utils/referenceLabels';
+import { Icon } from './Icon';
+import { t } from '../../i18n';
+import { documentName, provinceName, qualificationName } from '../../utils/referenceLabels';
 
-export function Requirements({ job, reference }) {
+/** A job's structured eligibility rules as a list. Used on the public and staff job pages. */
+export function JobRequirements({ job, reference }) {
   const req = job.requirements;
   const rows = [
     {

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { LoadingState } from '../components/common/PageState';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { AppLayout } from '../components/layout/AppLayout';
 import JobDetailsPage from '../pages/public/JobDetailsPage';
 import JobSearchPage from '../pages/public/JobSearchPage';
@@ -10,9 +11,13 @@ import SignupPage from '../pages/public/SignupPage';
 import { paths } from './paths';
 import { RequireCandidate } from './RequireCandidate';
 import { RequireStaff } from './RequireStaff';
+import { APPROVER_ROLES, CREATOR_ROLES } from '../utils/staffRoles';
 
 // Candidate and staff pages load on demand to keep the first download small.
-const AdminHomePage = lazy(() => import('../pages/admin/AdminHomePage'));
+const AdminJobPage = lazy(() => import('../pages/admin/AdminJobPage'));
+const AdminJobsPage = lazy(() => import('../pages/admin/AdminJobsPage'));
+const JobApplicationsPage = lazy(() => import('../pages/admin/JobApplicationsPage'));
+const JobFormPage = lazy(() => import('../pages/admin/JobFormPage'));
 const StaffLoginPage = lazy(() => import('../pages/admin/StaffLoginPage'));
 const ProfilePage = lazy(() => import('../pages/candidate/ProfilePage'));
 const ApplicationCheckPage = lazy(() => import('../pages/candidate/ApplicationCheckPage'));
@@ -40,7 +45,22 @@ export function AppRoutes() {
 
           <Route path={paths.adminLogin} element={<StaffLoginPage />} />
           <Route element={<RequireStaff />}>
-            <Route path={paths.admin} element={<AdminHomePage />} />
+            <Route element={<AdminLayout />}>
+              <Route path={paths.admin} element={<AdminJobsPage />} />
+              <Route path={paths.adminJob()} element={<AdminJobPage />} />
+              <Route path={paths.adminJobApplications()} element={<JobApplicationsPage />} />
+            </Route>
+          </Route>
+          <Route element={<RequireStaff roles={APPROVER_ROLES} />}>
+            <Route element={<AdminLayout />}>
+              <Route path={paths.adminApprovals} element={<AdminJobsPage approvals />} />
+            </Route>
+          </Route>
+          <Route element={<RequireStaff roles={CREATOR_ROLES} />}>
+            <Route element={<AdminLayout />}>
+              <Route path={paths.adminEditJob()} element={<JobFormPage />} />
+              <Route path={paths.adminNewJob} element={<JobFormPage />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

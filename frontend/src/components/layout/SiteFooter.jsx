@@ -51,10 +51,10 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="w-full font-['Instrument_Sans',sans-serif] bg-[#eaf4ef]">
+    <footer className="w-full bg-[#eaf4ef] font-['Instrument_Sans',sans-serif]">
       {/* MAIN FOOTER SECTION */}
-      <div className="relative bg-[#eaf4ef] pt-10 pb-6 px-4 sm:px-8 lg:px-12 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
+      <div className="relative overflow-hidden bg-[#eaf4ef] px-4 pt-10 pb-6 sm:px-8 lg:px-12">
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 md:flex-row">
           {/* EXACT VERTICAL LOGO */}
           <div className="flex items-center">
             <Link to="/">
@@ -67,8 +67,8 @@ export function SiteFooter() {
           </div>
 
           {/* SOCIAL MEDIA BUTTONS */}
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <span className="text-sm font-semibold text-gray-800 font-['Instrument_Sans',sans-serif]">
+          <div className="flex flex-col items-center gap-2 md:items-start">
+            <span className="text-gray-800 font-['Instrument_Sans',sans-serif] text-sm font-semibold">
               Follow Us
             </span>
             <div className="flex items-center gap-3">
@@ -79,15 +79,15 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={item.name}
-                  className={`relative group w-10 h-10 rounded-full bg-white flex items-center justify-center border ${item.borderColor} shadow-sm overflow-hidden transition-all duration-300`}
+                  className={`group relative flex h-10 w-10 items-center justify-center rounded-full border bg-white ${item.borderColor} shadow-sm overflow-hidden transition-all duration-300`}
                 >
                   {/* Bottom-to-Top Fill Overlay */}
                   <span
-                    className={`absolute bottom-0 left-0 w-full h-0 group-hover:h-full transition-all duration-300 ease-out ${item.fillColor}`}
+                    className={`absolute bottom-0 left-0 h-0 w-full transition-all duration-300 ease-out group-hover:h-full ${item.fillColor}`}
                   />
                   {/* Icon */}
                   <span
-                    className={`relative z-10 text-sm ${item.iconColor} group-hover:text-white transition-colors duration-300`}
+                    className={`relative z-10 text-sm ${item.iconColor} transition-colors duration-300 group-hover:text-white`}
                   >
                     {item.icon}
                   </span>
@@ -97,27 +97,27 @@ export function SiteFooter() {
           </div>
 
           {/* LATEST JOB UPDATES */}
-          <div className="flex flex-col items-center md:items-start gap-2 w-full md:w-auto">
-            <span className="text-sm font-semibold text-gray-800 font-['Instrument_Sans',sans-serif]">
+          <div className="flex w-full flex-col items-center gap-2 md:w-auto md:items-start">
+            <span className="text-gray-800 font-['Instrument_Sans',sans-serif] text-sm font-semibold">
               Latest Job Updates
             </span>
             {subscribed ? (
-              <span className="text-sm font-medium text-[#1F4D36] bg-emerald-100/70 px-4 py-2 rounded-lg font-['Instrument_Sans',sans-serif]">
+              <span className="bg-emerald-100/70 rounded-lg px-4 py-2 font-['Instrument_Sans',sans-serif] text-sm font-medium text-[#1F4D36]">
                 ✓ Thank you for subscribing!
               </span>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex items-center gap-2 w-full max-w-sm">
+              <form onSubmit={handleSubscribe} className="flex w-full max-w-sm items-center gap-2">
                 <input
                   type="email"
                   required
                   placeholder="Sign Up With Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="px-4 py-2 text-sm bg-white text-gray-800 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F4D36] w-full font-['Instrument_Sans',sans-serif]"
+                  className="text-gray-800 border-gray-300 w-full rounded-lg border bg-white px-4 py-2 font-['Instrument_Sans',sans-serif] text-sm focus:ring-2 focus:ring-[#1F4D36] focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2 text-sm font-medium bg-[#1F4D36] text-white rounded-lg transition-colors hover:bg-[#163827] flex-shrink-0 font-['Instrument_Sans',sans-serif]"
+                  className="flex-shrink-0 rounded-lg bg-[#1F4D36] px-5 py-2 font-['Instrument_Sans',sans-serif] text-sm font-medium text-white transition-colors hover:bg-[#163827]"
                 >
                   Sign up
                 </button>
@@ -127,51 +127,51 @@ export function SiteFooter() {
         </div>
 
         {/* DIVIDER */}
-        <div className="max-w-7xl mx-auto my-6 border-t border-gray-300/70" />
+        <div className="border-gray-300/70 mx-auto my-6 max-w-7xl border-t" />
 
         {/* CONTACT INFO ROW */}
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4 text-sm text-gray-800 font-medium font-['Instrument_Sans',sans-serif]">
+        <div className="text-gray-800 mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 font-['Instrument_Sans',sans-serif] text-sm font-medium">
           <div>
-            <span className="font-bold text-gray-900">Email:</span> info@pakrail.gov.pk
+            <span className="text-gray-900 font-bold">Email:</span> info@pakrail.gov.pk
           </div>
           <div>
-            <span className="font-bold text-gray-900">Tel:</span> 042-99201938 (Lahore)
+            <span className="text-gray-900 font-bold">Tel:</span> 042-99201938 (Lahore)
           </div>
           <div className="max-w-xl">
-            <span className="font-bold text-gray-900">Address:</span> Muhammad Raza Hussain (DPO),
+            <span className="text-gray-900 font-bold">Address:</span> Muhammad Raza Hussain (DPO),
             For Divisional Superintendent, Pakistan Railways.
           </div>
         </div>
 
         {/* FAINT WATERMARK TEXT - NO CUTOFF */}
-        <div className="mt-8 text-center select-none pointer-events-none w-full overflow-hidden">
-          <span className="font-['Instrument_Sans',sans-serif] font-extrabold text-[clamp(1.1rem,4.1vw,3.6rem)] text-[#1F4D36]/10 tracking-wider uppercase block text-center leading-tight">
+        <div className="pointer-events-none mt-8 w-full overflow-hidden text-center select-none">
+          <span className="block text-center font-['Instrument_Sans',sans-serif] text-[clamp(1.1rem,4.1vw,3.6rem)] leading-tight font-extrabold tracking-wider text-[#1F4D36]/10 uppercase">
             PUBLIC RECRUITMENT SERVICES
           </span>
         </div>
       </div>
 
       {/* BOTTOM DARK BAR */}
-      <div className="bg-[#0b0f19] text-white py-4 px-4 sm:px-8 lg:px-12 text-xs font-['Instrument_Sans',sans-serif]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
-          <p className="text-white/90 underline decoration-white/40 underline-offset-4 font-['Instrument_Sans',sans-serif]">
+      <div className="bg-[#0b0f19] px-4 py-4 font-['Instrument_Sans',sans-serif] text-xs text-white sm:px-8 lg:px-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
+          <p className="font-['Instrument_Sans',sans-serif] text-white/90 underline decoration-white/40 underline-offset-4">
             Copyright 2026 - All Right Reserved - Developed By Directorate of IT Pakistan Railways
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-white font-['Instrument_Sans',sans-serif]">
-            <Link to="/media-policy" className="text-white hover:underline font-medium">
+          <div className="flex flex-wrap items-center justify-center gap-4 font-['Instrument_Sans',sans-serif] text-white">
+            <Link to="/media-policy" className="font-medium text-white hover:underline">
               Media Policy
             </Link>
             <span className="text-white/60">|</span>
-            <Link to="/legal-notice" className="text-white hover:underline font-medium">
+            <Link to="/legal-notice" className="font-medium text-white hover:underline">
               Legal Notice
             </Link>
             <span className="text-white/60">|</span>
-            <Link to="/privacy-policy" className="text-white hover:underline font-medium">
+            <Link to="/privacy-policy" className="font-medium text-white hover:underline">
               Privacy Policy
             </Link>
             <span className="text-white/60">|</span>
-            <Link to="/terms" className="text-white hover:underline font-medium">
+            <Link to="/terms" className="font-medium text-white hover:underline">
               Terms & Conditions
             </Link>
           </div>

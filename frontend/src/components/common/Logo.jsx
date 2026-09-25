@@ -3,7 +3,7 @@ export function Logo() {
     <img
       src="/pakrail-logo-horizontal.png"
       alt="Pakistan Railways"
-      className="h-10 sm:h-12 w-auto object-contain"
+      className="h-10 w-auto object-contain sm:h-12"
     />
   );
 }

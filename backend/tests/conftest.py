@@ -5,7 +5,7 @@ seeded with reference data. After each test every non-reference table is truncat
 """
 
 import re
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from flask_jwt_extended import create_access_token
@@ -17,7 +17,9 @@ from app.extensions import db
 from app.models import (
     CandidateAccount,
     CandidateProfile,
+    Document,
     DocumentType,
+    EducationRecord,
     Job,
     JobQuota,
     JobRequirement,
@@ -178,3 +180,40 @@ def staff_headers(client):
         return {"Authorization": f"Bearer {body['token']}"}
 
     return _headers
+
+
+@pytest.fixture
+def eligible_candidate(make_candidate):
+    """A candidate who meets `publish_job`'s defaults: intermediate 70%, age 22, Punjab
+    domicile and a CNIC copy in the vault."""
+
+    def _make(cnic="00000-0000000-1", mobile="03000000000"):
+        account = make_candidate(cnic=cnic, mobile=mobile)
+        profile = account.profile
+        today = date.today()
+        profile.full_name = "Test Candidate"
+        profile.dob = date(today.year - 22, 1, 1)
+        profile.domicile_province_code = "PB"
+        profile.education = [
+            EducationRecord(
+                qualification_level_code="intermediate",
+                discipline="Pre-Engineering",
+                institution="Test College",
+                passing_year=today.year - 3,
+                marks_percent=70,
+            )
+        ]
+        db.session.add(
+            Document(
+                profile_id=profile.id,
+                document_type_code="cnic_copy",
+                original_filename="cnic.pdf",
+                storage_key=f"test/{cnic}/cnic.pdf",
+                content_type="application/pdf",
+                size_bytes=1000,
+            )
+        )
+        db.session.commit()
+        return account
+
+    return _make

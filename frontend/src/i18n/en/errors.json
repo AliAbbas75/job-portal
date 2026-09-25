@@ -26,5 +26,10 @@
   "captcha_failed": "Please complete the CAPTCHA and try again.",
   "captcha_unavailable": "We couldn't check the CAPTCHA. Please try again.",
   "sms_unavailable": "We can't send text messages right now. Please try again later.",
-  "invalid_credentials": "Email or password is incorrect."
+  "invalid_credentials": "Email or password is incorrect.",
+  "job_locked": "This job is approved or published and can't be changed.",
+  "invalid_status": "This action isn't possible in the job's current status. Reload the page.",
+  "own_job": "You can't approve a job you created.",
+  "already_decided": "You've already approved this job.",
+  "invalid_status_change": "The application can't move to that status. Reload the page."
 }

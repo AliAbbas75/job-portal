@@ -6,7 +6,6 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 
 - **Owners:** Ali, Malaika
 - **Status:** In progress
-- **Branch:** `m4-candidate-portal`
 - **Depends on:** M1
 
 ## Scope
@@ -58,7 +57,7 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 - T-048: client-side compression before upload.
 - T-045 to T-048: UI built early on mock data. T-040 to T-043 must match the shapes in `src/api/mocks/`.
 - Backend endpoints: `GET /api/jobs`, `GET /api/jobs/stats`, `GET /api/jobs/<id>`, `GET /api/reference`, `GET|PUT /api/profile[/<section>]`, `POST|PUT|DELETE /api/profile/<education|experience>[/<id>]`, `GET|POST /api/documents`, `DELETE /api/documents/<id>`. Shapes match the frontend mocks.
-- Profile and document endpoints need a candidate login token (issued by M2, T-022). Until M2 lands, the UI uses mock mode for those pages; job search and details already work against the real API (`flask seed-demo` for sample jobs).
+- Profile and document endpoints use the candidate login token from M2 (done), so every candidate page works against the real API.
 - Profile edits are recorded in the audit log (edit history: section + field names, never values). Replacing or removing a document archives it, so submitted applications keep their files.
 
 ### Figma candidate journey (T-049, T-140 to T-149)
