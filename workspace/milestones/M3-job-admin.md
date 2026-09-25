@@ -40,6 +40,7 @@ Master flow §3.1–3.3. Job drafting, approval and publishing.
 
 ## Notes
 
+- Staff login and roles are ready (M2 T-023, T-026): protect endpoints with `@staff_required(...)` and pages with `<RequireStaff roles={[...]}>` (see CLAUDE.md). Add admin pages under the `/admin` routes next to `AdminHomePage`.
 - T-031: approve / return with comments / reject.
 - T-032: attach newspaper advertisement. Published jobs are final (no corrigendum).
 - T-030, T-033: the Figma candidate journey ([docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journey.html)) shows extra job fields that the job form must capture: post category/trade (e.g. Carpenter, Gateman), gender, eligibility criteria bullets, quota percentages per category, and the advertisement file. The data model for them is M4 T-147/T-148.

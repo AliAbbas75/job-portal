@@ -15,5 +15,16 @@
   "job_closed": "Applications for this job have closed.",
   "already_applied": "You've already applied for this job.",
   "declaration_required": "Please accept the declaration to submit.",
-  "requirements_incomplete": "Some requirements are still missing. Go back to the eligibility check."
+  "requirements_incomplete": "Some requirements are still missing. Go back to the eligibility check.",
+  "forbidden": "You don't have access to this.",
+  "too_many_requests": "Too many attempts. Please wait and try again.",
+  "validation_error": "Check the highlighted fields and try again.",
+  "otp_expired": "This code has expired. Ask for a new one.",
+  "otp_too_soon": "Please wait a minute before asking for a new code.",
+  "otp_rate_limited": "Too many codes requested. Try again in an hour.",
+  "otp_attempts_exceeded": "Too many wrong codes. Ask for a new one.",
+  "captcha_failed": "Please complete the CAPTCHA and try again.",
+  "captcha_unavailable": "We couldn't check the CAPTCHA. Please try again.",
+  "sms_unavailable": "We can't send text messages right now. Please try again later.",
+  "invalid_credentials": "Email or password is incorrect."
 }

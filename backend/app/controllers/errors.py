@@ -57,3 +57,4 @@ def register_error_handlers(app):
     jwt.unauthorized_loader(lambda reason: _unauthorized())
     jwt.invalid_token_loader(lambda reason: _unauthorized())
     jwt.expired_token_loader(lambda header, payload: _unauthorized("Your session has ended."))
+    jwt.revoked_token_loader(lambda header, payload: _unauthorized("Your session has ended."))

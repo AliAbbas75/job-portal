@@ -1,6 +1,8 @@
 /** Route paths and builders, so links never hard-code URLs. */
 export const paths = {
   home: '/',
+  admin: '/admin',
+  adminLogin: '/admin/login',
   job: (id = ':jobId') => `/jobs/${id}`,
   applyCheck: (id = ':jobId') => `/jobs/${id}/apply`,
   applyReview: (id = ':jobId') => `/jobs/${id}/apply/review`,

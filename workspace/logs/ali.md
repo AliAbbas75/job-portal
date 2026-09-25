@@ -17,6 +17,24 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-25 | M2: candidate signup/login with OTP, staff login and roles (T-020 to T-023, T-026)
+- **Milestone:** M2 (branch m2-authentication)
+- **Status:** Done for T-020 to T-023 and T-026; M2 stays In progress (T-024 [P], and T-027/T-028 from the design PR)
+- **What changed:**
+  - Models: `otp_challenge.py` (`OtpChallenge`: hashed code, expiry, attempts), `revoked_token.py` (`RevokedToken` for logout), `OtpPurpose` enum; registered in `models/__init__.py`
+  - Services: `otp_service.py` (issue/verify, 5 min expiry, 60 s resend, 5 per hour per CNIC or mobile, 5 wrong tries), `sms_service.py` (stub: console in dev, memory in tests, refuses otherwise), `captcha_service.py` (Cloudflare Turnstile when `CAPTCHA_SECRET_KEY` is set), `auth_service.py` (signup creates account + permanent profile + audit entry; login; candidate token; token revocation), `staff_service.py` (Argon2id passwords, login with one error for every failure, staff token, audit entry)
+  - Schemas: `auth_schema.py` (CNIC/mobile/OTP input, mobile dash removed; session JSON matching `authMock.js`), `staff_schema.py`
+  - Controllers: `auth_controller.py` (`/api/auth/<signup|login>/otp|verify`, `/session`, `/logout`), `admin/auth_controller.py` (`/api/admin/auth/login|session|logout`), `auth_guard.py` (`@staff_required(*roles)`, revoked-token check), `errors.py` (revoked token → unauthorized), `controllers/__init__.py` registers `/api/admin` blueprints
+  - `commands.py`: `flask create-staff`. `config.py` + `.env.example`: OTP limits, `SMS_BACKEND`, `CAPTCHA_SECRET_KEY`
+  - Dependency: `argon2-cffi==25.1.0` in `requirements.txt`. Why: Argon2id password hashing for staff, as the tech stack in CLAUDE.md requires; Werkzeug's built-in hashing doesn't offer Argon2
+  - Tests: `services/test_otp_service.py`, `services/test_staff_service.py`, `controllers/test_auth_controller.py`, `controllers/admin/test_admin_auth_controller.py`; conftest fixtures `sms_outbox`, `last_otp`, `make_staff`, `staff_headers` (101 backend tests)
+  - Frontend (T-026): `api/adminAuth.js` + `api/mocks/adminAuthMock.js`, `api/client.js` (staff token on `/admin/...` requests), `context/StaffAuthContext.js`, `context/StaffAuthProvider.jsx`, `hooks/useStaffAuth.js`, `routes/RequireStaff.jsx` (+ test), `pages/admin/StaffLoginPage.jsx`, `pages/admin/AdminHomePage.jsx` (removed `pages/admin/.gitkeep`), routes `/admin/login` and `/admin`, `App.jsx`; i18n `staffLogin.json`, `admin.json`, new codes in `errors.json`
+  - Docs: README (dev OTP in the flask log, `create-staff`, mock staff logins), CLAUDE.md (staff auth contract), M2 notes, M3 note on using the guards
+- **Database:** migration `4a947c997756` (T-021): tables `otp_challenges`, `revoked_tokens`
+- **Commits:**
+  - `feat(auth): candidate OTP signup/login and staff login with roles [T-020]`
+- **How to test:** four checks in WORKFLOW.md. Manual: `flask db upgrade`, `flask create-staff`, `frontend/.env.local` with `VITE_USE_MOCKS=false`, then sign up at `/signup` (code in the `flask run` output) and log in to the staff area at `/admin/login`
+- **Notes / follow-ups:** account recovery not built ([Proposed]); no SMS gateway yet; per-IP rate limiting and staff lockout left for deployment/security review. `frontend prettier` hook fails on 4 files from `develop` that this branch doesn't touch (`Logo.jsx`, `FaqSection.jsx`, `SiteFooter.jsx`, `JobListItem.jsx`).
 ### 2026-09-25 | Figma candidate journey: tasks added to M2, M3, M4, M6
 - **Milestone:** none (planning, branch `fix/candidate-journey-tasks`, PR into `develop`)
 - **Status:** Done

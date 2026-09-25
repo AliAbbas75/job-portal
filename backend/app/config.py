@@ -21,10 +21,23 @@ class Config:
     # Reject request bodies well above the largest allowed file before they reach a view.
     MAX_CONTENT_LENGTH = MAX_UPLOAD_BYTES + 512 * 1024
 
+    # OTP (T-021): a code lives 5 minutes; resend after 60 s; at most 5 codes per CNIC or
+    # mobile number per hour; 5 wrong guesses end a code.
+    OTP_TTL_SECONDS = 300
+    OTP_RESEND_SECONDS = 60
+    OTP_MAX_SENDS_PER_HOUR = 5
+    OTP_MAX_ATTEMPTS = 5
+    # "console" logs the SMS (development), "memory" keeps it for tests. No real gateway yet:
+    # anything else makes sending fail with sms_unavailable.
+    SMS_BACKEND = os.environ.get("SMS_BACKEND")
+    # Cloudflare Turnstile secret. Without it the CAPTCHA check is skipped, except in production.
+    CAPTCHA_SECRET_KEY = os.environ.get("CAPTCHA_SECRET_KEY")
+
 
 class DevelopmentConfig(Config):
     ENV_NAME = "development"
     DEBUG = True
+    SMS_BACKEND = os.environ.get("SMS_BACKEND", "console")
 
 
 class TestingConfig(Config):
@@ -33,6 +46,8 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URL")
     SECRET_KEY = "test-secret-key-at-least-32-bytes-long"
     JWT_SECRET_KEY = "test-jwt-secret-at-least-32-bytes-long"
+    SMS_BACKEND = "memory"
+    CAPTCHA_SECRET_KEY = None
 
 
 class ProductionConfig(Config):

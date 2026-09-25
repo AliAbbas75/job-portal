@@ -25,10 +25,10 @@ Master flow §4.3. Candidate signup and OTP login; staff login with roles.
 
 | ID    | Task                                         | Owner | Status |
 |-------|----------------------------------------------|-------|--------|
-| T-020 | Candidate signup API (CNIC, mobile, CAPTCHA) | -     | TODO   |
-| T-021 | OTP service (expiry, rate limit, SMS stub)   | -     | TODO   |
-| T-022 | Candidate OTP login, JWT, account recovery   | -     | TODO   |
-| T-023 | Staff login + roles                          | -     | TODO   |
+| T-020 | Candidate signup API (CNIC, mobile, CAPTCHA) | Ali   | DONE   |
+| T-021 | OTP service (expiry, rate limit, SMS stub)   | Ali   | DONE   |
+| T-022 | Candidate OTP login, JWT, account recovery   | Ali   | DONE   |
+| T-023 | Staff login + roles                          | Ali   | DONE   |
 | T-024 | [P] NADRA CNIC verification interface        | -     | TODO   |
 | T-028 | Telecom operator on account + OTP requests   | -     | TODO   |
 
@@ -44,7 +44,7 @@ Master flow §4.3. Candidate signup and OTP login; staff login with roles.
 
 - T-020: CNIC format + duplicate check; signup creates the permanent profile.
 - T-022: issue the token M4's APIs already accept: Flask-JWT-Extended access token, identity = candidate account id as a string, claim `{"role": "candidate"}` (see `backend/app/controllers/auth_guard.py`).
-- T-023: roles are job creator, approver, admin. Do this first; M3 depends on it. Depends on open question 2.
+- T-023: roles are job creator, approver, admin. Staff accounts have an optional department; whether job creators are limited to their department is open question 2 (decide in M3).
 - T-024: stub until NADRA integration is available.
 - T-025: signup, OTP and login already work (mock API). T-027 restyles them to the design.
 - T-025: built on the mock API (`src/api/mocks/authMock.js`). T-020 to T-022 must match its request/response shapes.
