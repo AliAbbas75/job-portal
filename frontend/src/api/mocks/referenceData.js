@@ -12,6 +12,26 @@ export const departments = [
   { code: 'ACC', name: 'Accounts & Finance' },
 ];
 
+/** Kinds of post for "Jobs by category" (backend seed: JOB_CATEGORIES). */
+export const jobCategories = [
+  { code: 'carpenter', name: 'Carpenter' },
+  { code: 'clerical', name: 'Clerical and accounts' },
+  { code: 'driver', name: 'Driver' },
+  { code: 'electrician', name: 'Electrician' },
+  { code: 'engineering', name: 'Engineering' },
+  { code: 'fitter', name: 'Fitter' },
+  { code: 'gateman', name: 'Gateman' },
+  { code: 'it', name: 'Information technology' },
+  { code: 'mason', name: 'Mason' },
+  { code: 'mechanic', name: 'Mechanic' },
+  { code: 'medical', name: 'Medical' },
+  { code: 'painter', name: 'Painter' },
+  { code: 'pointsman', name: 'Pointsman' },
+  { code: 'station_staff', name: 'Station staff' },
+  { code: 'ticket_checker', name: 'Ticket checker' },
+  { code: 'welder', name: 'Welder' },
+];
+
 export const provinces = [
   {
     code: 'PB',

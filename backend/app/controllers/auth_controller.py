@@ -22,7 +22,12 @@ def request_otp(purpose):
     purpose = _purpose(purpose)
     data = OtpRequestInput().load(request.get_json(silent=True) or {})
     ttl = auth_service.request_otp(
-        purpose, data["cnic"], data["mobile"], data["captcha_token"], request.remote_addr
+        purpose,
+        data["cnic"],
+        data["mobile"],
+        data["captcha_token"],
+        request.remote_addr,
+        data["operator"],
     )
     return {"expiresInSeconds": ttl}
 
@@ -31,9 +36,11 @@ def request_otp(purpose):
 def verify_otp(purpose):
     purpose = _purpose(purpose)
     data = OtpVerifyInput().load(request.get_json(silent=True) or {})
-    account = auth_service.verify_otp(purpose, data["cnic"], data["mobile"], data["otp"])
+    account = auth_service.verify_otp(
+        purpose, data["cnic"], data["mobile"], data["otp"], data["operator"]
+    )
     session = {
-        "token": auth_service.candidate_token(account),
+        "token": auth_service.candidate_token(account, data["remember"]),
         "candidate": CandidateSessionSchema().dump(account),
     }
     return session, 201 if purpose == OtpPurpose.SIGNUP else 200

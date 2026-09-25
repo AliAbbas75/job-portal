@@ -3,11 +3,12 @@
   "cnic": "Enter your 13-digit CNIC, e.g. 12345-1234567-1.",
   "mobile": "Enter a mobile number like 0300-1234567.",
   "otp": "Enter the 6-digit code.",
-  "captcha": "Please confirm you're not a robot.",
+  "captcha": "Please complete the CAPTCHA.",
   "email": "Enter a valid email address.",
   "dobFuture": "Date of birth can't be in the future.",
   "year": "Enter a year between 1950 and this year.",
   "percent": "Enter a percentage from 0 to 100.",
   "endBeforeStart": "End date must be after the start date.",
-  "confirmRequired": "Please tick this box to continue."
+  "confirmRequired": "Please tick this box to continue.",
+  "operator": "Select your mobile network."
 }

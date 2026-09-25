@@ -80,7 +80,7 @@ export default function ApplicationDetailPage() {
       {justSubmitted && (
         <div className="flex flex-wrap gap-3">
           <Button to={paths.applications}>{t('nav.myApplications')}</Button>
-          <Button to={paths.home} variant="secondary">
+          <Button to={paths.jobs} variant="secondary">
             {t('tracking.findMore')}
           </Button>
         </div>

@@ -35,6 +35,7 @@ REFERENCE_TABLES = {
     "districts",
     "qualification_levels",
     "document_types",
+    "job_categories",
 }
 
 
@@ -87,6 +88,7 @@ def make_job():
         fields = {
             "title": "Assistant Station Master",
             "department_code": "TRF",
+            "category_code": "station_staff",
             "bps": 11,
             "location": "Lahore",
             "employment_type": EmploymentType.PERMANENT,

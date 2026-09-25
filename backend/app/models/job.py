@@ -57,6 +57,8 @@ class Job(TimestampMixin, db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(160), nullable=False)
     department_code: Mapped[str] = mapped_column(ForeignKey("departments.code"), nullable=False)
+    # Optional for jobs created before categories existed; the job form requires it.
+    category_code: Mapped[str | None] = mapped_column(ForeignKey("job_categories.code"), index=True)
     bps: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     location: Mapped[str] = mapped_column(String(80), nullable=False)
     employment_type: Mapped[EmploymentType] = mapped_column(
@@ -88,6 +90,7 @@ class Job(TimestampMixin, db.Model):
         back_populates="job", cascade="all, delete-orphan"
     )
     department = relationship("Department")
+    category = relationship("JobCategory")
     required_documents = relationship("DocumentType", secondary=job_required_documents)
     domicile_provinces = relationship("Province", secondary=job_domicile_provinces)
     approvals = relationship(

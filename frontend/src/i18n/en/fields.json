@@ -24,5 +24,7 @@
   "endDate": "End date",
   "skill": "Skill or licence",
   "optional": "Optional",
-  "optionalTag": "(optional)"
+  "optionalTag": "(optional)",
+  "operator": "Mobile network",
+  "operatorPlaceholder": "Select your network"
 }

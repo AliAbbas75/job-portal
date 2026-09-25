@@ -1,0 +1,63 @@
+{
+  "heading": "Frequently asked questions",
+  "tabsLabel": "Question topics",
+  "tabs": {
+    "general": "General",
+    "applications": "Applications and tracking",
+    "account": "Account and login"
+  },
+  "general": [
+    {
+      "q": "Who can apply through this portal?",
+      "a": "Anyone with a valid CNIC and a Pakistani mobile number can create an account. Each job lists its own eligibility rules: education, age, domicile and documents."
+    },
+    {
+      "q": "Is there a fee to register?",
+      "a": "No. Creating an account is free. Some jobs have an application fee, shown on the job page."
+    },
+    {
+      "q": "How do I find jobs for my qualification?",
+      "a": "Open Available Jobs and filter by scale (BPS), department, location or education, or search by job title."
+    },
+    {
+      "q": "Are jobs on this portal official?",
+      "a": "Yes. Every job is approved by Pakistan Railways before it is published, and each carries its advertisement number."
+    }
+  ],
+  "applications": [
+    {
+      "q": "Do I need to complete my whole profile before applying?",
+      "a": "No. When you apply, the portal checks the job's requirements and asks only for what is missing for that job."
+    },
+    {
+      "q": "Can I edit or withdraw an application after submitting?",
+      "a": "No. Submitted applications are final. Check the review page carefully before you submit."
+    },
+    {
+      "q": "How do I track my application?",
+      "a": "Log in and open My applications. Each application shows its status and a timeline of every change."
+    },
+    {
+      "q": "How is my age calculated?",
+      "a": "From the date of birth in your profile, on the job's closing date (or the cutoff date in the advertisement, if there is one). You never enter your age."
+    }
+  ],
+  "account": [
+    {
+      "q": "How do I create an account?",
+      "a": "Choose Register, enter your CNIC and mobile number, and type the 6-digit code we send by SMS. Your permanent profile is created straight away."
+    },
+    {
+      "q": "Do I need a password?",
+      "a": "No. You log in with your CNIC and the mobile number you registered, and we send a new code by SMS every time."
+    },
+    {
+      "q": "I didn't receive the SMS code.",
+      "a": "Wait a minute and use \"Resend code\". Check that the number is the one you registered. After 5 codes in an hour, wait before trying again."
+    },
+    {
+      "q": "Can I register a second account?",
+      "a": "No. Each CNIC can have only one account, which you keep for every future job."
+    }
+  ]
+}

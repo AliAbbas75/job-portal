@@ -4,6 +4,7 @@ const filled = () => ({
   ...emptyForm(),
   title: 'Gateman',
   department: 'TRF',
+  category: 'gateman',
   bps: '2',
   location: 'Sukkur',
   vacancies: '10',

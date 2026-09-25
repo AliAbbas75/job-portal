@@ -1,7 +1,7 @@
 import { client, USE_MOCKS } from './client';
 import * as mock from './mocks/referenceData';
 
-/** Lookup lists: departments, provinces (with districts), qualificationLevels, documentTypes, employmentTypes, bpsRanges, genders. */
+/** Lookup lists: departments, provinces (with districts), qualificationLevels, documentTypes, jobCategories, employmentTypes, bpsRanges, genders. */
 export async function getReferenceData() {
   if (USE_MOCKS) {
     const {
@@ -9,6 +9,7 @@ export async function getReferenceData() {
       provinces,
       qualificationLevels,
       documentTypes,
+      jobCategories,
       employmentTypes,
       bpsRanges,
       genders,
@@ -18,6 +19,7 @@ export async function getReferenceData() {
       provinces,
       qualificationLevels,
       documentTypes,
+      jobCategories,
       employmentTypes,
       bpsRanges,
       genders,

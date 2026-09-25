@@ -1,7 +1,9 @@
 {
-  "eyebrow": "Now recruiting",
-  "title": "Build your career with Pakistan Railways",
-  "lead": "One profile for every job. Create it once with your CNIC, and each application only asks for what's missing.",
+  "titleLine1": "Find your career at",
+  "titleLine2": "Pakistan Railways",
+  "lead": "Search government jobs across Pakistan Railways and apply online with one profile that stays with you.",
+  "explore": "Explore jobs",
   "statJobs": "Open jobs",
-  "statVacancies": "Vacancies"
+  "statVacancies": "Vacancies",
+  "statDepartments": "Departments"
 }

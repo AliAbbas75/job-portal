@@ -1,9 +1,10 @@
 {
   "title": "Create your account",
-  "lead": "Your account comes with one permanent profile linked to your CNIC. You'll use it for every job you apply to.",
-  "captcha": "I'm not a robot",
-  "captchaNote": "(A CAPTCHA check will replace this box.)",
+  "lead": "A new account needs only your CNIC and a mobile number we can verify. It comes with one permanent profile for every job you apply to.",
   "submit": "Send code",
   "permanentNote": "You can only create one account per CNIC.",
-  "haveAccount": "Already have an account?"
+  "haveAccount": "Already have an account?",
+  "successTitle": "Success!",
+  "successBody": "Your mobile number {mobile} is registered and you're logged in.",
+  "successNext": "Continue"
 }

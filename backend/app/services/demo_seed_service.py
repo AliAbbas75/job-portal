@@ -16,27 +16,33 @@ STANDARD_DOCS = ["cnic_copy", "photo", "domicile_certificate", "character_certif
 
 DEMO_JOBS = [
     dict(ad_no="DEMO/001", title="Assistant Station Master", dept="TRF", bps=11,
+         cat="station_staff",
          location="Lahore", type="permanent", vacancies=24, opened=1, closes=21,
          level="intermediate", marks=45, age_max=28,
          docs=["matric_certificate", "intermediate_certificate"],
          summary="Run day-to-day station operations and train movements safely and on time."),
     dict(ad_no="DEMO/002", title="Assistant Executive Engineer (Civil)", dept="CIV", bps=17,
+         cat="engineering",
          location="Rawalpindi", type="permanent", vacancies=6, opened=1, closes=28,
          level="bachelor16", marks=60, age_max=32, docs=["degree", "pec_registration"], fee=800,
          summary="Plan and supervise track, bridge and building works across the division."),
     dict(ad_no="DEMO/003", title="Ticket Checker", dept="COM", bps=7,
+         cat="ticket_checker",
          location="Karachi", type="permanent", vacancies=40, opened=2, closes=5,
          level="matric", age_max=25, provinces=["SD"], docs=["matric_certificate"],
          summary="Check tickets on board and at stations, and help passengers."),
     dict(ad_no="DEMO/004", title="Junior Engineer (Signal & Telecom)", dept="SNT", bps=14,
+         cat="engineering",
          location="Multan", type="permanent", vacancies=10, opened=3, closes=14,
          level="dae", marks=50, experience=1, docs=["dae_certificate", "experience_certificate"],
          summary="Maintain signalling, interlocking and telecom equipment on the line."),
     dict(ad_no="DEMO/005", title="Assistant Director (IT)", dept="ITD", bps=17,
+         cat="it",
          location="Lahore", type="contract", vacancies=3, opened=4, closes=18,
          level="bachelor16", experience=2, age_max=35, docs=["degree", "experience_certificate"],
          fee=800, summary="Build and run the software behind ticketing, HR and operations."),
     dict(ad_no="DEMO/006", title="Staff Nurse", dept="MED", bps=16,
+         cat="medical",
          location="Quetta", type="permanent", vacancies=8, opened=5, closes=12,
          level="bachelor14", age_max=35, provinces=["BA"], docs=["degree"],
          summary="Provide nursing care at the Pakistan Railways hospital, Quetta."),
@@ -48,6 +54,7 @@ def _build_job(spec, now):
     job = Job(
         title=spec["title"],
         department_code=spec["dept"],
+        category_code=spec["cat"],
         bps=spec["bps"],
         location=spec["location"],
         employment_type=EmploymentType(spec["type"]),
@@ -81,7 +88,9 @@ def seed_demo_jobs():
     now = datetime.now(UTC)
     added = 0
     for spec in DEMO_JOBS:
-        if db.session.scalar(select(Job.id).where(Job.advertisement_no == spec["ad_no"])):
+        existing = db.session.scalar(select(Job).where(Job.advertisement_no == spec["ad_no"]))
+        if existing:
+            existing.category_code = existing.category_code or spec["cat"]
             continue
         db.session.add(_build_job(spec, now))
         added += 1

@@ -73,7 +73,8 @@
       "quotaTotal": "Quota seats must add up to the number of vacancies.",
       "quotaDuplicate": "Each quota category can appear only once.",
       "fixFields": "Some fields need attention."
-    }
+    },
+    "category": "Category"
   },
   "detail": {
     "back": "Back to jobs",

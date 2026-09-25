@@ -4,5 +4,13 @@
   "myProfile": "My profile",
   "logIn": "Log in",
   "logOut": "Log out",
-  "createAccount": "Create account"
+  "createAccount": "Create account",
+  "home": "Home",
+  "availableJobs": "Available jobs",
+  "jobsByCategory": "Jobs by category",
+  "howItWorks": "How it works",
+  "faqs": "FAQs",
+  "contact": "Contact us",
+  "register": "Register",
+  "dashboard": "Dashboard"
 }

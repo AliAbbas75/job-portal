@@ -17,6 +17,22 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-25 | Figma design: header, home, Available jobs, job details, auth screens, categories (M4 T-141 to T-144, T-146, T-147; M2 T-027, T-028)
+- **Milestone:** M4, M2
+- **Status:** Done for those tasks (M2 complete; M4 still has T-145, T-148, T-149)
+- **What changed:**
+  - Backend: `JobCategory` model (`models/reference.py`), `Job.category_code` + relationship, seed `JOB_CATEGORIES`, reference API `jobCategories`, job search `category` and `scale` filters, stats `byCategory` / `byBps`, job JSON `category` / `categoryName`, admin job input requires `category`; demo jobs get categories. `MobileOperator` enum + `CandidateAccount.mobile_operator`; OTP request takes `operator` (required for signup) and checks the CAPTCHA for login too; verify takes `operator` and `remember` (30-day token). Migrations `904db39c53bf` (T-147) and `7205f1a38036` (T-028). Tests updated/added (134 backend tests).
+  - Frontend layout: `SiteHeader.jsx` (rewritten), `SiteFooter.jsx` (rewritten, brand colours, i18n), `AppLayout.jsx` (FAQ moved to the home page); deleted `components/layout/FaqSection.jsx`, the FAQ utilities in `index.css`, and `pages/public/JobSearchPage/{HomeHero,SearchCard,MoreFilters,JobListItem}.jsx`
+  - New: `pages/public/HomePage/` (`index.jsx`, `HowItWorks.jsx`, `JobCountCards.jsx`, `FaqSection.jsx`, test), `components/common/{JobsTable,Pagination,Countdown,ShareButton}.jsx`, `components/forms/{Captcha,OperatorField,OtpInput}.jsx`, `utils/jobCode.js`, `pages/public/SignupPage.test.jsx`, i18n `home`, `faq`, `countdown`, `share`, `operators`, `captcha`
+  - Changed: `pages/public/JobSearchPage/` (now `/jobs` with table and pages), `JobDetailsPage`, `SignupPage`, `LoginPage`, `OtpStep` (6 boxes), `AuthProvider` (remember me), `api/auth.js`, `api/jobs.js`, `api/reference.js`, mocks (categories, scale, stats, operator), admin job form (category), `i18n/index.js` (`tList`), `utils/format.js` (`formatLongDate`), routes/paths (`/jobs`), links that said "Find jobs" now go to `/jobs`; i18n `header`, `nav`, `footer`, `hero`, `jobs`, `job`, `signup`, `login`, `otp`, `fields`, `validation`, `adminJobs`
+  - `react-icons` (added earlier by Malaika without a log line): kept for the four social icons in the footer; tree-shaken, so only those icons are bundled.
+  - Docs: M2 and M4 files, `frontend/.env.example` (`VITE_TURNSTILE_SITE_KEY`)
+- **Database:** migrations `904db39c53bf` (job categories), `7205f1a38036` (mobile operator). Run `flask db upgrade` and `flask seed`.
+- **Commits:**
+  - `feat(ui): Figma header, home, jobs table, job details and auth screens; job categories [T-141]`
+- **How to test:** four checks; `npm run dev` in mock mode: home page sections and FAQ tabs, `/jobs` filters and pages, a job's countdown, signup with network + CAPTCHA + 6-box code.
+- **Notes / follow-ups:** design deviations are listed in the M2 and M4 notes (white header for the logo, no carousel, no second SMS after signup). A white-out logo and hero photos would close the first two.
+
 ### 2026-09-25 | M6 core: eligibility, apply, snapshot, tracking, staff status updates (T-060 to T-062, T-064, T-065, T-068)
 - **Milestone:** M6
 - **Status:** Partial (core flow done; T-063 [P], T-069, T-160 to T-163 open)

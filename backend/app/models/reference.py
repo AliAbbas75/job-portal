@@ -16,6 +16,16 @@ class Department(db.Model):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
 
 
+class JobCategory(db.Model):
+    """The kind of post (a trade such as Carpenter, or a group such as Engineering), used to
+    browse jobs by category (M4 T-147)."""
+
+    __tablename__ = "job_categories"
+
+    code: Mapped[str] = mapped_column(String(20), primary_key=True)
+    name: Mapped[str] = mapped_column(String(80), nullable=False)
+
+
 class Province(db.Model):
     __tablename__ = "provinces"
 

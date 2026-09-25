@@ -5,7 +5,7 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 ## Claim
 
 - **Owners:** Ali
-- **Status:** In progress
+- **Status:** Done
 - **Depends on:** M1
 
 ## Scope
@@ -29,7 +29,7 @@ Master flow §4.3. Candidate signup and OTP login; staff login with roles.
 | T-022 | Candidate OTP login, JWT, account recovery   | Ali   | DONE   |
 | T-023 | Staff login + roles                          | Ali   | DONE   |
 | T-024 | [P] NADRA CNIC verification interface        | -     | TODO   |
-| T-028 | Telecom operator on account + OTP requests   | -     | TODO   |
+| T-028 | Telecom operator on account + OTP requests   | Ali   | DONE   |
 
 **Frontend**
 
@@ -37,7 +37,7 @@ Master flow §4.3. Candidate signup and OTP login; staff login with roles.
 |-------|----------------------------------------|-------|--------|
 | T-025 | Signup / OTP / login pages             | Ali   | DONE   |
 | T-026 | Staff login page + route guards        | Ali   | DONE   |
-| T-027 | Auth screens to match the Figma design | -     | TODO   |
+| T-027 | Auth screens to match the Figma design | Ali   | DONE   |
 
 ## Notes
 
@@ -57,3 +57,5 @@ Master flow §4.3. Candidate signup and OTP login; staff login with roles.
   - Logout revokes the token (`revoked_tokens` table). Migration `4a947c997756` adds `otp_challenges` and `revoked_tokens`.
   - T-022: account recovery isn't built. It is **[Proposed]** in master flow §4.3 and needs a stakeholder decision (e.g. how to change a lost mobile number).
   - Not yet: per-IP rate limiting (Nginx/Cloudflare at deployment) and a lockout after repeated wrong staff passwords.
+- Done (T-027, T-028): telecom operator on the account (required at signup, updated at login; migration `7205f1a38036`); CAPTCHA on signup **and** login (Cloudflare Turnstile widget when `VITE_TURNSTILE_SITE_KEY` is set, a development checkbox otherwise); 6-box code input (paste and phone autofill fill all boxes); "Remember me" gives a 30-day login kept in localStorage, otherwise 8 hours in sessionStorage. **Deviation:** after signup the design shows "Success!" then "Login Now", which would send a second SMS code; the success screen keeps the candidate logged in and "Continue" goes on to their profile.
+- M2 is done. T-024 (NADRA) stays TODO until it is approved and an integration exists.

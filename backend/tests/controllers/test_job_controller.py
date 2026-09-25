@@ -118,10 +118,33 @@ def test_closed_job_details_still_visible_as_closed(client, publish_job):
 
 def test_stats(client, publish_job):
     publish_job(vacancies=10, location="Lahore")
-    publish_job(vacancies=5, location="Karachi", department_code="MED")
+    publish_job(
+        vacancies=5, location="Karachi", department_code="MED", category_code="medical", bps=17
+    )
     assert client.get("/api/jobs/stats").get_json() == {
         "openJobs": 2,
         "vacancies": 15,
         "departments": 2,
         "locations": ["Karachi", "Lahore"],
+        "byCategory": [
+            {"code": "medical", "name": "Medical", "count": 1},
+            {"code": "station_staff", "name": "Station staff", "count": 1},
+        ],
+        "byBps": [{"bps": 17, "count": 1}, {"bps": 11, "count": 1}],
     }
+
+
+def test_filter_by_category(client, publish_job):
+    publish_job(title="Station job")
+    publish_job(title="Doctor", category_code="medical")
+    body = client.get("/api/jobs?category=medical").get_json()
+    assert [job["title"] for job in body["items"]] == ["Doctor"]
+    assert body["items"][0]["categoryName"] == "Medical"
+
+
+def test_filter_by_exact_scale(client, publish_job):
+    publish_job(title="Eleven", bps=11)
+    publish_job(title="Fourteen", bps=14)
+    titles = [j["title"] for j in client.get("/api/jobs?scale=14").get_json()["items"]]
+    assert titles == ["Fourteen"]
+    assert client.get("/api/jobs?scale=30").status_code == 422

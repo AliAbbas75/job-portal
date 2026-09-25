@@ -4,6 +4,7 @@ import { LoadingState } from '../components/common/PageState';
 import { AdminLayout } from '../components/layout/AdminLayout';
 import { AppLayout } from '../components/layout/AppLayout';
 import JobDetailsPage from '../pages/public/JobDetailsPage';
+import HomePage from '../pages/public/HomePage';
 import JobSearchPage from '../pages/public/JobSearchPage';
 import LoginPage from '../pages/public/LoginPage';
 import NotFoundPage from '../pages/public/NotFoundPage';
@@ -31,7 +32,8 @@ export function AppRoutes() {
     <Suspense fallback={<LoadingState />}>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path={paths.home} element={<JobSearchPage />} />
+          <Route path={paths.home} element={<HomePage />} />
+          <Route path={paths.jobs} element={<JobSearchPage />} />
           <Route path={paths.job()} element={<JobDetailsPage />} />
           <Route path={paths.signup} element={<SignupPage />} />
           <Route path={paths.login} element={<LoginPage />} />

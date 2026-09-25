@@ -11,8 +11,9 @@ function findAccount(cnic) {
   return getDb().accounts[cnic];
 }
 
-export function requestOtp({ purpose, cnic, mobile }) {
+export function requestOtp({ purpose, cnic, mobile, operator }) {
   const account = findAccount(cnic);
+  if (purpose === 'signup' && !operator) return fail('validation_error');
   if (purpose === 'signup' && account) return fail('cnic_taken');
   if (purpose === 'login' && !account) {
     // Auto-create mock account on login attempt for seamless demo testing

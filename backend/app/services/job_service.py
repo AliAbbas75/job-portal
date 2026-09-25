@@ -6,13 +6,14 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
 
 from app.extensions import db
-from app.models import Department, Job, JobRequirement, QualificationLevel
+from app.models import Department, Job, JobCategory, JobRequirement, QualificationLevel
 from app.models.constants import BPS_RANGES, CLOSING_WINDOWS
 from app.models.enums import EmploymentType, JobStatus
 from app.utils.errors import AppError
 
 LOAD_ALL = (
     selectinload(Job.department),
+    selectinload(Job.category),
     selectinload(Job.requirement),
     selectinload(Job.quotas),
     selectinload(Job.required_documents),
@@ -35,7 +36,9 @@ def search_jobs(
     q="",
     sort="",
     bps="",
+    scale=None,
     department="",
+    category="",
     employment_type="",
     location="",
     qualification="",
@@ -61,8 +64,12 @@ def search_jobs(
     if bps:
         low, high = next((r[2], r[3]) for r in BPS_RANGES if r[0] == bps)
         stmt = stmt.where(Job.bps.between(low, high))
+    if scale:
+        stmt = stmt.where(Job.bps == scale)
     if department:
         stmt = stmt.where(Job.department_code == department)
+    if category:
+        stmt = stmt.where(Job.category_code == category)
     if employment_type:
         stmt = stmt.where(Job.employment_type == EmploymentType(employment_type))
     if location:
@@ -118,7 +125,20 @@ def job_stats():
     locations = db.session.scalars(
         select(open_jobs.c.location).distinct().order_by(open_jobs.c.location)
     ).all()
+    by_category = db.session.execute(
+        select(JobCategory.code, JobCategory.name, func.count(open_jobs.c.id))
+        .join(open_jobs, open_jobs.c.category_code == JobCategory.code)
+        .group_by(JobCategory.code, JobCategory.name)
+        .order_by(func.count(open_jobs.c.id).desc(), JobCategory.name)
+    ).all()
+    by_bps = db.session.execute(
+        select(open_jobs.c.bps, func.count(open_jobs.c.id))
+        .group_by(open_jobs.c.bps)
+        .order_by(open_jobs.c.bps.desc())
+    ).all()
     return {
+        "by_category": [{"code": c, "name": n, "count": k} for c, n, k in by_category],
+        "by_bps": [{"bps": b, "count": k} for b, k in by_bps],
         "open_jobs": counts[0],
         "vacancies": int(counts[1]),
         "departments": counts[2],

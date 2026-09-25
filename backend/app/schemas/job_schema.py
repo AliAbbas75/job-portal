@@ -15,7 +15,9 @@ class JobSearchArgsSchema(ma.Schema):
     q = fields.Str(load_default="", validate=validate.Length(max=100))
     sort = fields.Str(load_default="", validate=EMPTY_OR("newest", "closing"))
     bps = fields.Str(load_default="", validate=EMPTY_OR(*[r[0] for r in BPS_RANGES]))
+    scale = fields.Int(load_default=None, allow_none=True, validate=validate.Range(1, 22))
     department = fields.Str(load_default="", validate=validate.Length(max=10))
+    category = fields.Str(load_default="", validate=validate.Length(max=20))
     employment_type = fields.Str(
         data_key="employmentType", load_default="", validate=EMPTY_OR("permanent", "contract")
     )
@@ -31,6 +33,10 @@ class JobSchema(ma.Schema):
     title = fields.Str()
     department = fields.Str(attribute="department_code")
     department_name = fields.Function(lambda job: job.department.name, data_key="departmentName")
+    category = fields.Str(attribute="category_code", allow_none=True)
+    category_name = fields.Function(
+        lambda job: job.category.name if job.category else None, data_key="categoryName"
+    )
     bps = fields.Int()
     location = fields.Str()
     employment_type = fields.Function(
@@ -70,3 +76,5 @@ class JobStatsSchema(ma.Schema):
     vacancies = fields.Int()
     departments = fields.Int()
     locations = fields.List(fields.Str())
+    by_category = fields.List(fields.Dict(), data_key="byCategory")
+    by_bps = fields.List(fields.Dict(), data_key="byBps")

@@ -8,6 +8,7 @@ export const paths = {
   adminJobApplications: (id = ':jobId') => `/admin/jobs/${id}/applications`,
   adminLogin: '/admin/login',
   adminNewJob: '/admin/jobs/new',
+  jobs: '/jobs',
   job: (id = ':jobId') => `/jobs/${id}`,
   applyCheck: (id = ':jobId') => `/jobs/${id}/apply`,
   applyReview: (id = ':jobId') => `/jobs/${id}/apply/review`,

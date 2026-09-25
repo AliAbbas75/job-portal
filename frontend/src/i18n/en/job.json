@@ -1,5 +1,5 @@
 {
-  "backToJobs": "All jobs",
+  "backToJobs": "Back to jobs",
   "closesOn": "Closes {date}",
   "vacancies": "{count} vacancies",
   "vacancies_one": "1 vacancy",
@@ -20,7 +20,11 @@
     "closing": "Deadline",
     "advertisement": "Advertisement no.",
     "fee": "Application fee",
-    "noFee": "None"
+    "noFee": "None",
+    "jobId": "Job ID",
+    "ageLimit": "Age limit",
+    "location": "Location",
+    "domicile": "Domicile"
   },
   "req": {
     "education": "Education",
@@ -35,5 +39,7 @@
     "ageNote": "Age is worked out from your date of birth on the closing date.",
     "domicile": "Domicile",
     "domicileAny": "Any province"
-  }
+  },
+  "vacanciesAvailable": "vacancies available",
+  "deadlineHeading": "Application deadline"
 }

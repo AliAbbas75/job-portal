@@ -12,7 +12,7 @@ export default function NotFoundPage() {
         icon="alert"
         title={t('notFound.title')}
         description={t('notFound.description')}
-        action={<Button to={paths.home}>{t('nav.findJobs')}</Button>}
+        action={<Button to={paths.jobs}>{t('nav.findJobs')}</Button>}
       />
     </div>
   );

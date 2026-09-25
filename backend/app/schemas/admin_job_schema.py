@@ -51,6 +51,7 @@ class QuotaInput(_Input):
 class JobInput(_Input):
     title = fields.Str(required=True, validate=validate.Length(1, 160))
     department = fields.Str(required=True, validate=CODE)
+    category = fields.Str(required=True, validate=CODE)
     bps = fields.Int(required=True, validate=validate.Range(1, 22))
     location = fields.Str(required=True, validate=validate.Length(1, 80))
     employment_type = fields.Str(

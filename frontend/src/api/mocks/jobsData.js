@@ -42,6 +42,7 @@ function job(fields) {
 export const jobs = [
   job({
     id: 'j-101',
+    category: 'station_staff',
     title: 'Assistant Station Master',
     department: 'TRF',
     bps: 11,
@@ -67,6 +68,7 @@ export const jobs = [
   }),
   job({
     id: 'j-102',
+    category: 'engineering',
     title: 'Assistant Executive Engineer (Civil)',
     department: 'CIV',
     bps: 17,
@@ -92,6 +94,7 @@ export const jobs = [
   }),
   job({
     id: 'j-103',
+    category: 'ticket_checker',
     title: 'Ticket Checker',
     department: 'COM',
     bps: 7,
@@ -116,6 +119,7 @@ export const jobs = [
   }),
   job({
     id: 'j-104',
+    category: 'engineering',
     title: 'Junior Engineer (Signal & Telecom)',
     department: 'SNT',
     bps: 14,
@@ -136,6 +140,7 @@ export const jobs = [
   }),
   job({
     id: 'j-105',
+    category: 'it',
     title: 'Assistant Director (IT)',
     department: 'ITD',
     bps: 17,
@@ -157,6 +162,7 @@ export const jobs = [
   }),
   job({
     id: 'j-106',
+    category: 'medical',
     title: 'Staff Nurse',
     department: 'MED',
     bps: 16,
@@ -180,6 +186,7 @@ export const jobs = [
   }),
   job({
     id: 'j-107',
+    category: 'mechanic',
     title: 'Diesel Mechanic',
     department: 'MEC',
     bps: 9,
@@ -203,6 +210,7 @@ export const jobs = [
   }),
   job({
     id: 'j-108',
+    category: 'clerical',
     title: 'Accounts Clerk',
     department: 'ACC',
     bps: 11,
@@ -225,6 +233,7 @@ export const jobs = [
   }),
   job({
     id: 'j-109',
+    category: 'engineering',
     title: 'Assistant Electrical Engineer',
     department: 'ELE',
     bps: 16,
@@ -245,6 +254,7 @@ export const jobs = [
   }),
   job({
     id: 'j-110',
+    category: 'gateman',
     title: 'Gateman',
     department: 'TRF',
     bps: 2,
@@ -268,6 +278,7 @@ export const jobs = [
   }),
   job({
     id: 'j-111',
+    category: 'medical',
     title: 'Medical Officer',
     department: 'MED',
     bps: 17,
@@ -291,6 +302,7 @@ export const jobs = [
   }),
   job({
     id: 'j-112',
+    category: 'clerical',
     title: 'Data Entry Operator',
     department: 'ITD',
     bps: 12,
@@ -309,6 +321,7 @@ export const jobs = [
   }),
   job({
     id: 'j-090',
+    category: 'clerical',
     title: 'Junior Clerk',
     department: 'COM',
     bps: 11,

@@ -16,7 +16,14 @@ from app.models.profile_records import (
     ProfessionalRegistration,
     Publication,
 )
-from app.models.reference import Department, District, DocumentType, Province, QualificationLevel
+from app.models.reference import (
+    Department,
+    District,
+    DocumentType,
+    JobCategory,
+    Province,
+    QualificationLevel,
+)
 from app.models.revoked_token import RevokedToken
 from app.models.staff_user import StaffUser
 
@@ -35,6 +42,7 @@ __all__ = [
     "EducationRecord",
     "ExperienceRecord",
     "Job",
+    "JobCategory",
     "JobQuota",
     "JobRequirement",
     "OtpChallenge",

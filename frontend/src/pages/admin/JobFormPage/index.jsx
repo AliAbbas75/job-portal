@@ -107,6 +107,14 @@ function JobForm({ job, reference }) {
           error={errors.department}
         />
         <SelectField
+          label={t('adminJobs.form.category')}
+          required
+          options={options(reference.jobCategories)}
+          value={form.category}
+          onChange={set('category')}
+          error={errors.category}
+        />
+        <SelectField
           label={t('adminJobs.form.bps')}
           required
           options={BPS_OPTIONS}

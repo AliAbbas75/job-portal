@@ -8,6 +8,7 @@ import re
 from marshmallow import EXCLUDE, fields, pre_load, validate
 
 from app.extensions import ma
+from app.models.enums import MobileOperator
 
 CNIC = validate.Regexp(r"^\d{5}-\d{7}-\d$", error="Enter the CNIC as 12345-1234567-1.")
 MOBILE = validate.Regexp(r"^03\d{9}$", error="Enter a mobile number like 0300-1234567.")
@@ -20,6 +21,11 @@ class OtpRequestInput(ma.Schema):
     cnic = fields.Str(required=True, validate=CNIC)
     mobile = fields.Str(required=True, validate=MOBILE)
     captcha_token = fields.Str(data_key="captchaToken", load_default=None, allow_none=True)
+    operator = fields.Str(
+        load_default=None,
+        allow_none=True,
+        validate=validate.OneOf([o.value for o in MobileOperator]),
+    )
 
     @pre_load
     def normalize_mobile(self, data, **kwargs):
@@ -31,6 +37,7 @@ class OtpRequestInput(ma.Schema):
 
 class OtpVerifyInput(OtpRequestInput):
     otp = fields.Str(required=True, validate=validate.Regexp(r"^\d{6}$", error="Enter 6 digits."))
+    remember = fields.Bool(load_default=False)
 
 
 class CandidateSessionSchema(ma.Schema):

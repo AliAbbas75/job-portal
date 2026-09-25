@@ -1,7 +1,9 @@
 {
   "title": "Log in",
-  "lead": "Enter the CNIC and mobile number you signed up with.",
+  "lead": "Enter your CNIC and the mobile number you registered. We send a new code every time you log in.",
   "mobileHint": "The number registered with your account",
   "submit": "Send code",
-  "noAccount": "New here?"
+  "noAccount": "New here?",
+  "remember": "Remember me on this device",
+  "rememberNote": "(for 30 days; don't tick this on a shared computer)"
 }

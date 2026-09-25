@@ -1,9 +1,9 @@
 {
-  "title": "Enter your code",
+  "title": "Check your mobile",
   "sentTo": "We sent a 6-digit code to {mobile}.",
   "demoHint": "Demo mode: use the code 123456.",
-  "label": "6-digit code",
-  "verify": "Verify and continue",
+  "label": "Verification code",
+  "verify": "Verify code",
   "resendIn": "Resend code in {count}s",
   "resend": "Resend code",
   "changeNumber": "Change details"

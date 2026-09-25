@@ -11,12 +11,12 @@ MOBILE = "0300-0000000"
 
 
 def _otp(client, purpose, **overrides):
-    payload = {"cnic": CNIC, "mobile": MOBILE, **overrides}
+    payload = {"cnic": CNIC, "mobile": MOBILE, "operator": "jazz", **overrides}
     return client.post(f"/api/auth/{purpose}/otp", json=payload)
 
 
 def _verify(client, purpose, otp, **overrides):
-    payload = {"cnic": CNIC, "mobile": MOBILE, "otp": otp, **overrides}
+    payload = {"cnic": CNIC, "mobile": MOBILE, "otp": otp, "operator": "jazz", **overrides}
     return client.post(f"/api/auth/{purpose}/verify", json=payload)
 
 
@@ -38,6 +38,7 @@ def test_signup_creates_account_and_permanent_profile(client, sms_outbox, last_o
     account = db.session.query(CandidateAccount).one()
     assert account.mobile == "03000000000" and account.profile is not None
     assert account.last_login_at is not None
+    assert account.mobile_operator == "jazz"
     assert db.session.query(AuditLog).filter_by(action="candidate.signed_up").count() == 1
 
     # The token works on M4's candidate endpoints.
@@ -133,3 +134,24 @@ def test_signup_checks_captcha_when_configured(app, client, monkeypatch, sms_out
     finally:
         app.config["CAPTCHA_SECRET_KEY"] = None
     assert "secret=test-secret" in sent["data"]
+
+
+def test_signup_needs_a_valid_operator(client, sms_outbox):
+    missing = _otp(client, "signup", operator=None)
+    assert missing.status_code == 422 and "operator" in missing.get_json()["fields"]
+    assert _otp(client, "signup", operator="warid").status_code == 422
+    assert sms_outbox == []
+
+
+def test_login_updates_operator_and_remember_me_lasts_longer(
+    app, client, make_candidate, sms_outbox, last_otp
+):
+    from flask_jwt_extended import decode_token
+
+    account = make_candidate(cnic=CNIC, mobile="03000000000")
+    _otp(client, "login", operator=None)
+    body = _verify(client, "login", last_otp(), operator="zong", remember=True).get_json()
+    assert account.mobile_operator == "zong"
+    with app.app_context():
+        claims = decode_token(body["token"])
+    assert claims["exp"] - claims["iat"] == 30 * 24 * 3600

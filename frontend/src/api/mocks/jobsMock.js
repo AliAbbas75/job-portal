@@ -1,19 +1,26 @@
 import { daysUntil } from '../../utils/format';
 import { jobs } from './jobsData';
-import { bpsRanges, departments, qualificationLevels } from './referenceData';
+import { bpsRanges, departments, jobCategories, qualificationLevels } from './referenceData';
 import { fail, respond } from './store';
 
 const departmentName = (code) => departments.find((d) => d.code === code)?.name ?? code;
 const levelRank = (code) => qualificationLevels.find((l) => l.code === code)?.rank ?? 0;
 
-export const withDepartment = (job) => ({ ...job, departmentName: departmentName(job.department) });
+const categoryName = (code) => jobCategories.find((c) => c.code === code)?.name ?? null;
+
+export const withDepartment = (job) => ({
+  ...job,
+  departmentName: departmentName(job.department),
+  categoryName: categoryName(job.category),
+});
 
 export function findJob(id) {
   return jobs.find((j) => j.id === id);
 }
 
 function matches(job, filters) {
-  const { q, bps, department, employmentType, location, qualification, closing } = filters;
+  const { q, bps, scale, department, category, employmentType, location, qualification, closing } =
+    filters;
   if (q) {
     const haystack = [
       job.title,
@@ -36,7 +43,9 @@ function matches(job, filters) {
     const range = bpsRanges.find((r) => r.code === bps);
     if (range && (job.bps < range.min || job.bps > range.max)) return false;
   }
+  if (scale && job.bps !== Number(scale)) return false;
   if (department && job.department !== department) return false;
+  if (category && job.category !== category) return false;
   if (employmentType && job.employmentType !== employmentType) return false;
   if (location && job.location !== location) return false;
   if (qualification && levelRank(job.requirements.minQualification) > levelRank(qualification)) {
@@ -77,5 +86,16 @@ export function getJobStats() {
     vacancies: open.reduce((sum, j) => sum + j.vacancies, 0),
     departments: new Set(open.map((j) => j.department)).size,
     locations: [...new Set(open.map((j) => j.location))].sort(),
+    byCategory: jobCategories
+      .map(({ code, name }) => ({
+        code,
+        name,
+        count: open.filter((j) => j.category === code).length,
+      }))
+      .filter((c) => c.count > 0)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+    byBps: [...new Set(open.map((j) => j.bps))]
+      .sort((a, b) => b - a)
+      .map((bps) => ({ bps, count: open.filter((j) => j.bps === bps).length })),
   });
 }

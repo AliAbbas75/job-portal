@@ -19,6 +19,7 @@ from app.models import (
     Department,
     DocumentType,
     Job,
+    JobCategory,
     JobQuota,
     JobRequirement,
     Province,
@@ -66,9 +67,11 @@ def _apply(job, values):
     """Copies validated JobInput values onto the job, checking reference codes exist."""
     req = values["requirements"]
     _lookup(Department, [values["department"]], "department")
+    _lookup(JobCategory, [values["category"]], "category")
     _lookup(QualificationLevel, [req["min_qualification"]], "requirements")
     job.title = values["title"]
     job.department_code = values["department"]
+    job.category_code = values["category"]
     job.bps = values["bps"]
     job.location = values["location"]
     job.employment_type = EmploymentType(values["employment_type"])

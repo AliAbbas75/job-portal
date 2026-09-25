@@ -10,6 +10,7 @@ const dayOf = (iso) =>
 export const emptyForm = () => ({
   title: '',
   department: '',
+  category: '',
   bps: '',
   location: '',
   employmentType: 'permanent',
@@ -37,6 +38,7 @@ export function formFromJob(job) {
   return {
     title: job.title,
     department: job.department,
+    category: job.category ?? '',
     bps: text(job.bps),
     location: job.location,
     employmentType: job.employmentType,
@@ -65,6 +67,7 @@ export function payloadFromForm(form) {
   return {
     title: form.title.trim(),
     department: form.department,
+    category: form.category,
     bps: num(form.bps),
     location: form.location.trim(),
     employmentType: form.employmentType,
@@ -92,6 +95,7 @@ export function payloadFromForm(form) {
 const REQUIRED = [
   'title',
   'department',
+  'category',
   'bps',
   'location',
   'vacancies',

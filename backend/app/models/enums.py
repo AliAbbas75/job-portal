@@ -60,6 +60,13 @@ class ApplicationStatus(StrEnum):
     OFFER = "offer"
 
 
+class MobileOperator(StrEnum):
+    JAZZ = "jazz"
+    TELENOR = "telenor"
+    UFONE = "ufone"
+    ZONG = "zong"
+
+
 class OtpPurpose(StrEnum):
     SIGNUP = "signup"
     LOGIN = "login"

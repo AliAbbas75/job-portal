@@ -12,6 +12,7 @@ def job_payload(**overrides):
     payload = {
         "title": "Ticket Checker",
         "department": "COM",
+        "category": "ticket_checker",
         "bps": 7,
         "location": "Karachi",
         "employmentType": "permanent",

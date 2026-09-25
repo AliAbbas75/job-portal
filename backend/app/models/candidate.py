@@ -22,7 +22,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
 from app.models.base import TimestampMixin, enum_type
-from app.models.enums import Gender
+from app.models.enums import Gender, MobileOperator
 
 if TYPE_CHECKING:
     from app.models.document import Document
@@ -45,6 +45,10 @@ class CandidateAccount(TimestampMixin, db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     cnic: Mapped[str] = mapped_column(String(15), unique=True, nullable=False)
     mobile: Mapped[str] = mapped_column(String(11), nullable=False)
+    # The candidate's network, used to route SMS (T-028). Empty for accounts made before it.
+    mobile_operator: Mapped[MobileOperator | None] = mapped_column(
+        enum_type(MobileOperator, "mobile_operator")
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 

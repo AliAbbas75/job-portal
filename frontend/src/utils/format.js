@@ -8,6 +8,19 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
 
 const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
+const longDateFormatter = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+/** "Thursday, 18 September 2026". */
+export function formatLongDate(value) {
+  if (!value) return '';
+  return longDateFormatter.format(new Date(value));
+}
+
 export function formatDate(value) {
   if (!value) return '';
   return dateFormatter.format(new Date(value));

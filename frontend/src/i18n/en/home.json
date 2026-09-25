@@ -1,0 +1,19 @@
+{
+  "howTitle": "How it works",
+  "howLead": "From sign-up to joining, everything happens on this portal.",
+  "steps": {
+    "register": "Register",
+    "profile": "Complete profile",
+    "apply": "Apply for a job",
+    "shortlisted": "Get shortlisted",
+    "status": "Track your status",
+    "employed": "Get employed"
+  },
+  "recentTitle": "Recent jobs",
+  "recentLead": "The latest openings. Rows in red close within a week.",
+  "showAll": "Show all jobs",
+  "byCategoryTitle": "Jobs by category",
+  "byBpsTitle": "Jobs by BPS scale",
+  "jobsAvailable": "{count} jobs available",
+  "jobsAvailable_one": "1 job available"
+}

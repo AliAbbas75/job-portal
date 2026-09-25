@@ -7,7 +7,14 @@ them from the API.
 from sqlalchemy.dialects.postgresql import insert
 
 from app.extensions import db
-from app.models.reference import Department, District, DocumentType, Province, QualificationLevel
+from app.models.reference import (
+    Department,
+    District,
+    DocumentType,
+    JobCategory,
+    Province,
+    QualificationLevel,
+)
 
 DEPARTMENTS = [
     ("TRF", "Traffic & Operations"),
@@ -19,6 +26,27 @@ DEPARTMENTS = [
     ("MED", "Medical Services"),
     ("ITD", "Information Technology"),
     ("ACC", "Accounts & Finance"),
+]
+
+# Kinds of post for "Jobs by category": trades and operational posts, then office and
+# professional groups.
+JOB_CATEGORIES = [
+    ("carpenter", "Carpenter"),
+    ("electrician", "Electrician"),
+    ("fitter", "Fitter"),
+    ("mason", "Mason"),
+    ("mechanic", "Mechanic"),
+    ("painter", "Painter"),
+    ("welder", "Welder"),
+    ("driver", "Driver"),
+    ("gateman", "Gateman"),
+    ("pointsman", "Pointsman"),
+    ("station_staff", "Station staff"),
+    ("ticket_checker", "Ticket checker"),
+    ("clerical", "Clerical and accounts"),
+    ("engineering", "Engineering"),
+    ("medical", "Medical"),
+    ("it", "Information technology"),
 ]
 
 # Starter district lists; extend with the full official list before launch.
@@ -89,8 +117,16 @@ def seed_reference_data():
         ["name", "rank"],
     )
     _upsert(DocumentType, [{"code": c, "name": n} for c, n in DOCUMENT_TYPES], ["code"], ["name"])
+    _upsert(JobCategory, [{"code": c, "name": n} for c, n in JOB_CATEGORIES], ["code"], ["name"])
     db.session.commit()
     return {
         model.__tablename__: db.session.query(model).count()
-        for model in (Department, Province, District, QualificationLevel, DocumentType)
+        for model in (
+            Department,
+            Province,
+            District,
+            QualificationLevel,
+            DocumentType,
+            JobCategory,
+        )
     }

@@ -31,3 +31,9 @@ export function t(key, vars = {}) {
 export function getLanguage() {
   return language;
 }
+
+/** A list of items under a key (e.g. FAQ entries), or [] if missing. Items are not interpolated. */
+export function tList(key) {
+  const value = lookup(key);
+  return Array.isArray(value) ? value : [];
+}

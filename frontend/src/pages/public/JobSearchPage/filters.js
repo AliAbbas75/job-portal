@@ -1,14 +1,7 @@
-/** Search filters kept in the URL query string. */
-export const FILTER_KEYS = [
-  'q',
-  'sort',
-  'bps',
-  'department',
-  'employmentType',
-  'location',
-  'qualification',
-  'closing',
-];
+/** Job search filters kept in the URL query string (see backend JobSearchArgsSchema). */
+export const FILTER_KEYS = ['q', 'scale', 'department', 'category', 'location', 'qualification'];
+
+export const PAGE_SIZES = [10, 20, 50];
 
 /** Reference-data list → select options. */
 export const toOptions = (list = []) =>

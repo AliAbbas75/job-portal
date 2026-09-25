@@ -39,4 +39,21 @@ describe('JobSearchPage', () => {
     await userEvent.click(screen.getByRole('option', { name: 'Medical Services' }));
     expect(await screen.findByText('2 jobs')).toBeInTheDocument();
   });
+
+  it('pages through results', async () => {
+    renderPage();
+    await screen.findByText('1–10 of 12');
+    expect(screen.getAllByRole('link', { name: 'Apply now' })).toHaveLength(10);
+    await userEvent.click(screen.getByRole('button', { name: '2' }));
+    expect(await screen.findByText('11–12 of 12')).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: 'Apply now' })).toHaveLength(2);
+  });
+
+  it('filters by category', async () => {
+    renderPage();
+    await screen.findByText('12 jobs');
+    await userEvent.click(screen.getByRole('combobox', { name: 'Category' }));
+    await userEvent.click(screen.getByRole('option', { name: 'Medical' }));
+    expect(await screen.findByText('2 jobs')).toBeInTheDocument();
+  });
 });

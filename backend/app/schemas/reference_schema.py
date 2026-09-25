@@ -27,6 +27,7 @@ def dump_reference(data):
             data["qualification_levels"]
         ),
         "documentTypes": CodeNameSchema(many=True).dump(data["document_types"]),
+        "jobCategories": CodeNameSchema(many=True).dump(data["job_categories"]),
         "employmentTypes": pairs(data["employment_types"]),
         "bpsRanges": [
             {"code": code, "name": name, "min": low, "max": high}

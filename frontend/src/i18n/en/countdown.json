@@ -1,0 +1,8 @@
+{
+  "title": "Time remaining",
+  "days": "Days",
+  "hours": "Hours",
+  "minutes": "Min",
+  "seconds": "Sec",
+  "summary": "{days} days and {hours} hours left to apply"
+}

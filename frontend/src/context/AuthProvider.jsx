@@ -5,18 +5,21 @@ import { AuthContext } from './AuthContext';
 
 const TOKEN_KEY = 'pr-auth-token';
 
+// "Remember me" keeps the token in localStorage (survives closing the browser); otherwise it
+// lives in sessionStorage and ends with the tab.
 function readToken() {
   try {
-    return sessionStorage.getItem(TOKEN_KEY);
+    return sessionStorage.getItem(TOKEN_KEY) ?? localStorage.getItem(TOKEN_KEY);
   } catch {
     return null;
   }
 }
 
-function writeToken(token) {
+function writeToken(token, remember = false) {
   try {
-    if (token) sessionStorage.setItem(TOKEN_KEY, token);
-    else sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    if (token) (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, token);
   } catch {
     // Storage blocked: the session lasts until the tab reloads.
   }
@@ -41,8 +44,8 @@ export function AuthProvider({ children }) {
       });
   }, []);
 
-  const signIn = useCallback(({ token, candidate }) => {
-    writeToken(token);
+  const signIn = useCallback(({ token, candidate }, { remember = false } = {}) => {
+    writeToken(token, remember);
     setAuthToken(token);
     setState({ status: 'authenticated', candidate });
   }, []);
