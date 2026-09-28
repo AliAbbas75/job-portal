@@ -30,7 +30,7 @@ Master flow §4.1, 4.2, 4.4. Job search, job details, permanent profile, documen
 | T-043 | Document vault API (upload once, reuse)                                       | Ali   | DONE   |
 | T-044 | Age calculation utility + tests                                               | Ali   | DONE   |
 | T-147 | Job category (trade) + counts by category and BPS                             | Ali   | DONE   |
-| T-148 | Job detail fields: gender, criteria, ad file, quota %                         | -     | TODO   |
+| T-148 | Job detail fields: gender, criteria, ad file, quota %                         | Ali   | IN PROGRESS|
 | T-149 | Profile: trade certificate, quota + age-relaxation claims, new document types | Ali   | DONE   |
 
 **Frontend**
@@ -88,3 +88,4 @@ Design: [docs/pakrail-candidate-journey.html](../../docs/pakrail-candidate-journ
 - T-145, T-149 (done): My profile uses Malaika's one-page design (profile picture = the "photo" document, contact, personal details, education and quota, Save Profile), saved in one call `PUT /api/profile/summary`. New profile fields `highest_qualification_code`, `trade_certificate`, `quota_claim`, `age_relaxation_claim` (migration `69cb5fc8dd8f`); lists in `GET /api/reference` (`quotaClaims`, `ageRelaxations`, `tradeCertificates`); document types `trade_certificate`, `quota_proof`, `age_relaxation_proof`. The education, experience and document vault sections stay below the form (jobs with minimum marks or experience need them). Eligibility accepts the highest level when there is no full education record, unless the job sets minimum marks. The claim lists are provisional (open question 8); age relaxation is recorded but doesn't change the age check yet.
 - Upload limit is now 5 MB (design; open question 5).
 - `GET /api/documents/<id>/file` returns the candidate's own file (used for the profile picture).
+- T-148 (partly done, 2026-09-28): gender requirement on jobs (`JobRequirement.gender`, empty = any; checked by the eligibility engine), display-only eligibility criteria (`Job.eligibility_criteria`, one per line in the job form, listed on the job page), and the newspaper advertisement file (`POST /api/admin/jobs/<id>/advertisement` until publishing, public `GET /api/jobs/<id>/advertisement`, "View/Download advertisement" on the job page). Migration `df563bb5b080`. **Still open: quota percentages and the extra quota categories** (blocked by open question 8).

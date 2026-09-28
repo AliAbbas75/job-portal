@@ -85,6 +85,18 @@ export function checkEligibility(job, profile, documents) {
   const items = [educationItem(req, profile.education, profile.claims?.highestQualification)];
   if (req.experienceYears > 0) items.push(experienceItem(req, profile.experience));
   items.push(ageItem(req, profile.personal.dob, job.closingDate));
+  if (req.gender) {
+    const gender = profile.personal.gender;
+    items.push(
+      gender
+        ? {
+            key: 'gender',
+            required: { gender: req.gender },
+            status: gender === req.gender ? 'met' : 'not_met',
+          }
+        : { key: 'gender', required: { gender: req.gender }, status: 'missing', fix: 'personal' },
+    );
+  }
   if (req.domicileProvinces.length > 0) items.push(domicileItem(req, profile.domicile));
   for (const type of req.documents) {
     const doc = documents.find((d) => d.type === type);

@@ -40,7 +40,8 @@
     "experience": "Experience",
     "age": "Age",
     "domicile": "Domicile",
-    "document": "Document"
+    "document": "Document",
+    "gender": "Gender"
   },
   "addInProfile": "Add in My profile",
   "disclaimerLabel": "Disclaimer:",

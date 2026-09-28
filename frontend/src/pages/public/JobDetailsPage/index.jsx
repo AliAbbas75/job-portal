@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { getJob } from '../../../api/jobs';
+import { advertisementUrl, getJob } from '../../../api/jobs';
 import { Alert } from '../../../components/common/Alert';
 import { Button } from '../../../components/common/Button';
 import { Countdown } from '../../../components/common/Countdown';
@@ -16,7 +16,7 @@ import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
 import { formatCurrency, formatDate, formatLongDate } from '../../../utils/format';
 import { jobCode } from '../../../utils/jobCode';
-import { provinceName } from '../../../utils/referenceLabels';
+import { genderName, provinceName } from '../../../utils/referenceLabels';
 
 /** Job details (Figma "Job Details", T-144): facts, requirements, quotas, deadline countdown. */
 export default function JobDetailsPage() {
@@ -55,6 +55,10 @@ export default function JobDetailsPage() {
         ? req.domicileProvinces.map((code) => provinceName(ref, code)).join(', ')
         : t('job.req.domicileAny'),
     },
+    {
+      label: t('job.facts.gender'),
+      value: req.gender ? genderName(ref, req.gender) : t('job.facts.anyGender'),
+    },
     { label: t('job.facts.fee'), value: job.fee ? formatCurrency(job.fee) : t('job.facts.noFee') },
     { label: t('job.facts.opening'), value: formatDate(job.openingDate) },
     { label: t('job.facts.advertisement'), value: job.advertisementNo },
@@ -69,8 +73,21 @@ export default function JobDetailsPage() {
 
       <div className="grid items-start gap-8 pt-6 lg:grid-cols-[1fr_340px] lg:gap-12">
         <div className="flex min-w-0 flex-col gap-8">
-          <header className="border-b border-heritage pb-6">
+          <header className="flex flex-col gap-4 border-b border-heritage pb-6">
             <JobSummary job={job} as="h1" size="lg" />
+            {job.hasAdvertisement && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-cream p-3">
+                <strong>{t('job.advertisementPrompt')}</strong>
+                <a
+                  href={advertisementUrl(job.id)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-sm bg-heritage px-4 py-2 font-bold text-white no-underline"
+                >
+                  {t('job.advertisementLink')}
+                </a>
+              </div>
+            )}
           </header>
 
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -88,6 +105,17 @@ export default function JobDetailsPage() {
           </section>
 
           <JobRequirements job={job} reference={ref} />
+
+          {job.eligibilityCriteria?.length > 0 && (
+            <section className="flex flex-col gap-3">
+              <h2 className="text-xl">{t('job.criteriaHeading')}</h2>
+              <ul className="list-disc pl-5">
+                {job.eligibilityCriteria.map((criterion) => (
+                  <li key={criterion}>{criterion}</li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="flex flex-col gap-3">
             <h2 className="text-xl">{t('job.quotaHeading')}</h2>

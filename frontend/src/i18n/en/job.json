@@ -24,7 +24,9 @@
     "jobId": "Job ID",
     "ageLimit": "Age limit",
     "location": "Location",
-    "domicile": "Domicile"
+    "domicile": "Domicile",
+    "gender": "Gender",
+    "anyGender": "Any"
   },
   "req": {
     "education": "Education",
@@ -41,5 +43,8 @@
     "domicileAny": "Any province"
   },
   "vacanciesAvailable": "vacancies available",
-  "deadlineHeading": "Application deadline"
+  "deadlineHeading": "Application deadline",
+  "criteriaHeading": "Eligibility criteria",
+  "advertisementPrompt": "To view or download the advertisement:",
+  "advertisementLink": "Click here"
 }

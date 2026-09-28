@@ -29,7 +29,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
 from app.models.base import TimestampMixin, enum_type
-from app.models.enums import EmploymentType, JobStatus, QuotaCategory
+from app.models.enums import EmploymentType, Gender, JobStatus, QuotaCategory
 
 job_required_documents = Table(
     "job_required_documents",
@@ -84,6 +84,14 @@ class Job(TimestampMixin, db.Model):
     )
     created_by_id: Mapped[int | None] = mapped_column(ForeignKey("staff_users.id"))
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Display-only conditions from the advertisement ("Physically fit", "Literate in Urdu").
+    # Eligibility still runs on the structured JobRequirement fields.
+    eligibility_criteria: Mapped[list[str]] = mapped_column(
+        ARRAY(String(300)), server_default=text("'{}'"), nullable=False
+    )
+    # The newspaper advertisement (PDF or image), downloadable from the job page.
+    advertisement_key: Mapped[str | None] = mapped_column(String(255))
+    advertisement_filename: Mapped[str | None] = mapped_column(String(255))
     # Notes from the quick requisition form (admin panel): the quota categories ticked and the
     # recruitment KPIs. Shown to approvers; the structured quotas are what count.
     requisition: Mapped[dict] = mapped_column(JSONB, server_default="{}", nullable=False)
@@ -139,6 +147,8 @@ class JobRequirement(db.Model):
     )
     age_min: Mapped[int] = mapped_column(SmallInteger, nullable=False)
     age_max: Mapped[int] = mapped_column(SmallInteger, nullable=False)
+    # Empty means any gender.
+    gender: Mapped[Gender | None] = mapped_column(enum_type(Gender, "job_gender"))
 
     job: Mapped[Job] = relationship(back_populates="requirement")
 

@@ -181,3 +181,14 @@ export function createRequisition(values) {
   jobs = [job, ...jobs];
   return respond(withDepartment(job));
 }
+
+export function attachAdvertisement(id, file) {
+  if (!['application/pdf', 'image/jpeg', 'image/png'].includes(file.type)) {
+    return fail('file_type_not_allowed');
+  }
+  return act(id, CREATORS, (job) => {
+    if (['published', 'closed', 'rejected'].includes(job.status)) return 'job_locked';
+    job.hasAdvertisement = true;
+    return null;
+  });
+}

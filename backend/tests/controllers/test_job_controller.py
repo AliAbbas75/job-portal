@@ -43,6 +43,7 @@ def test_job_json_matches_frontend_shape(client, publish_job):
         "ageMax": 28,
         "domicileProvinces": ["PB"],
         "documents": ["cnic_copy"],
+        "gender": None,
     }
     assert job["quotas"] == [{"category": "open_merit", "seats": 10}]
 

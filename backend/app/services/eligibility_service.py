@@ -93,6 +93,13 @@ def _domicile(job, profile):
     return {**item, "status": "met" if profile.domicile_province_code in allowed else "not_met"}
 
 
+def _gender(req, profile):
+    item = {"key": "gender", "required": {"gender": req.gender.value}}
+    if profile.gender is None:
+        return {**item, "status": "missing", "fix": "personal"}
+    return {**item, "status": "met" if profile.gender == req.gender else "not_met"}
+
+
 def check(job, profile, documents, today=None):
     """Returns {items, eligible, complete}. `documents` are the candidate's current documents."""
     today = today or datetime.now(UTC).date()
@@ -101,6 +108,8 @@ def check(job, profile, documents, today=None):
     if req.min_experience_years > 0:
         items.append(_experience(req, profile, today))
     items.append(_age(req, job, profile))
+    if req.gender is not None:
+        items.append(_gender(req, profile))
     if job.domicile_provinces:
         items.append(_domicile(job, profile))
 

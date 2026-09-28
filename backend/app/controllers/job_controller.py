@@ -1,7 +1,8 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 
 from app.schemas.job_schema import JobSchema, JobSearchArgsSchema, JobStatsSchema
 from app.services import job_service
+from app.services.storage_service import path_of
 
 job_bp = Blueprint("jobs", __name__)
 
@@ -26,3 +27,9 @@ def job_stats():
 @job_bp.get("/jobs/<int:job_id>")
 def get_job(job_id):
     return JobSchema().dump(job_service.get_public_job(job_id))
+
+
+@job_bp.get("/jobs/<int:job_id>/advertisement")
+def job_advertisement(job_id):
+    key, filename = job_service.advertisement_of(job_id)
+    return send_file(path_of(key), download_name=filename, max_age=0)

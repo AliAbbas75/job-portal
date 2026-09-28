@@ -59,6 +59,10 @@ class JobSchema(ma.Schema):
     closing_date = fields.DateTime(data_key="closingDate")
     fee = fields.Function(lambda job: float(job.fee_amount))
     requirements = fields.Method("dump_requirements")
+    eligibility_criteria = fields.List(fields.Str(), data_key="eligibilityCriteria")
+    has_advertisement = fields.Function(
+        lambda job: bool(job.advertisement_key), data_key="hasAdvertisement"
+    )
     quotas = fields.Function(
         lambda job: [{"category": q.category.value, "seats": q.seats} for q in job.quotas]
     )
@@ -75,6 +79,7 @@ class JobSchema(ma.Schema):
             "ageMax": req.age_max,
             "domicileProvinces": sorted(p.code for p in job.domicile_provinces),
             "documents": sorted(d.code for d in job.required_documents),
+            "gender": req.gender.value if req.gender else None,
         }
 
 

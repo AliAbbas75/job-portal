@@ -144,3 +144,11 @@ def job_stats():
         "departments": counts[2],
         "locations": locations,
     }
+
+
+def advertisement_of(job_id):
+    """(storage key, file name) of a published job's advertisement, or not_found."""
+    job = get_public_job(job_id)
+    if not job.advertisement_key:
+        raise AppError("not_found", "This job has no advertisement file.", status=404)
+    return job.advertisement_key, job.advertisement_filename

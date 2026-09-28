@@ -70,3 +70,19 @@ describe('jobForm', () => {
     });
   });
 });
+
+describe('jobForm gender and criteria (T-148)', () => {
+  it('sends gender and one criterion per line, and reads them back', () => {
+    const payload = payloadFromForm({
+      ...emptyForm(),
+      gender: 'male',
+      eligibilityCriteria: 'Physically fit\n\n  Literate in Urdu ',
+    });
+    expect(payload.requirements.gender).toBe('male');
+    expect(payload.eligibilityCriteria).toEqual(['Physically fit', 'Literate in Urdu']);
+    expect(payloadFromForm(emptyForm()).requirements.gender).toBeNull();
+    const form = formFromJob({ ...payload, id: 'j-1', quotas: [] });
+    expect(form.gender).toBe('male');
+    expect(form.eligibilityCriteria).toBe('Physically fit\nLiterate in Urdu');
+  });
+});

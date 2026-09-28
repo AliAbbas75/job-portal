@@ -74,7 +74,11 @@
       "quotaDuplicate": "Each quota category can appear only once.",
       "fixFields": "Some fields need attention."
     },
-    "category": "Category"
+    "category": "Category",
+    "gender": "Gender",
+    "genderAny": "Any gender",
+    "eligibilityCriteria": "Eligibility criteria",
+    "eligibilityCriteriaHint": "One per line, e.g. \"Physically fit\". Shown on the job page; the fields above decide eligibility."
   },
   "detail": {
     "back": "Back to jobs",
@@ -108,16 +112,7 @@
     "returnedNote": "Returned for changes. Edit the job and submit it again.",
     "rejectedNote": "This job was rejected and is closed.",
     "incomplete": "Complete these in Edit before submitting: {fields}.",
-    "fields": {
-      "category": "category",
-      "location": "location",
-      "summary": "short summary",
-      "description": "description",
-      "openingDate": "opening date",
-      "closingDate": "closing date",
-      "requirements": "eligibility",
-      "quotas": "quota seats"
-    },
+    "fields": {},
     "requisitionTitle": "Requisition notes",
     "quotaSelection": "Quotas requested",
     "quotaOptions": {
@@ -130,6 +125,10 @@
       "sindh": "Sindh",
       "khyber_pakhtunkhwa": "Khyber Pakhtunkhwa",
       "balochistan": "Balochistan"
-    }
+    },
+    "advertisementTitle": "Newspaper advertisement",
+    "advertisementAttached": "Attached. It can be replaced until the job is published.",
+    "advertisementNone": "Not attached yet. PDF, JPG or PNG, up to 5 MB.",
+    "advertisementUpload": "Upload advertisement"
   }
 }

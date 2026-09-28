@@ -18,6 +18,8 @@ function job(fields) {
     ageMax = 30,
     domicile = [],
     documents,
+    gender = null,
+    eligibilityCriteria = [],
     ...rest
   } = fields;
   return {
@@ -26,6 +28,8 @@ function job(fields) {
     openingDate: at(-publishedAgo),
     closingDate: at(closesIn * DAY),
     fee: 0,
+    eligibilityCriteria,
+    hasAdvertisement: false,
     requirements: {
       minQualification: minLevel,
       minMarksPercent: minMarks,
@@ -34,6 +38,7 @@ function job(fields) {
       ageMax,
       domicileProvinces: domicile,
       documents: [...standardDocs, ...documents],
+      gender,
     },
     ...rest,
   };
@@ -255,6 +260,8 @@ export const jobs = [
   job({
     id: 'j-110',
     category: 'gateman',
+    gender: 'male',
+    eligibilityCriteria: ['Physically fit', 'Literate in Urdu'],
     title: 'Gateman',
     department: 'TRF',
     bps: 2,

@@ -89,3 +89,10 @@ def publish(job_id):
     data = _body(PublishInput)
     job = admin_job_service.get_job(job_id)
     return _job(admin_job_service.publish(g.staff, job, data["advertisement_no"]))
+
+
+@admin_job_bp.post("/jobs/<int:job_id>/advertisement")
+@staff_required(*CREATORS)
+def attach_advertisement(job_id):
+    job = admin_job_service.get_job(job_id)
+    return _job(admin_job_service.attach_advertisement(g.staff, job, request.files.get("file")))

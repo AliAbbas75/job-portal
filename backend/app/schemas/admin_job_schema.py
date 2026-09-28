@@ -7,7 +7,7 @@ Shapes match frontend/src/api/mocks/adminJobsMock.js.
 from marshmallow import EXCLUDE, ValidationError, fields, validate, validates_schema
 
 from app.extensions import ma
-from app.models.enums import ApprovalAction, EmploymentType, QuotaCategory
+from app.models.enums import ApprovalAction, EmploymentType, Gender, QuotaCategory
 from app.schemas.job_schema import JobSchema
 
 CODE = validate.Length(min=1, max=40)
@@ -35,6 +35,9 @@ class RequirementsInput(_Input):
         fields.Str(validate=CODE), data_key="domicileProvinces", load_default=list
     )
     documents = fields.List(fields.Str(validate=CODE), load_default=list)
+    gender = fields.Str(
+        load_default=None, allow_none=True, validate=validate.OneOf([g.value for g in Gender])
+    )
 
     @validates_schema
     def age_range(self, data, **kwargs):
@@ -72,6 +75,12 @@ class JobInput(_Input):
     closing_date = fields.AwareDateTime(data_key="closingDate", required=True)
     age_cutoff_date = fields.Date(data_key="ageCutoffDate", load_default=None, allow_none=True)
     fee = fields.Decimal(load_default=0, validate=validate.Range(min=0, max=100000))
+    eligibility_criteria = fields.List(
+        fields.Str(validate=validate.Length(1, 300)),
+        data_key="eligibilityCriteria",
+        load_default=list,
+        validate=validate.Length(max=20),
+    )
     requirements = fields.Nested(RequirementsInput, required=True)
     quotas = fields.List(fields.Nested(QuotaInput), required=True, validate=validate.Length(min=1))
 

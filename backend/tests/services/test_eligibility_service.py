@@ -118,3 +118,22 @@ def test_domicile_rule_only_when_job_restricts_it(publish_job, eligible_candidat
     job.domicile_provinces = [db.session.get(Province, "SD"), db.session.get(Province, "PB")]
     db.session.flush()
     assert _items(job, eligible_candidate(cnic="00000-0000000-2"))[1]["domicile"]["status"] == "met"
+
+
+def test_gender_rule_only_when_the_job_sets_one(publish_job, eligible_candidate):
+    from app.models.enums import Gender
+
+    job = publish_job()
+    account = eligible_candidate()
+    assert "gender" not in _items(job, account)[1]
+    job.requirement.gender = Gender.FEMALE
+    db.session.flush()
+    assert _items(job, account)[1]["gender"] == {
+        "key": "gender",
+        "required": {"gender": "female"},
+        "status": "missing",
+        "fix": "personal",
+    }
+    account.profile.gender = Gender.MALE
+    db.session.flush()
+    assert _items(job, account)[1]["gender"]["status"] == "not_met"

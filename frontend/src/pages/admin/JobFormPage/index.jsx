@@ -219,6 +219,24 @@ function JobForm({ job, reference }) {
             {...field('ageMax')}
           />
         </div>
+        <SelectField
+          label={t('adminJobs.form.gender')}
+          options={[
+            { value: '', label: t('adminJobs.form.genderAny') },
+            ...(reference.genders ?? []).map((g) => ({ value: g.code, label: g.name })),
+          ]}
+          value={form.gender}
+          onChange={set('gender')}
+        />
+        <div className="sm:col-span-2">
+          <TextField
+            label={t('adminJobs.form.eligibilityCriteria')}
+            hint={t('adminJobs.form.eligibilityCriteriaHint')}
+            multiline
+            rows={3}
+            {...field('eligibilityCriteria')}
+          />
+        </div>
         <div className="space-y-2">
           <p className="font-medium">{t('adminJobs.form.domicile')}</p>
           <p className="text-sm">{t('adminJobs.form.domicileHint')}</p>

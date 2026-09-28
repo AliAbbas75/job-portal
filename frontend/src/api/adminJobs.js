@@ -63,3 +63,12 @@ export async function createRequisition(values) {
   const { data } = await client.post('/admin/jobs/requisitions', values);
   return data;
 }
+
+/** Attaches the newspaper advertisement (PDF, JPG or PNG) before the job is published. */
+export async function attachAdvertisement(id, file) {
+  if (USE_MOCKS) return mock.attachAdvertisement(id, file);
+  const form = new FormData();
+  form.append('file', file);
+  const { data } = await client.post(`/admin/jobs/${id}/advertisement`, form);
+  return data;
+}

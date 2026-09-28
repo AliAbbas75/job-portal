@@ -167,3 +167,38 @@ def test_list_filters_by_status(client, staff):
     assert [job["id"] for job in items] == [first]
     assert len(client.get("/api/admin/jobs", headers=admin).get_json()["items"]) == 2
     assert client.get("/api/admin/jobs?status=nope", headers=admin).status_code == 422
+
+
+def test_gender_criteria_and_advertisement(client, staff):
+    import io
+
+    creator, approver, admin = (staff[r] for r in StaffRole)
+    payload = job_payload(eligibilityCriteria=["Physically fit", "  ", "Literate in Urdu"])
+    payload["requirements"]["gender"] = "male"
+    job = _create(client, creator, **payload)
+    assert job["requirements"]["gender"] == "male"
+    assert job["eligibilityCriteria"] == ["Physically fit", "Literate in Urdu"]
+    assert job["hasAdvertisement"] is False
+
+    url = f"/api/admin/jobs/{job['id']}"
+    pdf = b"%PDF-1.4 advert"
+    attached = client.post(
+        f"{url}/advertisement",
+        data={"file": (io.BytesIO(pdf), "advert.pdf")},
+        headers=creator,
+        content_type="multipart/form-data",
+    ).get_json()
+    assert attached["hasAdvertisement"] is True
+
+    client.post(f"{url}/submit", headers=creator)
+    client.post(f"{url}/decision", json={"action": "approved"}, headers=approver)
+    client.post(f"{url}/publish", json={}, headers=admin)
+    public = client.get(f"/api/jobs/{job['id']}/advertisement")
+    assert public.status_code == 200 and public.data == pdf
+    locked = client.post(
+        f"{url}/advertisement",
+        data={"file": (io.BytesIO(pdf), "new.pdf")},
+        headers=admin,
+        content_type="multipart/form-data",
+    )
+    assert locked.status_code == 409

@@ -12,6 +12,7 @@ from datetime import UTC, datetime, time, timedelta, timezone
 from flask import current_app
 from marshmallow import ValidationError
 from sqlalchemy import func, select
+from werkzeug.utils import secure_filename
 
 from app.extensions import db
 from app.models import (
@@ -29,6 +30,7 @@ from app.models import (
 from app.models.enums import ApprovalAction, EmploymentType, JobStatus, QuotaCategory
 from app.services import audit_service
 from app.services.job_service import LOAD_ALL
+from app.services.storage_service import delete_stored, save_upload
 from app.utils.errors import AppError
 
 EDITABLE = {JobStatus.DRAFT, JobStatus.RETURNED}
@@ -84,6 +86,7 @@ def _apply(job, values):
     job.closing_date = values["closing_date"]
     job.age_cutoff_date = values["age_cutoff_date"]
     job.fee_amount = values["fee"]
+    job.eligibility_criteria = [c.strip() for c in values["eligibility_criteria"] if c.strip()]
 
     requirement = job.requirement or JobRequirement()
     requirement.min_qualification_code = req["min_qualification"]
@@ -91,6 +94,7 @@ def _apply(job, values):
     requirement.min_experience_years = req["experience_years"]
     requirement.age_min = req["age_min"]
     requirement.age_max = req["age_max"]
+    requirement.gender = req["gender"]
     job.requirement = requirement
 
     job.domicile_provinces = _lookup(
@@ -272,3 +276,27 @@ def close_expired_jobs(now=None):
         audit_service.record("job.closed", "job", job.id, details={"reason": "closing date"})
     db.session.commit()
     return len(jobs)
+
+
+# The advertisement can be attached until the job is published (published jobs are final).
+ADVERTISEMENT_STATUSES = {
+    JobStatus.DRAFT,
+    JobStatus.RETURNED,
+    JobStatus.PENDING_APPROVAL,
+    JobStatus.APPROVED,
+}
+
+
+def attach_advertisement(staff, job, file):
+    if job.status not in ADVERTISEMENT_STATUSES:
+        raise AppError("job_locked", "Published jobs can't be changed.", 409)
+    if file is None or not file.filename:
+        raise ValidationError({"file": ["Choose a file to upload."]})
+    stored = save_upload(file.stream)
+    if job.advertisement_key:
+        delete_stored(job.advertisement_key)
+    job.advertisement_key = stored.storage_key
+    job.advertisement_filename = secure_filename(file.filename)[:255] or "advertisement"
+    audit_service.record("job.advertisement_attached", "job", job.id, staff=staff)
+    db.session.commit()
+    return job

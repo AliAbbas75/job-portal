@@ -17,6 +17,18 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-28 | M4 T-148 (unblocked part): gender, eligibility criteria, advertisement file
+- **Milestone:** M4
+- **Status:** Partial (quota percentages wait for open question 8)
+- **What changed:**
+  - Backend: `JobRequirement.gender`, `Job.eligibility_criteria`, `Job.advertisement_key/_filename` (migration `df563bb5b080`); job input/output fields; eligibility `gender` item; `admin_job_service.attach_advertisement`, `POST /api/admin/jobs/<id>/advertisement`, public `GET /api/jobs/<id>/advertisement`. Tests in `test_admin_job_controller.py`, `test_eligibility_service.py`, updated job shape test.
+  - Frontend: job form gender + criteria fields, `AdminJobPage/AdvertisementPanel.jsx` (new), job details gender fact + criteria list + advertisement button, `advertisementUrl`/`attachAdvertisement` API + mocks, mock eligibility gender rule, demo Gateman job with gender and criteria; tests `jobForm.test.js`, `JobDetailsPage.test.jsx` (new) (56 frontend tests).
+- **Database:** migration `df563bb5b080`. Run `flask db upgrade`.
+- **Commits:**
+  - `feat(jobs): gender requirement, eligibility criteria and advertisement file [T-148]`
+- **How to test:** admin → edit a draft job: set Gender and criteria, upload an advertisement → approve and publish → the public job page shows them and the download works.
+- **Notes / follow-ups:** quota percentages + extra quota categories after open question 8.
+
 ### 2026-09-26 | Admin panel connected to the backend
 - **Milestone:** M3 (follow-up)
 - **Status:** Done

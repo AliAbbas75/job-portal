@@ -14,6 +14,7 @@ import { useStaffAuth } from '../../../hooks/useStaffAuth';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
 import { formatCurrency, formatDate } from '../../../utils/format';
+import { AdvertisementPanel } from './AdvertisementPanel';
 import { JobActions } from './JobActions';
 
 /** One job for staff: details, approval history and the actions the user's role allows. */
@@ -142,6 +143,7 @@ export default function AdminJobPage() {
 
         <aside className="flex flex-col gap-4 lg:sticky lg:top-4">
           <JobActions job={job} staff={staff} onChange={setData} />
+          <AdvertisementPanel job={job} staff={staff} onChange={setData} />
           {['published', 'closed'].includes(job.status) && (
             <Button to={paths.adminJobApplications(job.id)} variant="secondary" fullWidth>
               {t('adminApplications.viewAll')}

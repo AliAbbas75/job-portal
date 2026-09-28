@@ -27,6 +27,8 @@ export const emptyForm = () => ({
   experienceYears: '0',
   ageMin: '18',
   ageMax: '',
+  gender: '',
+  eligibilityCriteria: '',
   domicileProvinces: [],
   documents: ['cnic_copy', 'photo'],
   quotas: [{ category: 'open_merit', seats: '' }],
@@ -65,6 +67,8 @@ export function formFromJob(job) {
     experienceYears: text(req.experienceYears),
     ageMin: text(req.ageMin),
     ageMax: text(req.ageMax),
+    gender: req.gender ?? '',
+    eligibilityCriteria: (job.eligibilityCriteria ?? []).join('\n'),
     domicileProvinces: req.domicileProvinces,
     documents: req.documents,
     quotas: job.quotas.length
@@ -99,7 +103,13 @@ export function payloadFromForm(form) {
       ageMax: num(form.ageMax),
       domicileProvinces: form.domicileProvinces,
       documents: form.documents,
+      gender: form.gender || null,
     },
+    // One criterion per line; display only (eligibility uses the fields above).
+    eligibilityCriteria: form.eligibilityCriteria
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean),
     quotas: form.quotas.map((q) => ({ category: q.category, seats: num(q.seats) })),
   };
 }
