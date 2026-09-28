@@ -36,5 +36,8 @@
   "detailsLead": "Jobs that ask for minimum marks or experience use these details.",
   "education": "Education history",
   "experience": "Work experience",
-  "documents": "Document vault"
+  "documents": "Document vault",
+  "resumeTitle": "Resume (BPS-15 and above)",
+  "resumeLead": "Posts at BPS-15 and above also use a resume. Upload yours to fill these sections, or build it here and download it as a PDF.",
+  "resumeLink": "Upload or build resume"
 }

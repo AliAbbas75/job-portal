@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   getApplicationCheck,
@@ -17,10 +17,12 @@ import { ErrorState, LoadingState } from '../../../components/common/PageState';
 import { OtpStep } from '../../../components/forms/OtpStep';
 import { ProfileFields } from '../../../components/forms/ProfileFields';
 import { useAsync } from '../../../hooks/useAsync';
+import { useAuth } from '../../../hooks/useAuth';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
+import { clearApplyDraft, loadApplyDraft, saveApplyDraft } from '../../../utils/applyDraft';
 import { errorMessage } from '../../../utils/errorMessage';
 import { formatCurrency } from '../../../utils/format';
 import {
@@ -36,10 +38,19 @@ import { ReviewStep } from './ReviewStep';
 /**
  * Apply wizard (design: Malaika / Figma): 1 identity, 2 SMS code, 3 profile, 4 documents,
  * 5 review, 6 confirmation. Profile details and documents are saved to the permanent profile;
- * submitting freezes them in the application.
+ * submitting freezes them in the application. Progress is kept in the tab (utils/applyDraft.js),
+ * so a reload, a dropped connection or logging in again after the session ends resumes here.
  */
 export default function ApplicationCheckPage() {
   const { jobId } = useParams();
+  const { candidate } = useAuth();
+  // Saved progress belongs to one candidate and job, so the wizard starts once both are known.
+  if (!candidate) return <LoadingState />;
+  const draftKey = `${candidate.id}:${jobId}`;
+  return <ApplyWizard key={draftKey} jobId={jobId} draftKey={draftKey} />;
+}
+
+function ApplyWizard({ jobId, draftKey }) {
   const navigate = useNavigate();
   useDocumentTitle(t('wizard.title'));
   const job = useAsync(() => getJob(jobId), [jobId]);
@@ -47,15 +58,28 @@ export default function ApplicationCheckPage() {
   const documents = useAsync(listDocuments, []);
   const check = useAsync(() => getApplicationCheck(jobId), [jobId]);
   const { data: reference } = useReferenceData();
+  const [draft] = useState(() => loadApplyDraft(draftKey));
 
-  const [step, setStep] = useState('identity');
+  const [step, setStep] = useState(draft?.step ?? 'identity');
   const [identity, setIdentity] = useState(null);
-  const [applyPass, setApplyPass] = useState(null);
-  const [form, setForm] = useState(null);
+  const [applyPass, setApplyPass] = useState(draft?.applyPass ?? null);
+  const [passAt, setPassAt] = useState(draft?.passAt ?? null);
+  // Where the SMS code step leads: the profile, or back to review after re-verifying.
+  const [afterOtp, setAfterOtp] = useState(draft?.afterOtp ?? null);
+  // Unsaved edits on the profile step; other steps start from the saved profile.
+  const [form, setForm] = useState(draft?.step === 'profile' ? draft.form : null);
   const [formErrors, setFormErrors] = useState({});
   const [error, setError] = useState(null);
+  const [notice, setNotice] = useState(
+    draft && draft.step !== 'identity' ? t('wizard.resumed') : null,
+  );
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(null);
+
+  useEffect(() => {
+    if (step === 'confirm') clearApplyDraft(draftKey);
+    else saveApplyDraft(draftKey, { step, applyPass, passAt, form, afterOtp });
+  }, [draftKey, step, applyPass, passAt, form, afterOtp]);
 
   const loadError = job.error ?? profile.error ?? documents.error ?? check.error;
   if (loadError) {
@@ -73,6 +97,7 @@ export default function ApplicationCheckPage() {
   async function run(action) {
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
       await action();
     } catch (err) {
@@ -92,7 +117,18 @@ export default function ApplicationCheckPage() {
   async function verifyCode(otp) {
     const { applyPass: pass } = await verifyApplyCode(jobId, otp);
     setApplyPass(pass);
-    setStep('profile');
+    setPassAt(Date.now());
+    setStep(afterOtp ?? 'profile');
+    setAfterOtp(null);
+  }
+
+  // The SMS check lasts 30 minutes; after that, verify again and come straight back to review.
+  function verifyAgain() {
+    setApplyPass(null);
+    setPassAt(null);
+    setAfterOtp('review');
+    setStep('identity');
+    setNotice(t('wizard.verifyAgain'));
   }
 
   function saveProfile() {
@@ -119,14 +155,26 @@ export default function ApplicationCheckPage() {
       setStep('review');
     });
 
-  const submit = () =>
+  const submit = () => {
+    if (!applyPass) {
+      verifyAgain();
+      return;
+    }
     run(async () => {
-      setSubmitted(await submitApplication(jobId, { declarationAccepted: true, applyPass }));
+      try {
+        setSubmitted(await submitApplication(jobId, { declarationAccepted: true, applyPass }));
+      } catch (err) {
+        if (err.code !== 'identity_check_required') throw err;
+        verifyAgain();
+        return;
+      }
       setStep('confirm');
     });
+  };
 
   const back = (to) => () => {
     setError(null);
+    setNotice(null);
     setStep(to);
   };
 
@@ -177,6 +225,7 @@ export default function ApplicationCheckPage() {
             />
           ) : (
             <>
+              {notice && step !== 'otp' && <Alert variant="info">{notice}</Alert>}
               {error && step !== 'otp' && <Alert variant="error">{error}</Alert>}
 
               {step === 'identity' && (
@@ -205,6 +254,12 @@ export default function ApplicationCheckPage() {
                     <h1 className="text-xl text-black">{t('wizard.profileTitle')}</h1>
                     <p className="text-sm">{t('wizard.profileLead')}</p>
                   </div>
+                  {job.data.resumeTier && (
+                    <Alert variant="info" title={t('wizard.resumeTitle')}>
+                      {t('wizard.resumeBody')}{' '}
+                      <Link to={paths.resume}>{t('wizard.resumeLink')}</Link>
+                    </Alert>
+                  )}
                   <ProfileFields
                     form={form}
                     setForm={setForm}

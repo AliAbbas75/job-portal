@@ -55,5 +55,10 @@
   "toDashboard": "Go To Dashboard",
   "alreadyAppliedTitle": "You've already applied for this job",
   "viewApplication": "View your application",
-  "closedTitle": "Applications for this job have closed"
+  "closedTitle": "Applications for this job have closed",
+  "resumeTitle": "This post needs a resume",
+  "resumeBody": "For BPS-15 and above, your resume details (statement of purpose, registrations, publications, references) go with your application.",
+  "resumeLink": "Upload or build your resume",
+  "resumed": "Welcome back. We kept your progress, so you can continue from here.",
+  "verifyAgain": "For your security, verify your mobile number again. You'll go straight back to the review."
 }

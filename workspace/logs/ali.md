@@ -17,6 +17,68 @@ Newest entries at the top. Template and rules: [../WORKFLOW.md](../WORKFLOW.md#s
 
 -->
 
+### 2026-09-28 | Admin profile menu and Reset Password dialog close on outside click / Escape
+- **Status:** Done
+- **What changed:**
+  - New `frontend/src/hooks/useDismiss.js` (+ `useDismiss.test.jsx`): closes a menu or dialog on a press outside it or Escape.
+  - `pages/admin/AdminHomePage.jsx`: the avatar menu and the Reset Password dialog use it (the dialog stays open while a password change is saving); the dialog is marked `role="dialog"`.
+  - `components/layout/SiteHeader.jsx`: the account menu uses the same hook instead of its own copy of the listener code.
+- **Database:** none
+- **How to test:** admin panel → open the avatar menu, click anywhere else: it closes. Open Reset Password, click the dark backdrop or press Escape: it closes; clicks inside the dialog don't close it.
+
+### 2026-09-28 | Fix: admin panel colours (empty profile menu)
+- **Status:** Done
+- **What changed:**
+  - `frontend/src/pages/admin/AdminHomePage.jsx` (Malaika's design, colours only): the ~230 standard Tailwind colour classes (`gray-*`, `emerald-*`, `red-*`, `amber-*`, `blue-*`) and the hex colours (`#1f4d36`, `#183e2b`) only worked through the CDN script removed earlier, so e.g. the profile menu inherited the header's white text on a white box. Mapped them to brand colours: greys → black text, cream/surface backgrounds and borders; light greens on the dark sidebar/header → surface; dark greens and hex greens → heritage (hover → black); reds → ember; ambers → gold/pumpkin; blues → heritage/pumpkin. Layout and behaviour unchanged.
+- **Database:** none
+- **How to test:** log in at `/admin/login`, open the avatar menu: name, email, Reset Password and Log out show.
+
+### 2026-09-28 | Full domicile district lists (reference data, T-018 follow-up)
+- **Status:** Done
+- **What changed:**
+  - `backend/app/services/reference_seed_service.py`: the starter district lists are now the full current lists, 174 districts: Punjab 41, Sindh 30, Khyber Pakhtunkhwa 40, Balochistan 42, Islamabad 1, Gilgit-Baltistan 10, AJK 10 (source: the provinces' district lists on Wikipedia, checked September 2026). Karachi is now its 7 districts and Quetta is Quetta East/West. `flask seed` also removes districts that are no longer listed unless a profile's domicile uses one.
+  - `frontend/src/api/mocks/referenceData.js`: same lists, generated from the backend list.
+  - Tests: `test_reference_seed_service.py` (counts per province; old districts retired unless in use); `test_profile_controller.py`, `test_profile_summary.py`, `ApplicationCheckPage.test.jsx` use current district names.
+- **Database:** no migration. Run `flask seed` (done on the local dev DB).
+- **How to test:** My profile or the apply wizard: Province = Sindh shows Sukkur; Punjab shows 41 districts.
+- **Notes / follow-ups:** the local dev DB keeps the old "Karachi" under Sindh because a test profile uses it; it goes on the next `flask seed` once that profile picks a current district.
+
+### 2026-09-28 | Apply wizard: continue where you left off (M6)
+- **Status:** Done
+- **Milestone:** M6
+- **What changed:**
+  - New `frontend/src/utils/applyDraft.js` (+ test): wizard progress (step, SMS-check pass and its time, unsaved profile-step edits, where to go after re-verifying) in `sessionStorage`, per candidate and job. Cleared on submit and on logout; ends with the tab like the login token.
+  - `pages/candidate/ApplicationCheckPage/index.jsx`: resumes the saved step with a "we kept your progress" note; the wizard starts once the candidate is known. The SMS check lasts 30 min on the server: if it's gone at submit (or the server says `identity_check_required`), the candidate verifies the mobile again and returns straight to Review. Test added to `ApplicationCheckPage.test.jsx`.
+  - `api/client.js` (+ new `client.test.js`): a rejected candidate token (`unauthorized`) calls a handler. `context/AuthProvider.jsx` uses it to end the session (keeping saved progress), and logout clears saved progress. `routes/RequireCandidate.jsx` passes `sessionEnded` to login, and `pages/public/LoginPage.jsx` shows "Your session has ended" and returns to the same page after login.
+  - i18n: `auth.json` (`sessionEnded*`), `wizard.json` (`resumed`, `verifyAgain`).
+- **Database:** none
+- **How to test:** start applying, reach Documents, reload the page: it reopens at Documents. With an expired or removed token, any step sends you to login with the note, and after logging in you're back on the same step. 68 frontend tests pass.
+- **Notes / follow-ups:** progress is per tab. Resuming on another device would need drafts saved on the server.
+
+### 2026-09-28 | Fix: invisible Continue button in the apply wizard
+- **Status:** Done
+- **What changed:**
+  - `frontend/index.html`: removed the Tailwind v3 Play CDN script (added in `f64d22c`). Its runtime styles overrode our Tailwind v4 build and don't know the brand colours, so `bg-heritage` buttons rendered white-on-white (the wizard's Continue), `border-heritage` showed grey, and the header collapsed to the menu button. It also logged "cdn.tailwindcss.com should not be used in production".
+- **Database:** none
+- **How to test:** Apply to a job: Step 1 shows a green Continue button; no CDN warning in the console.
+- **Notes / follow-ups:** `pages/admin/AdminHomePage.jsx` used default Tailwind colours that only existed through the CDN; mapped to brand colours in the entry above.
+
+### 2026-09-28 | M5 T-054 to T-056: resume screens
+- **Milestone:** M5
+- **Status:** Done (handed over at the project lead's request; Malaika may restyle)
+- **What changed:**
+  - New `pages/candidate/ResumePage/` (`index.jsx`, `ResumeUpload.jsx`, `DetailsReview.jsx`, `ResumePage.test.jsx`): upload and confirm parsed sections, builder, Download PDF.
+  - New sections in `pages/candidate/ProfilePage/`: `RegistrationsSection.jsx`, `PublicationsSection.jsx`, `ReferencesSection.jsx`, `StatementSection.jsx`, `SkillsSection.jsx`.
+  - `ListSection.jsx`: `suggestions` / `lowConfidence` props (resume suggestions are reviewed in the normal form before saving); `EducationSection.jsx`, `ExperienceSection.jsx` pass them through.
+  - `ProfilePage/index.jsx`: resume card linking to the new page. `ApplicationCheckPage/index.jsx`: resume note on the profile step for `resumeTier` jobs.
+  - `routes/paths.js` (`resume`), `routes/AppRoutes.jsx` (route); i18n `resume.json` (new), `profileForm.json`, `wizard.json`.
+  - `workspace/milestones/M5-resume-tier.md`: T-054 to T-056 Ali DONE, milestone Done.
+- **Database:** none
+- **Commits:**
+  - `feat(resume): resume screens, resumable apply wizard, full district lists, admin fixes [T-054]` (one commit with the entries above it)
+- **How to test:** My profile → "Upload or build resume" → upload a text PDF or .docx → review suggestions, add some, confirm details → Download PDF. In mock mode a file named `scan…` shows the unreadable path. 60 frontend tests pass.
+- **Notes / follow-ups:** UI may be restyled by Malaika.
+
 ### 2026-09-28 | M4 T-148 (unblocked part): gender, eligibility criteria, advertisement file
 - **Milestone:** M4
 - **Status:** Partial (quota percentages wait for open question 8)

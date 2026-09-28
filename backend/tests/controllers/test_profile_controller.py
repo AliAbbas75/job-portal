@@ -65,7 +65,7 @@ def test_domicile_district_must_belong_to_province(client, make_candidate, auth_
     )
     assert ok.get_json()["domicile"] == {"province": "PB", "district": "Lahore"}
     bad = client.put(
-        "/api/profile/domicile", json={"province": "PB", "district": "Karachi"}, headers=headers
+        "/api/profile/domicile", json={"province": "PB", "district": "Sukkur"}, headers=headers
     )
     assert bad.status_code == 422 and "district" in bad.get_json()["fields"]
 

@@ -15,6 +15,7 @@ export const paths = {
   login: '/login',
   profile: '/profile',
   profileSection: (section) => `/profile?section=${section}`,
+  resume: '/profile/resume',
   applications: '/applications',
   application: (id = ':applicationId') => `/applications/${id}`,
   challan: (id = ':applicationId') => `/applications/${id}/challan`,

@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { deleteProfileItem, saveProfileItem } from '../../../api/profile';
 import { Alert } from '../../../components/common/Alert';
+import { Badge } from '../../../components/common/Badge';
 import { Button } from '../../../components/common/Button';
 import { Icon } from '../../../components/common/Icon';
 import { t } from '../../../i18n';
 import { errorMessage } from '../../../utils/errorMessage';
 
 /**
- * Add / edit / remove entries of a list section (education, experience).
+ * Add / edit / remove entries of a list section (education, experience, BPS-15+ sections).
  * summarize(item) → { title, subtitle }; renderFields({ draft, setField, errors }) → inputs.
+ * suggestions: entries read from a resume ({ ...item, confidence }), each reviewed in the form
+ * before it is saved; those below lowConfidence are flagged.
  */
 export function ListSection({
   section,
@@ -19,12 +22,16 @@ export function ListSection({
   validate,
   onSaved,
   labels,
+  suggestions = [],
+  lowConfidence = 0,
 }) {
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState(null);
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [suggestionIndex, setSuggestionIndex] = useState(null);
+  const [handled, setHandled] = useState([]);
 
   function startEdit(item) {
     setEditingId(item?.id ?? 'new');
@@ -33,16 +40,26 @@ export function ListSection({
     setError(null);
   }
 
+  function review(index) {
+    const { confidence: _confidence, ...item } = suggestions[index];
+    const known = Object.fromEntries(Object.entries(item).filter(([, value]) => value != null));
+    startEdit(null);
+    setDraft({ ...emptyItem, ...known });
+    setSuggestionIndex(index);
+  }
+
   function cancel() {
     setEditingId(null);
     setDraft(null);
+    setSuggestionIndex(null);
   }
 
-  async function run(action) {
+  async function run(action, usedSuggestion = null) {
     setBusy(true);
     setError(null);
     try {
       onSaved(await action());
+      if (usedSuggestion !== null) setHandled((h) => [...h, usedSuggestion]);
       cancel();
     } catch (err) {
       setError(err);
@@ -55,9 +72,13 @@ export function ListSection({
     event.preventDefault();
     const found = validate(draft);
     setErrors(found);
-    if (Object.keys(found).length === 0) run(() => saveProfileItem(section, draft));
+    if (Object.keys(found).length === 0)
+      run(() => saveProfileItem(section, draft), suggestionIndex);
   }
 
+  const pending = suggestions
+    .map((item, index) => ({ item, index }))
+    .filter(({ index }) => !handled.includes(index) && index !== suggestionIndex);
   const setField = (name) => (value) => setDraft((d) => ({ ...d, [name]: value }));
 
   // Only built while an entry is being added or edited (draft is null otherwise).
@@ -121,6 +142,45 @@ export function ListSection({
           ),
         )}
       </ul>
+      {pending.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-bold text-heritage">{t('resume.suggested')}</p>
+          <ul className="flex flex-col gap-2">
+            {pending.map(({ item, index }) => (
+              <li
+                key={index}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-dashed border-heritage bg-white px-4 py-3"
+              >
+                <div>
+                  <p className="font-bold">{summarize(item).title}</p>
+                  <p className="text-sm">{summarize(item).subtitle}</p>
+                  {item.confidence < lowConfidence && (
+                    <Badge variant="gold">{t('resume.checkThis')}</Badge>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => review(index)}
+                    disabled={busy || editingId !== null}
+                  >
+                    {t('resume.review')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setHandled((h) => [...h, index])}
+                    disabled={busy}
+                  >
+                    {t('resume.dismiss')}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {editingId === 'new'
         ? form
         : editingId === null && (

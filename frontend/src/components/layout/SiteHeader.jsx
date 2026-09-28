@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useDismiss } from '../../hooks/useDismiss';
 import { t } from '../../i18n';
 import { paths } from '../../routes/paths';
 import { cx } from '../../utils/cx';
@@ -27,19 +28,7 @@ export function SiteHeader() {
   }
 
   // Close the account menu on an outside click or Escape.
-  useEffect(() => {
-    if (!accountOpen) return undefined;
-    const onClick = (event) => {
-      if (!accountRef.current?.contains(event.target)) setAccountOpen(false);
-    };
-    const onKey = (event) => event.key === 'Escape' && setAccountOpen(false);
-    document.addEventListener('mousedown', onClick);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onClick);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [accountOpen]);
+  useDismiss(accountRef, accountOpen, () => setAccountOpen(false));
 
   async function logOut() {
     setAccountOpen(false);

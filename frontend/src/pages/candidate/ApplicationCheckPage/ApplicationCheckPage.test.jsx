@@ -64,7 +64,7 @@ describe('Apply wizard', () => {
     );
     await choose(/Gender/, 'Male');
     await choose(/Province/, 'Sindh');
-    await choose(/District/, 'Karachi');
+    await choose(/District/, 'Karachi South');
     await userEvent.type(screen.getByLabelText(/Residential Address/), 'House 1, Karachi');
     await choose(/Highest Education/, 'Matric / SSC');
     await choose(/Trade Certificate/, 'None');
@@ -91,5 +91,42 @@ describe('Apply wizard', () => {
       await screen.findByRole('heading', { name: 'Application Submitted!' }),
     ).toBeInTheDocument();
     expect(screen.getByText(/Application reference: PR-/)).toBeInTheDocument();
+    // Nothing is kept for this job once it's submitted.
+    expect(Object.keys(sessionStorage).some((key) => key.startsWith('pr-apply-draft:'))).toBe(
+      false,
+    );
+  }, 60000);
+
+  it('continues where the candidate left off after leaving the page', async () => {
+    const renderWizard = () =>
+      render(
+        <MemoryRouter initialEntries={[paths.applyCheck('j-103')]}>
+          <AuthProvider>
+            <Routes>
+              <Route path={paths.applyCheck()} element={<ApplicationCheckPage />} />
+            </Routes>
+          </AuthProvider>
+        </MemoryRouter>,
+      );
+
+    const first = renderWizard();
+    expect(await screen.findByRole('heading', { name: /Step 1/ })).toBeInTheDocument();
+    await choose(/Select Telecom Operator/, 'Jazz');
+    await userEvent.type(screen.getByLabelText(/Mobile number/), MOBILE);
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
+    await userEvent.click(
+      await screen.findByRole('textbox', { name: 'Digit 1 of the verification code' }),
+    );
+    await userEvent.paste('123456');
+    expect(await screen.findByRole('heading', { name: /Step 3/ })).toBeInTheDocument();
+    await userEvent.type(screen.getByLabelText(/Full Name/), 'Demo Applicant');
+
+    // The page goes away (reload, session ended) and comes back.
+    first.unmount();
+    renderWizard();
+
+    expect(await screen.findByRole('heading', { name: /Step 3/ })).toBeInTheDocument();
+    expect(screen.getByText(/We kept your progress/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Full Name/)).toHaveValue('Demo Applicant');
   }, 60000);
 });

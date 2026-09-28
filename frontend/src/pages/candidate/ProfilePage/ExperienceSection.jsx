@@ -21,7 +21,7 @@ function validate(draft) {
   return errors;
 }
 
-export function ExperienceSection({ profile, onSaved }) {
+export function ExperienceSection({ profile, onSaved, suggestions, lowConfidence }) {
   return (
     <>
       <p>{t('profile.experience.lead')}</p>
@@ -31,6 +31,8 @@ export function ExperienceSection({ profile, onSaved }) {
         emptyItem={EMPTY}
         validate={validate}
         onSaved={onSaved}
+        suggestions={suggestions}
+        lowConfidence={lowConfidence}
         labels={{
           add: t('profile.experience.add'),
           edit: t('profile.experience.edit'),

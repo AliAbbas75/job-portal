@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { requestOtp, verifyOtp } from '../../api/auth';
 import { Alert } from '../../components/common/Alert';
 import { Button } from '../../components/common/Button';
@@ -23,6 +23,7 @@ export default function LoginPage() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const sessionEnded = useLocation().state?.sessionEnded;
   const next = safeNext(searchParams.get('next'), paths.applications);
 
   const [step, setStep] = useState('details');
@@ -95,6 +96,11 @@ export default function LoginPage() {
   return (
     <AuthCard title={t('auth.loginTitle')} lead={t('auth.loginLead')} footer={signupLink}>
       <form className="space-y-4" onSubmit={sendOtp} noValidate>
+        {sessionEnded && !formError && (
+          <Alert variant="info" title={t('auth.sessionEndedTitle')}>
+            {t('auth.sessionEnded')}
+          </Alert>
+        )}
         {formError && <Alert variant="error">{errorMessage(formError)}</Alert>}
         <IconField
           label={t('auth.cnic')}

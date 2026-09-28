@@ -15,6 +15,14 @@ export function setStaffToken(token) {
   staffToken = token;
 }
 
+// Called when the candidate's login token is rejected (expired, revoked), so the app can send
+// them to log in again. Set by AuthProvider.
+let onCandidateUnauthorized = null;
+
+export function setUnauthorizedHandler(handler) {
+  onCandidateUnauthorized = handler;
+}
+
 export const client = axios.create({ baseURL: '/api' });
 
 client.interceptors.request.use((config) => {
@@ -37,6 +45,10 @@ client.interceptors.response.use(
   (response) => response,
   (error) => {
     const body = error.response?.data ?? {};
+    const candidateRequest = !error.config?.url?.startsWith('/admin/');
+    if (body.code === 'unauthorized' && candidateRequest && authToken) {
+      onCandidateUnauthorized?.();
+    }
     return Promise.reject(
       new ApiError(body.code ?? 'network_error', body.message ?? error.message, body.fields),
     );

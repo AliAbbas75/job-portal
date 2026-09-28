@@ -4,9 +4,11 @@ Keep codes in sync with frontend/src/api/mocks/referenceData.js until the fronte
 them from the API.
 """
 
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from app.extensions import db
+from app.models.candidate import CandidateProfile
 from app.models.reference import (
     Department,
     District,
@@ -49,15 +51,221 @@ JOB_CATEGORIES = [
     ("it", "Information technology"),
 ]
 
-# Starter district lists; extend with the full official list before launch.
+# Domicile districts, as notified in September 2026: Punjab 41, Sindh 30, Khyber Pakhtunkhwa 40
+# (Upper Swat and Paharpur, Oct 2025), Balochistan 42, Gilgit-Baltistan 10 (the four announced
+# in 2019 were never set up), AJK 10. Source: the provinces' district lists on Wikipedia. When
+# districts change, edit these lists and run `flask seed`.
 PROVINCES = [
-    ("PB", "Punjab", ["Lahore", "Rawalpindi", "Multan", "Faisalabad", "Bahawalpur"]),
-    ("SD", "Sindh", ["Karachi", "Hyderabad", "Sukkur", "Larkana"]),
-    ("KP", "Khyber Pakhtunkhwa", ["Peshawar", "Mardan", "Kohat", "Abbottabad"]),
-    ("BA", "Balochistan", ["Quetta", "Sibi", "Khuzdar"]),
+    (
+        "PB",
+        "Punjab",
+        [
+            "Attock",
+            "Bahawalnagar",
+            "Bahawalpur",
+            "Bhakkar",
+            "Chakwal",
+            "Chiniot",
+            "Dera Ghazi Khan",
+            "Faisalabad",
+            "Gujranwala",
+            "Gujrat",
+            "Hafizabad",
+            "Jhang",
+            "Jhelum",
+            "Kasur",
+            "Khanewal",
+            "Khushab",
+            "Kot Addu",
+            "Lahore",
+            "Layyah",
+            "Lodhran",
+            "Mandi Bahauddin",
+            "Mianwali",
+            "Multan",
+            "Murree",
+            "Muzaffargarh",
+            "Nankana Sahib",
+            "Narowal",
+            "Okara",
+            "Pakpattan",
+            "Rahim Yar Khan",
+            "Rajanpur",
+            "Rawalpindi",
+            "Sahiwal",
+            "Sargodha",
+            "Sheikhupura",
+            "Sialkot",
+            "Talagang",
+            "Taunsa",
+            "Toba Tek Singh",
+            "Vehari",
+            "Wazirabad",
+        ],
+    ),
+    (
+        "SD",
+        "Sindh",
+        [
+            "Badin",
+            "Dadu",
+            "Ghotki",
+            "Hyderabad",
+            "Jacobabad",
+            "Jamshoro",
+            "Karachi Central",
+            "Karachi East",
+            "Karachi South",
+            "Karachi West",
+            "Kashmore",
+            "Keamari",
+            "Khairpur",
+            "Korangi",
+            "Larkana",
+            "Malir",
+            "Matiari",
+            "Mirpur Khas",
+            "Naushahro Feroze",
+            "Qambar Shahdadkot",
+            "Sanghar",
+            "Shaheed Benazirabad",
+            "Shikarpur",
+            "Sujawal",
+            "Sukkur",
+            "Tando Allahyar",
+            "Tando Muhammad Khan",
+            "Tharparkar",
+            "Thatta",
+            "Umerkot",
+        ],
+    ),
+    (
+        "KP",
+        "Khyber Pakhtunkhwa",
+        [
+            "Abbottabad",
+            "Allai",
+            "Bajaur",
+            "Bannu",
+            "Battagram",
+            "Buner",
+            "Central Dir",
+            "Charsadda",
+            "Dera Ismail Khan",
+            "Hangu",
+            "Haripur",
+            "Karak",
+            "Khyber",
+            "Kohat",
+            "Kolai Palas",
+            "Kurram",
+            "Lakki Marwat",
+            "Lower Chitral",
+            "Lower Dir",
+            "Lower Kohistan",
+            "Lower South Waziristan",
+            "Malakand",
+            "Mansehra",
+            "Mardan",
+            "Mohmand",
+            "North Waziristan",
+            "Nowshera",
+            "Orakzai",
+            "Paharpur",
+            "Peshawar",
+            "Shangla",
+            "Swabi",
+            "Swat",
+            "Tank",
+            "Torghar",
+            "Upper Chitral",
+            "Upper Dir",
+            "Upper Kohistan",
+            "Upper South Waziristan",
+            "Upper Swat",
+        ],
+    ),
+    (
+        "BA",
+        "Balochistan",
+        [
+            "Awaran",
+            "Barkhan",
+            "Barshore",
+            "Chagai",
+            "Chaman",
+            "Dera Bugti",
+            "Duki",
+            "Gwadar",
+            "Harnai",
+            "Hub",
+            "Jafarabad",
+            "Jhal Magsi",
+            "Kachhi",
+            "Kalat",
+            "Kech",
+            "Kharan",
+            "Khuzdar",
+            "Killa Saifullah",
+            "Kohlu",
+            "Lasbela",
+            "Loralai",
+            "Mastung",
+            "Musakhel",
+            "Nasirabad",
+            "Nushki",
+            "Panjgur",
+            "Pishin",
+            "Qila Abdullah",
+            "Quetta East",
+            "Quetta West",
+            "Sherani",
+            "Sibi",
+            "Sohbatpur",
+            "Surab",
+            "Taftan",
+            "Tump",
+            "Upper Dera Bugti",
+            "Usta Muhammad",
+            "Wadh",
+            "Washuk",
+            "Ziarat",
+            "Zhob",
+        ],
+    ),
     ("IS", "Islamabad Capital Territory", ["Islamabad"]),
-    ("GB", "Gilgit-Baltistan", ["Gilgit", "Skardu"]),
-    ("AJK", "Azad Jammu & Kashmir", ["Muzaffarabad", "Mirpur"]),
+    (
+        "GB",
+        "Gilgit-Baltistan",
+        [
+            "Astore",
+            "Diamer",
+            "Ghanche",
+            "Ghizer",
+            "Gilgit",
+            "Hunza",
+            "Kharmang",
+            "Nagar",
+            "Shigar",
+            "Skardu",
+        ],
+    ),
+    (
+        "AJK",
+        "Azad Jammu & Kashmir",
+        [
+            "Bagh",
+            "Bhimber",
+            "Hattian Bala",
+            "Haveli",
+            "Kotli",
+            "Mirpur",
+            "Muzaffarabad",
+            "Neelum",
+            "Poonch",
+            "Sudhanoti",
+        ],
+    ),
 ]
 
 QUALIFICATION_LEVELS = [
@@ -104,6 +312,18 @@ def _upsert(model, rows, key, update):
     db.session.execute(statement)
 
 
+def _retire_districts():
+    """Removes districts that are no longer on the lists, unless a profile's domicile uses one
+    (that profile keeps it until the candidate picks a current district)."""
+    current = {(code, name) for code, _, districts in PROVINCES for name in districts}
+    in_use = select(CandidateProfile.domicile_district_id).where(
+        CandidateProfile.domicile_district_id.is_not(None)
+    )
+    for district in db.session.scalars(select(District).where(District.id.not_in(in_use))):
+        if (district.province_code, district.name) not in current:
+            db.session.delete(district)
+
+
 def seed_reference_data():
     """Inserts or updates all lookup tables. Returns row counts per table."""
     _upsert(Department, [{"code": c, "name": n} for c, n in DEPARTMENTS], ["code"], ["name"])
@@ -114,6 +334,7 @@ def seed_reference_data():
         ["province_code", "name"],
         [],
     )
+    _retire_districts()
     _upsert(
         QualificationLevel,
         [{"code": c, "name": n, "rank": r} for c, n, r in QUALIFICATION_LEVELS],

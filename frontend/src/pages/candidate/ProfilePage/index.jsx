@@ -1,11 +1,13 @@
 import { listDocuments } from '../../../api/documents';
 import { getProfile } from '../../../api/profile';
+import { Button } from '../../../components/common/Button';
 import { ErrorState, LoadingState } from '../../../components/common/PageState';
 import { CandidateTabs } from '../../../components/layout/CandidateTabs';
 import { useAsync } from '../../../hooks/useAsync';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 import { t } from '../../../i18n';
+import { paths } from '../../../routes/paths';
 import { DocumentsSection } from './DocumentsSection';
 import { EducationSection } from './EducationSection';
 import { ExperienceSection } from './ExperienceSection';
@@ -13,7 +15,8 @@ import { ProfileForm } from './ProfileForm';
 
 /**
  * My profile (design: Malaika): the one-page form, then the education, experience and document
- * details that jobs with minimum marks, experience or specific documents need.
+ * details that jobs with minimum marks, experience or specific documents need, and a link to the
+ * resume (BPS-15+).
  */
 export default function ProfilePage() {
   useDocumentTitle(t('profileForm.title'));
@@ -86,6 +89,15 @@ export default function ProfilePage() {
             reference={reference}
             onChange={documents.setData}
           />
+        </section>
+        <section id="resume" className={card}>
+          <h3 className="text-base text-black">{t('profileForm.resumeTitle')}</h3>
+          <p className="text-sm">{t('profileForm.resumeLead')}</p>
+          <div>
+            <Button to={paths.resume} variant="secondary">
+              {t('profileForm.resumeLink')}
+            </Button>
+          </div>
         </section>
       </div>
     </div>

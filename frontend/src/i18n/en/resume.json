@@ -1,0 +1,85 @@
+{
+  "title": "Resume",
+  "lead": "For BPS-15 and above. Upload your resume to fill your profile faster, or build it section by section.",
+  "backToProfile": "Back to My profile",
+  "downloadPdf": "Download PDF",
+  "pdfUnavailable": "The PDF is made by the server, so it isn't available in demo mode.",
+  "builderTitle": "Resume sections",
+  "builderLead": "Everything here is saved to your profile and used in your resume PDF.",
+  "suggested": "From your resume",
+  "checkThis": "Please check",
+  "checkThisHint": "We weren't sure we read this correctly. Please check it.",
+  "review": "Review and add",
+  "dismiss": "Dismiss",
+  "useThis": "Use this",
+  "upload": {
+    "title": "Upload your resume",
+    "lead": "We read your resume and suggest values for each section. Nothing is saved until you confirm it.",
+    "button": "Choose PDF or Word file",
+    "reading": "Reading your resume...",
+    "hint": "PDF or Word (.docx). Scanned images can't be read; build your resume below instead.",
+    "parsedTitle": "We read your resume",
+    "parsed": "Check each suggestion below and add the ones that are right.",
+    "unreadableTitle": "We couldn't read this file",
+    "unreadable": "It may be a scan or an image. Fill in the sections below instead."
+  },
+  "details": {
+    "title": "Personal and contact details",
+    "lead": "These values come from your resume. Correct anything that's wrong, then confirm.",
+    "none": "No personal or contact details were found in your resume.",
+    "confirm": "Confirm and save",
+    "fullName": "Full name",
+    "fatherName": "Father's name",
+    "dob": "Date of birth",
+    "email": "Email",
+    "currentAddress": "Current address"
+  },
+  "sections": {
+    "education": "Education",
+    "experience": "Experience",
+    "skills": "Skills and licences",
+    "registrations": "Professional registrations",
+    "publications": "Publications",
+    "references": "References"
+  },
+  "statement": {
+    "title": "Statement of purpose",
+    "label": "Statement of purpose",
+    "hint": "A short paragraph on why you want this kind of post. Up to 4,000 characters."
+  },
+  "skills": {
+    "empty": "No skills added yet.",
+    "add": "Add a skill",
+    "addHint": "Press Enter to add, e.g. AutoCAD or HTV licence.",
+    "addButton": "Add"
+  },
+  "registrations": {
+    "add": "Add registration",
+    "edit": "Edit registration",
+    "empty": "No registrations added yet.",
+    "body": "Registering body",
+    "bodyPlaceholder": "e.g. PEC",
+    "number": "Registration number",
+    "validUntilLabel": "Valid until",
+    "validUntil": "Valid until {date}"
+  },
+  "publications": {
+    "add": "Add publication",
+    "edit": "Edit publication",
+    "empty": "No publications added yet.",
+    "title": "Title",
+    "venue": "Journal or conference",
+    "year": "Year",
+    "url": "Link"
+  },
+  "references": {
+    "add": "Add reference",
+    "edit": "Edit reference",
+    "empty": "No references added yet.",
+    "name": "Name",
+    "designation": "Designation",
+    "organization": "Organisation",
+    "phone": "Phone",
+    "email": "Email"
+  }
+}

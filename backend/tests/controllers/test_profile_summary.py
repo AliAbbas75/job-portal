@@ -41,7 +41,7 @@ def test_summary_form_saves_everything_at_once(client, make_candidate, auth_head
 
 
 def test_summary_validation(client, make_candidate, auth_headers):
-    bad = {**SUMMARY, "district": "Karachi", "quota": "vip", "highestQualification": "nope"}
+    bad = {**SUMMARY, "district": "Sukkur", "quota": "vip", "highestQualification": "nope"}
     response = client.put("/api/profile/summary", json=bad, headers=auth_headers(make_candidate()))
     assert response.status_code == 422
     assert "quota" in response.get_json()["fields"]

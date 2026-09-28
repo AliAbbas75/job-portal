@@ -21,7 +21,7 @@ function validate(draft) {
   return errors;
 }
 
-export function EducationSection({ profile, reference, onSaved }) {
+export function EducationSection({ profile, reference, onSaved, suggestions, lowConfidence }) {
   return (
     <ListSection
       section="education"
@@ -29,6 +29,8 @@ export function EducationSection({ profile, reference, onSaved }) {
       emptyItem={EMPTY}
       validate={validate}
       onSaved={onSaved}
+      suggestions={suggestions}
+      lowConfidence={lowConfidence}
       labels={{
         add: t('profile.education.add'),
         edit: t('profile.education.edit'),

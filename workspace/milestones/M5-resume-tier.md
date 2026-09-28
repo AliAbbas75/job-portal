@@ -5,7 +5,7 @@ Claim, status and tasks for this milestone live **only in this file**, so it nev
 ## Claim
 
 - **Owners:** Ali
-- **Status:** In progress
+- **Status:** Done
 - **Depends on:** M4
 
 ## Scope
@@ -34,9 +34,9 @@ Master flow §4.5. Resume upload and parsing, builder, confirmation, higher-tier
 
 | ID    | Task                                    | Owner | Status |
 |-------|-----------------------------------------|-------|--------|
-| T-054 | Resume upload + confirm parsed sections | Malaika| TODO   |
-| T-055 | Resume builder UI                       | Malaika| TODO   |
-| T-056 | BPS-15+ section forms                   | Malaika| TODO   |
+| T-054 | Resume upload + confirm parsed sections | Ali   | DONE   |
+| T-055 | Resume builder UI                       | Ali   | DONE   |
+| T-056 | BPS-15+ section forms                   | Ali   | DONE   |
 
 ## Notes
 
@@ -59,3 +59,11 @@ Screens to design, using the functions above (all work in mock mode):
 - T-054, "Upload your resume" (for jobs with `resumeTier`): pick a PDF/Word file → `uploadResume` → show each section with the suggested values, highlight anything with `confidence < lowConfidence`, let the candidate edit, and a **Confirm** button per section that saves it (`updateProfile` / `updateProfileSection` / `saveProfileItem`). If `parsed` is false, go to the builder with whatever was found.
 - T-055, resume builder: the same sections as forms (personal, contact, education, experience, skills, registrations, publications, references, statement of purpose) and a **Download PDF** button (`downloadResumePdf`; null in mock mode).
 - T-056, the BPS-15+ section forms (registrations, publications, references, statement of purpose), which can live inside the builder and My profile.
+
+### Screens done (T-054 to T-056)
+
+- Handed over: Ali built T-054 to T-056 at the project lead's request, as working screens. Malaika may restyle them; the behaviour and API calls stay.
+- Page `/profile/resume` (`pages/candidate/ResumePage/`), linked from My profile and from the apply wizard's profile step when the job has `resumeTier`.
+- T-054: upload a PDF/Word file. Personal and contact values are shown in editable fields and saved on **Confirm and save**. List suggestions (education, experience, registrations, publications, references) appear under each section as "From your resume": **Review and add** opens the normal form prefilled, and nothing is saved until the candidate saves it. Skills are offered as chips; the statement of purpose has **Use this**. Low-confidence values show "Please check". An unreadable file shows a warning and leaves the builder.
+- T-055: the same page is the builder: statement, education, experience, skills, registrations, publications, references, plus **Download PDF** (shows a note in mock mode).
+- T-056: `ProfilePage/RegistrationsSection.jsx`, `PublicationsSection.jsx`, `ReferencesSection.jsx`, `StatementSection.jsx`, `SkillsSection.jsx`; `ListSection` gained `suggestions` / `lowConfidence`.
