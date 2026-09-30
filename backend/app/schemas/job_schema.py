@@ -1,7 +1,7 @@
 """Job search arguments and job JSON. Shapes match frontend/src/api/mocks/jobsMock.js."""
 
 from flask import current_app
-from marshmallow import EXCLUDE, fields, validate
+from marshmallow import EXCLUDE, fields, pre_load, validate
 
 from app.extensions import ma
 from app.models.constants import BPS_RANGES, CLOSING_WINDOWS
@@ -12,6 +12,17 @@ EMPTY_OR = lambda *choices: validate.OneOf(["", *choices])  # noqa: E731
 class JobSearchArgsSchema(ma.Schema):
     class Meta:
         unknown = EXCLUDE
+
+    @pre_load
+    def empty_strings_to_none(self, data, **kwargs):
+        if hasattr(data, "to_dict"):
+            data = data.to_dict()
+        else:
+            data = dict(data)
+        for key in ("scale", "page", "pageSize"):
+            if data.get(key) == "":
+                data.pop(key, None)
+        return data
 
     q = fields.Str(load_default="", validate=validate.Length(max=100))
     sort = fields.Str(load_default="", validate=EMPTY_OR("newest", "closing"))

@@ -56,4 +56,12 @@ describe('SignupPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
     expect(await screen.findByText('Profile page')).toBeInTheDocument();
   }, 20000);
+
+  it('renders the brand headline and link to login', () => {
+    renderPage();
+    expect(screen.getAllByText(/PAKISTAN RAILWAYS/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/PUBLIC RECRUITMENT SERVICES/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Your journey/i);
+    expect(screen.getByRole('link', { name: /Login/i })).toBeInTheDocument();
+  });
 });

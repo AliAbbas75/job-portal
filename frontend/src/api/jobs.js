@@ -4,7 +4,10 @@ import * as mock from './mocks/jobsMock';
 /** Published jobs matching filters: { q, sort, bps, scale, department, category, employmentType, location, qualification, closing, page, pageSize }. */
 export async function searchJobs(params) {
   if (USE_MOCKS) return mock.listJobs(params);
-  const { data } = await client.get('/jobs', { params });
+  const cleanParams = Object.fromEntries(
+    Object.entries(params || {}).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+  );
+  const { data } = await client.get('/jobs', { params: cleanParams });
   return data;
 }
 

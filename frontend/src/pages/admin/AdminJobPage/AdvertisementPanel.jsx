@@ -12,7 +12,7 @@ export function AdvertisementPanel({ job, staff, onChange }) {
   const inputId = useId();
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
-  const canUpload = OPEN.includes(job.status) && CREATOR_ROLES.includes(staff.role);
+  const canUpload = OPEN.includes(job.status) && CREATOR_ROLES.includes(staff?.role);
   if (!canUpload && !job.hasAdvertisement) return null;
 
   async function upload(event) {

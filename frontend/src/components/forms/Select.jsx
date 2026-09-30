@@ -15,6 +15,7 @@ export function Select({
   onChange,
   options,
   placeholder,
+  leadingIcon,
   size = 'md',
   disabled = false,
   invalid = false,
@@ -22,6 +23,7 @@ export function Select({
   labelledBy,
   ariaLabel,
   className,
+  menuClassName,
 }) {
   const autoId = useId();
   const baseId = id ?? autoId;
@@ -116,16 +118,35 @@ export function Select({
         onKeyDown={onKeyDown}
         className={cx(
           'flex w-full cursor-pointer items-center justify-between gap-2 rounded-sm px-3 text-left select-none',
-          size === 'sm' ? 'min-h-10 text-sm' : 'min-h-11',
-          invalid ? 'border-2 border-ember' : 'border border-heritage',
+          size === 'xs'
+            ? 'h-9 min-h-9 text-xs rounded-md border border-heritage/30'
+            : size === 'sm'
+              ? 'min-h-10 text-sm rounded-sm'
+              : 'min-h-11 rounded-sm',
+          invalid ? 'border-2 border-ember' : size === 'xs' ? 'border-heritage/30' : 'border border-heritage',
           disabled ? 'cursor-not-allowed bg-surface' : 'bg-white',
         )}
       >
-        <span className="truncate">{items[selectedIndex]?.label ?? ''}</span>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {leadingIcon && (
+            <Icon
+              name={leadingIcon}
+              size={size === 'xs' ? 16 : 18}
+              className={cx('flex-none', size === 'xs' ? 'text-heritage/60' : 'text-heritage')}
+            />
+          )}
+          <span className={cx('truncate', !items[selectedIndex]?.value && 'text-black/40')}>
+            {items[selectedIndex]?.label ?? ''}
+          </span>
+        </div>
         <Icon
           name="chevronDown"
-          size={16}
-          className={cx('flex-none text-heritage transition-transform', open && 'rotate-180')}
+          size={size === 'xs' ? 14 : 16}
+          className={cx(
+            'flex-none transition-transform',
+            size === 'xs' ? 'text-heritage/60' : 'text-heritage',
+            open && 'rotate-180',
+          )}
         />
       </div>
 
@@ -136,7 +157,10 @@ export function Select({
         aria-labelledby={labelledBy}
         aria-label={ariaLabel}
         hidden={!open}
-        className="absolute inset-x-0 top-full z-30 mt-1 dropdown-list rounded-sm border border-heritage bg-white"
+        className={cx(
+          'absolute inset-x-0 top-full z-50 mt-1 dropdown-list max-h-72 overflow-y-auto rounded-md border border-heritage bg-white shadow-xl',
+          menuClassName
+        )}
       >
         {items.map((item, index) => {
           const isSelected = index === selectedIndex;

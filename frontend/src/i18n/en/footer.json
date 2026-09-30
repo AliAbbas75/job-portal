@@ -1,18 +1,27 @@
 {
-  "followUs": "Follow us",
+  "followUs": "Follow Us",
   "contactLabel": "Contact",
   "email": "Email",
   "emailValue": "info@pakrail.gov.pk",
   "phone": "Tel",
   "phoneValue": "042-99201938 (Lahore)",
   "address": "Address",
-  "addressValue": "Muhammad Raza Hussain (DPO), for Divisional Superintendent, Pakistan Railways.",
-  "wordmark": "Public Recruitment Services",
-  "copyright": "© {year} Pakistan Railways. Developed by the Directorate of IT, Pakistan Railways.",
+  "addressValue": "Muhammad Raza Hussain (DPO), For Divisional Superintendent, Pakistan Railways.",
+  "wordmark": "PUBLIC RECRUITMENT SERVICES",
+  "latestJobUpdates": "Latest Job Updates",
+  "signUpWithEmail": "Sign Up With Email",
+  "signUpButton": "Sign up",
+  "copyright": "Copyright 2026 - All Right Reserved - Developed By Directorate of IT Pakistan Railways",
+  "developedBy": "Developed By Directorate of IT Pakistan Railways",
+  "mediaPolicy": "Media Policy",
+  "legalNotice": "legal Notice",
+  "privacyPolicy": "Privacy Policy",
+  "termsConditions": "Terms & Conditions",
   "social": {
     "facebook": "Pakistan Railways on Facebook",
     "instagram": "Pakistan Railways on Instagram",
     "x": "Pakistan Railways on X",
+    "youtube": "Pakistan Railways on YouTube",
     "tiktok": "Pakistan Railways on TikTok"
   }
 }

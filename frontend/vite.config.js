@@ -10,7 +10,7 @@ export default defineConfig({
     port: 5180,
     strictPort: true,
     proxy: {
-      '/api': 'http://localhost:5000',
+      '/api': process.env.VITE_BACKEND_URL || 'http://localhost:5001',
     },
   },
   test: {

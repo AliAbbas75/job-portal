@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getJobStats, searchJobs } from '../../../api/jobs';
-import { Button } from '../../../components/common/Button';
 import { Icon } from '../../../components/common/Icon';
-import { JobsTable } from '../../../components/common/JobsTable';
 import { ErrorState, LoadingState } from '../../../components/common/PageState';
 import { useAsync } from '../../../hooks/useAsync';
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { t } from '../../../i18n';
 import { paths } from '../../../routes/paths';
 import { HowItWorks } from './HowItWorks';
+import { RecentJobsList } from './RecentJobsList';
 
 const RECENT_COUNT = 5;
 
@@ -19,6 +18,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { hash } = useLocation();
   const [query, setQuery] = useState('');
+  const [location, setLocation] = useState('');
   const stats = useAsync(getJobStats, []);
   const recent = useAsync(
     () => searchJobs({ sort: 'newest', page: 1, pageSize: RECENT_COUNT }),
@@ -33,73 +33,124 @@ export default function HomePage() {
   function search(event) {
     event.preventDefault();
     const q = query.trim();
-    navigate(q ? `${paths.jobs}?q=${encodeURIComponent(q)}` : paths.jobs);
+    const loc = location.trim();
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (loc) params.set('location', loc);
+    const queryString = params.toString();
+    navigate(queryString ? `${paths.jobs}?${queryString}` : paths.jobs);
   }
-
-  const figures = [
-    { value: stats.data?.openJobs, label: t('hero.statJobs') },
-    { value: stats.data?.vacancies, label: t('hero.statVacancies') },
-    { value: stats.data?.departments, label: t('hero.statDepartments') },
-  ];
 
   return (
     <>
-      <section className="bg-cream">
-        <div className="page grid items-center gap-8 py-10 md:grid-cols-[3fr_2fr] md:py-14">
-          <div className="flex flex-col gap-5">
-            <h1 className="text-4xl leading-tight md:text-5xl">
-              <span className="block text-ember">{t('hero.titleLine1')}</span>
-              <span className="block text-heritage">{t('hero.titleLine2')}</span>
+      {/* Hero section with full-height train image contained within page width */}
+      <section className="relative overflow-hidden bg-white">
+        <div className="page relative flex min-h-[460px] items-center py-12 sm:py-16 lg:min-h-[520px] lg:py-20">
+          {/* Full-height train image on the right, strictly bounded by the page container width */}
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden h-full w-[54%] items-center justify-end overflow-hidden lg:flex xl:w-[58%]">
+            <div className="relative h-full w-full">
+              <img
+                src="/login-train-bg.jpg"
+                alt="Pakistan Railways locomotive on scenic tracks"
+                className="h-full w-full object-cover object-[24%_center] lg:object-[20%_center]"
+              />
+              {/* Smooth white haze gradient fading the left edge into the solid white background */}
+              <div className="absolute inset-y-0 left-0 w-36 bg-gradient-to-r from-white via-white/85 to-transparent lg:w-48" />
+              <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white/30 to-transparent" />
+            </div>
+          </div>
+
+          {/* Content container */}
+          <div className="relative z-10 max-w-xl lg:max-w-lg xl:max-w-xl">
+            {/* Eyebrow */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-bold tracking-[0.2em] text-heritage uppercase">
+              <span>Pakistan Railways</span>
+              <span className="text-black/25" aria-hidden="true">
+                |
+              </span>
+              <span>Serving The Nation</span>
+              <span className="text-black/25" aria-hidden="true">
+                |
+              </span>
+              <span>Building Futures</span>
+            </div>
+
+            <h1 className="font-serif mt-4 text-3xl leading-[1.1] font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              <span className="block text-heritage">Your Next Career</span>
+              <span className="mt-1 block text-ember">Runs on Railways</span>
             </h1>
-            <p className="max-w-xl text-lg">{t('hero.lead')}</p>
+
+            <p className="mt-3.5 max-w-lg text-sm leading-relaxed text-black/75 sm:text-base">
+              Explore a wide range of job opportunities in Pakistan Railways and be a part of a
+              legacy that connects the nation.
+            </p>
+
+            {/* Reduced size filter */}
             <form
               role="search"
               onSubmit={search}
-              className="flex max-w-xl flex-col gap-3 sm:flex-row"
+              className="border-stone-200 shadow-sm mt-6 flex max-w-md flex-col items-stretch gap-1.5 rounded-xl border bg-white p-1.5 sm:flex-row sm:items-center"
             >
-              <label htmlFor="home-search" className="sr-only">
-                {t('jobs.keywordLabel')}
-              </label>
-              <input
-                id="home-search"
-                type="search"
-                className="min-h-12 min-w-0 flex-1 rounded-md border border-heritage bg-white px-4"
-                placeholder={t('jobs.searchPlaceholder')}
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-              <Button type="submit" size="lg">
-                <Icon name="search" size={18} />
-                {t('hero.explore')}
-              </Button>
+              <div className="flex min-w-0 flex-1 items-center gap-2 px-2.5 py-1">
+                <Icon name="search" size={17} className="flex-none text-black/40" />
+                <label htmlFor="home-search" className="sr-only">
+                  {t('jobs.keywordLabel')}
+                </label>
+                <input
+                  id="home-search"
+                  role="searchbox"
+                  type="search"
+                  className="w-full border-none bg-transparent py-1 text-xs text-black placeholder:text-black/40 focus:outline-none sm:text-sm"
+                  placeholder="Job title, skills or keyword"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+              </div>
+
+              <div className="bg-stone-200 hidden h-5 w-px sm:block" aria-hidden="true" />
+
+              <div className="flex w-full items-center gap-1.5 border-t border-stone-200 px-2.5 py-1.5 sm:w-auto sm:border-t-0 sm:py-1">
+                <Icon name="mapPin" size={16} className="flex-none text-black/40" />
+                <select
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full cursor-pointer border-none bg-transparent pr-3 text-xs font-medium text-black/80 focus:outline-none sm:w-auto"
+                  aria-label="Select location"
+                >
+                  <option value="">Select location</option>
+                  {(stats.data?.locations ?? []).map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-ember px-5 py-2.5 text-xs font-semibold whitespace-nowrap text-white transition-opacity hover:opacity-90 sm:w-auto sm:py-2 sm:text-sm"
+              >
+                <span>Find Jobs</span>
+                <span aria-hidden="true">→</span>
+              </button>
             </form>
           </div>
-
-          <dl className="grid grid-cols-3 gap-3 rounded-lg bg-heritage p-5 text-white md:grid-cols-1 md:gap-5 md:p-8">
-            {figures.map((figure) => (
-              <div key={figure.label} className="flex flex-col-reverse">
-                <dt className="text-sm text-cream md:text-base">{figure.label}</dt>
-                <dd className="text-3xl leading-none font-bold text-gold md:text-5xl">
-                  {figure.value ?? '–'}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </section>
 
       <HowItWorks />
 
+      {/* Recent jobs - GitHub row design from last week */}
       <section className="page flex flex-col gap-5 py-12" aria-labelledby="recent-heading">
         <div className="flex flex-col items-center gap-2 text-center">
-          <h2 id="recent-heading" className="text-3xl">
+          <h2 id="recent-heading" className="text-3xl font-bold">
             {t('home.recentTitle')}
           </h2>
           <p>{t('home.recentLead')}</p>
         </div>
         {recent.error && <ErrorState error={recent.error} onRetry={recent.reload} />}
         {!recent.error && !recent.data && <LoadingState label={t('jobs.loading')} />}
-        {recent.data && <JobsTable jobs={recent.data.items} caption={t('home.recentTitle')} />}
+        {recent.data && <RecentJobsList jobs={recent.data.items} />}
         <Link to={paths.jobs} className="self-center font-bold">
           {t('home.showAll')} →
         </Link>

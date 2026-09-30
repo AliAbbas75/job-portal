@@ -21,18 +21,19 @@ const CATEGORY_ICONS = {
     'M8 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm8 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM3 11l2-5a2 2 0 0 1 2-1h10a2 2 0 0 1 2 1l2 5m-18 0h18v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4z',
 };
 const DEFAULT_ICON = 'M3 8h18v12H3zM8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3M3 13h18';
+const BPS_ICON = 'M12 2l7 4v6c0 5.55-3.84 10.74-7 12-3.16-1.26-7-6.45-7-12V6l7-4z';
 
 function CountCard({ to, title, count, icon }) {
   return (
-    <li>
+    <li className="h-full">
       <Link
         to={to}
-        className="group flex h-full flex-col justify-between gap-3 rounded-md border border-heritage bg-white p-5 text-black no-underline hover:bg-cream"
+        className="group shadow-xs hover:shadow-sm flex h-full min-h-[152px] flex-col justify-between rounded-xl border border-heritage/20 bg-white p-5 text-black no-underline transition-all hover:border-heritage hover:bg-cream"
       >
-        <span className="flex flex-col gap-2">
-          {icon && (
+        <span className="flex flex-col gap-2.5">
+          <span className="flex size-9 items-center justify-center rounded-lg bg-surface text-heritage transition-colors group-hover:bg-heritage group-hover:text-white">
             <svg
-              className="size-7 text-heritage"
+              className="size-5"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -41,13 +42,19 @@ function CountCard({ to, title, count, icon }) {
               strokeLinejoin="round"
               aria-hidden="true"
             >
-              <path d={icon} />
+              <path d={icon ?? BPS_ICON} />
             </svg>
-          )}
-          <span className="text-base font-bold group-hover:text-ember">{title}</span>
+          </span>
+          <span className="text-base leading-snug font-bold group-hover:text-ember">{title}</span>
         </span>
-        <span className="text-sm">
-          {t('home.jobsAvailable', { count })} <span aria-hidden="true">→</span>
+        <span className="text-sm font-medium text-black/70 group-hover:text-heritage">
+          {t('home.jobsAvailable', { count })}{' '}
+          <span
+            aria-hidden="true"
+            className="inline-block transition-transform group-hover:translate-x-1"
+          >
+            →
+          </span>
         </span>
       </Link>
     </li>

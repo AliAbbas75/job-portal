@@ -1,27 +1,21 @@
 import { Link } from 'react-router-dom';
-import { useReferenceData } from '../../hooks/useReferenceData';
-import { t } from '../../i18n';
-import { paths } from '../../routes/paths';
-import { daysUntil } from '../../utils/format';
-import { qualificationName } from '../../utils/referenceLabels';
-import { Button } from './Button';
-import { Icon } from './Icon';
+import { Badge } from '../../../components/common/Badge';
+import { Button } from '../../../components/common/Button';
+import { Icon } from '../../../components/common/Icon';
+import { t } from '../../../i18n';
+import { paths } from '../../../routes/paths';
+import { daysUntil } from '../../../utils/format';
 
 /**
- * Available Jobs section - exact same row-card design as the Recent Jobs section on the homepage.
- * Highlights rows closing within 7 days with Ember Red left accent and soft tint.
+ * Recent jobs list - GitHub row layout from previous milestone.
+ * Highlights rows closing within 7 days with red left accent and soft tint.
  */
-export function JobsTable({ jobs, caption }) {
-  const { data: ref } = useReferenceData();
-
+export function RecentJobsList({ jobs }) {
   return (
-    <ul className="list-none divide-y-0 p-0" aria-label={caption || t('jobs.availableTitle')}>
+    <ul className="list-none divide-y-0 p-0" aria-label={t('home.recentTitle')}>
       {jobs.map((job) => {
         const daysLeft = daysUntil(job.closingDate);
         const closingSoon = daysLeft <= 7;
-        const qualification = job.requirements?.minQualification
-          ? qualificationName(ref, job.requirements.minQualification)
-          : null;
 
         return (
           <li
@@ -32,7 +26,7 @@ export function JobsTable({ jobs, caption }) {
                 : 'border-l-transparent hover:bg-surface'
             }`}
           >
-            {/* Left side: Location/Type details, Qualification, Title, Department summary, Status badge */}
+            {/* Left side: Location/Type details on top, Title, Department summary, Status badge */}
             <div className="min-w-0">
               <div
                 className={`flex flex-wrap items-center gap-2 text-xs font-semibold ${
@@ -48,27 +42,12 @@ export function JobsTable({ jobs, caption }) {
                 </span>
                 <span className="flex items-center gap-1">
                   <Icon name="briefcase" size={13} />
-                  <span>
-                    {job.employmentType
-                      ? t(`employmentType.${job.employmentType}`)
-                      : 'Full-time'}
-                  </span>
+                  <span>{t(`employmentType.${job.employmentType}`)}</span>
                 </span>
                 <span className="text-black/30" aria-hidden="true">
                   ·
                 </span>
                 <span>{t('job.vacancies', { count: job.vacancies })}</span>
-                {qualification && (
-                  <>
-                    <span className="text-black/30" aria-hidden="true">
-                      ·
-                    </span>
-                    <span className="flex items-center gap-1 text-black/70">
-                      <Icon name="award" size={13} />
-                      <span>{qualification}</span>
-                    </span>
-                  </>
-                )}
               </div>
 
               <h3 className="my-1.5 text-lg font-bold text-black sm:text-xl">
@@ -83,12 +62,10 @@ export function JobsTable({ jobs, caption }) {
               </h3>
 
               <p className="text-sm text-black/70">
-                <strong
-                  className={`font-semibold ${closingSoon ? 'text-ember' : 'text-heritage'}`}
-                >
+                <strong className={`font-semibold ${closingSoon ? 'text-ember' : 'text-heritage'}`}>
                   {job.departmentName}
-                </strong>
-                {job.summary ? ` · ${job.summary}` : job.categoryName ? ` · ${job.categoryName}` : ''}
+                </strong>{' '}
+                · {job.summary}
               </p>
 
               {/* Status on left side (Closed, Open, Closing soon) */}
@@ -109,7 +86,7 @@ export function JobsTable({ jobs, caption }) {
               </div>
             </div>
 
-            {/* Right side: BPS scale | Apply now button */}
+            {/* Right side: No label BPS | Apply now rectangle button */}
             <div className="flex items-center gap-3 sm:gap-4 md:self-center">
               <span className="text-sm font-bold whitespace-nowrap text-heritage sm:text-base">
                 {t('jobs.bps', { bps: job.bps })}

@@ -46,7 +46,7 @@ export function JobActions({ job, staff, onChange }) {
     run(action, () => decideJob(job.id, { action, comments }));
   }
 
-  const can = (roles) => roles.includes(staff.role);
+  const can = (roles) => Boolean(staff?.role && roles.includes(staff.role));
   const panel = 'flex flex-col gap-4 rounded-md border-2 border-heritage bg-white p-5';
   const errorAlert = error && <Alert variant="error">{error}</Alert>;
 

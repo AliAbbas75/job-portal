@@ -63,6 +63,7 @@ class ApplicationStatus(StrEnum):
 class MobileOperator(StrEnum):
     JAZZ = "jazz"
     ONIC = "onic"
+    SCOM = "scom"
     TELENOR = "telenor"
     UFONE = "ufone"
     ZONG = "zong"

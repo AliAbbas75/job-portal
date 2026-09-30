@@ -53,22 +53,28 @@ export function Captcha({ value, onChange, error }) {
     // Development stand-in, styled like the CAPTCHA box in the design.
     return (
       <div>
-        <div className="flex items-center justify-between rounded-md border border-heritage bg-cream p-3">
-          <label className="flex cursor-pointer items-center gap-3 text-sm font-medium select-none">
+        <div className="flex h-13 items-center justify-between rounded-md border border-heritage/30 bg-surface/40 px-3 py-1.5">
+          <label className="flex cursor-pointer items-center gap-2.5 text-xs font-normal text-black select-none">
             <input
               type="checkbox"
-              className="size-4 accent-heritage"
+              className="size-4.5 rounded border-heritage/30 accent-heritage"
               checked={Boolean(value)}
               aria-invalid={Boolean(error) || undefined}
               aria-describedby={error ? errorId : undefined}
               onChange={(event) => onChange(event.target.checked ? 'dev-placeholder' : null)}
             />
-            {t('captcha.placeholder')}
+            <span className="text-xs text-black">{t('captcha.placeholder')}</span>
           </label>
-          <span className="text-xs">{t('auth.captchaPrivacy')}</span>
+          <div className="flex flex-col items-center justify-center text-center">
+            <svg className="size-5 text-heritage" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span className="text-[9px] font-semibold text-black/70 leading-tight">reCAPTCHA</span>
+            <span className="text-[7.5px] text-black/50 leading-none">{t('auth.captchaPrivacy')}</span>
+          </div>
         </div>
         {error && (
-          <p id={errorId} className="mt-1 text-sm font-medium text-ember">
+          <p id={errorId} className="mt-1 text-xs font-medium text-ember">
             {error}
           </p>
         )}

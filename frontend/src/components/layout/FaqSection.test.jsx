@@ -3,14 +3,19 @@ import userEvent from '@testing-library/user-event';
 import { FaqSection } from './FaqSection';
 
 describe('FaqSection', () => {
-  it('switches topics and opens one answer at a time', async () => {
+  it('has answers closed by default and opens one answer at a time', async () => {
     render(<FaqSection />);
-    await userEvent.click(screen.getByRole('tab', { name: 'Account and login' }));
-    const first = screen.getByRole('button', { name: /How do I create an account/ });
+    const first = screen.getByRole('button', { name: /How Do I Register/i });
+    expect(first).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(first);
     expect(first).toHaveAttribute('aria-expanded', 'true');
-    const password = screen.getByRole('button', { name: /Do I need a password/ });
-    await userEvent.click(password);
-    expect(password).toHaveAttribute('aria-expanded', 'true');
+
+    const second = screen.getByRole('button', { name: /Do I need a password/i });
+    expect(second).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(second);
+    expect(second).toHaveAttribute('aria-expanded', 'true');
     expect(first).toHaveAttribute('aria-expanded', 'false');
   });
 });

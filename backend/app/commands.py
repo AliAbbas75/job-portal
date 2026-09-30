@@ -35,6 +35,13 @@ def register_commands(app):
         """Close published jobs whose closing date has passed. Run it every few minutes (cron)."""
         click.echo(f"jobs closed: {close_expired_jobs()}")
 
+    @app.cli.command("seed-all")
+    def seed_all():
+        """Seed complete portal data: reference, demo jobs, staff/employer, candidate, CV, and application."""
+        from app.services.full_seed_service import seed_all_portal_data
+        seed_all_portal_data()
+        click.echo("Database successfully seeded with employer, candidates, jobs, CV/documents, and applications.")
+
     @app.cli.command("create-staff")
     @click.option("--name", prompt=True)
     @click.option("--email", prompt=True)
